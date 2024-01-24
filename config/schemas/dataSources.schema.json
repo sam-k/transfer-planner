@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "/schemas/dataSources",
+  "title": "Data Sources",
+  "description": "Information about how to fetch data for this application.",
+  "type": "object",
+  "properties": {
+    "groups": {
+      "description": "All groups of data sources for this application.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "Short ID for this group.",
+            "type": "string",
+            "pattern": "^[ -~]+$"
+          },
+          "description": {
+            "description": "Description for this group.",
+            "type": "string"
+          },
+          "lastUpdated": {
+            "description": "Date on which information about this group was last updated.",
+            "type": "string",
+            "format": "date"
+          },
+          "sources": {
+            "description": "All sources contained within this group.",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "description": "Short ID for this data source.",
+                  "type": "string",
+                  "pattern": "^[ -~]+$"
+                },
+                "fileName": {
+                  "description": "File name to assign for this data source.",
+                  "type": "string",
+                  "pattern": "^[ -~]+$"
+                },
+                "description": {
+                  "description": "Description for this data source.",
+                  "type": "string"
+                },
+                "type": {
+                  "description": "Type of this data source.",
+                  "enum": [
+                    "gtfs",
+                    "osm"
+                  ]
+                },
+                "url": {
+                  "description": "Download URL for this data source, with any secrets (e.g., API keys) as ${SECRET}.\n\nIf secret is present, secretId must be provided.",
+                  "markdownDescription": "Download URL for this data source, with any secrets (e.g., API keys) as `${SECRET}`.\n\nIf secret is present, `secretId` must be provided.",
+                  "type": "string",
+                  "format": "uri"
+                },
+                "secretId": {
+                  "description": "ID corresponding to the secret needed, as defined in secrets.json.",
+                  "type": "string",
+                  "pattern": "^[ -~]+$"
+                }
+              },
+              "required": [
+                "id",
+                "url"
+              ],
+              "oneOf": [
+                {
+                  "not": {
+                    "properties": {
+                      "url": {
+                        "pattern": "\\${SECRET}"
+                      }
+                    }
+                  }
+                },
+                {
+                  "required": ["secretId"]
+                }
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "id",
+          "sources"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "additionalProperties": false
+  },
+  "additionalProperties": false
+}

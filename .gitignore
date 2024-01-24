@@ -1,3 +1,4 @@
+config/secrets.json
 data/
 dist/
 node_modules/
