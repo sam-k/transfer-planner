@@ -33,7 +33,7 @@ const compileAllSchemasInDir = async dirPath => {
       /** @returns {Promise<void>} */ async schemaPath => {
         const schemaJson = deepOmit(
           JSON.parse(readFileSync(schemaPath).toString()),
-          // json-schema-to-typescript cannot handle conditional subschemas.
+          // json-schema-to-typescript cannot handle schema composition.
           ['allOf', 'anyOf', 'oneOf']
         );
         const declarationPath = formatPath({

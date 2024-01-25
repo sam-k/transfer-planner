@@ -59,18 +59,26 @@ const main = async () => {
     secretsConfig.secrets.map(secret => [secret.id, secret.secret])
   );
 
-  for (const group of dataSourcesConfig.groups ?? []) {
-    console.log(
-      `Fetching data for: ${chalk.magenta(
-        chalk.bold(group.id) +
-          (group.description ? ` (${group.description})` : '')
-      )}...`
-    );
-  }
+  const logMsg = dataSourcesConfig.groups
+    .map(group =>
+      [
+        `Fetching data for: ${chalk.magenta(
+          chalk.bold(group.id) +
+            (group.description ? ` (${group.description})` : '')
+        )}...`,
+        ...group.sources.map(
+          source =>
+            `- ${source.id}` +
+            (source.description ? ` (${source.description})` : '')
+        ),
+      ].join('\n')
+    )
+    .join('\n\n');
+  console.log(logMsg);
 
   await Promise.all(
     dataSourcesConfig.groups
-      ?.flatMap(group => group.sources)
+      .flatMap(group => group.sources)
       .map(source => {
         if (!source.fileName) {
           throw `Filename for ${source.id} not provided.`;

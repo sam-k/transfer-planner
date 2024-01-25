@@ -7,8 +7,8 @@
   "type": "module",
   "packageManager": "pnpm@8.14.1",
   "scripts": {
-    "build": "vite build",
-    "installData": "node ./scripts/installData.js"
+    "build": "node ./scripts/tasks/compileJsonSchemas.js && vite build",
+    "installData": "node ./scripts/tasks/installData.js"
   },
   "devDependencies": {
     "@html-eslint/eslint-plugin": "^0.22.0",
