@@ -1,0 +1,27 @@
+{
+  "groups": [
+    {
+      "id": "sf",
+      "description": "San Francisco Bay Area",
+      "lastUpdated": "2024-01-23",
+      "sources": [
+        {
+          "id": "sf-gtfs",
+          "fileName": "data/511-sf-bay.gtfs",
+          "description": "GTFS data for all agencies in the SF Bay Area",
+          "sourceType": "gtfs",
+          "url": "http://api.511.org/transit/datafeeds?operator_id=RG&api_key=${SECRET}",
+          "secretId": "511-sf"
+        },
+        {
+          "id": "sf-osm",
+          "fileName": "data/sf-bay.osm.pbf",
+          "description": "OpenStreetMap data for the SF Bay Area",
+          "sourceType": "osm",
+          "url": "https://app.interline.io/osm_extracts/download_latest?string_id=san-francisco-bay_california&data_format=pbf&api_token=${SECRET}",
+          "secretId": "interline"
+        }
+      ]
+    }
+  ]
+}

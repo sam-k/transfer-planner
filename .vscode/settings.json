@@ -14,6 +14,16 @@
   ],
   "files.insertFinalNewline": true,
   "json.format.enable": false,
+  "json.schemas": [
+    {
+      "fileMatch": ["config/dataSources.json"],
+      "url": "./config/schemas/dataSources.schema.json"
+    },
+    {
+      "fileMatch": ["config/secrets.json"],
+      "url": "./config/schemas/secrets.schema.json"
+    }
+  ],
   "search.exclude": {
     "**/node_modules": true
   },

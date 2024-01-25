@@ -1,5 +1,3 @@
-/* eslint-disable node/no-unpublished-import */
-
 import react from '@vitejs/plugin-react';
 import {defineConfig} from 'vite';
 
