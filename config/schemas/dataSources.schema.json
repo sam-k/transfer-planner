@@ -45,7 +45,7 @@
                   "description": "Description for this data source.",
                   "type": "string"
                 },
-                "type": {
+                "sourceType": {
                   "description": "Type of this data source.",
                   "enum": [
                     "gtfs",
@@ -95,5 +95,6 @@
     },
     "additionalProperties": false
   },
+  "required": ["groups"],
   "additionalProperties": false
 }

@@ -1,15 +1,17 @@
 {
   "extends": "./node_modules/gts/tsconfig-google.json",
   "compilerOptions": {
+    "checkJs": true,
+    "forceConsistentCasingInFileNames": true,
+    "esModuleInterop": true,
+    "jsx": "react",
     "lib": [
       "DOM",
       "ESNext"
     ],
-    "outDir": "dist",
-    "jsx": "react",
-    "esModuleInterop": true,
     "module": "ESNext",
     "moduleResolution": "Node",
+    "outDir": "dist",
     "target": "ESNext"
   }
 }
