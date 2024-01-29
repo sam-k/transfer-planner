@@ -1,20 +1,29 @@
 import {isObject, transform} from 'lodash-es';
-import {dirname, join as joinPath} from 'path';
-import {fileURLToPath} from 'url';
+import {join as joinPath} from 'path';
 
-/** Path of the repository directory. */
-export const REPO_DIR = joinPath(
-  dirname(fileURLToPath(import.meta.url)),
-  '../..'
-);
+import {REPO_DIR} from '../constants/index.js';
 
 /**
- * Gets an absolute path from the given paths within the directory.
+ * Gets an absolute path from the given path fragments relative to the
+ * repository.
  *
  * @param {string[]} paths
  * @returns {string}
  */
-export const getAbsolutePath = (...paths) => joinPath(REPO_DIR, ...paths);
+export const getAbsolutePath = (...paths) =>
+  paths[0]?.startsWith('/')
+    ? joinPath(...paths) // Already an absolute path
+    : joinPath(REPO_DIR, ...paths);
+
+/**
+ * Gets a path as relative to the given path.
+ *
+ * @param {string} path
+ * @param {string=} parentPath
+ * @returns {string}
+ */
+export const getRelativePath = (path, parentPath = REPO_DIR) =>
+  path.replace(parentPath, '').replace(/^\//, '');
 
 /**
  * Recursively omits keys from an object.

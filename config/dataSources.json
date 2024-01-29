@@ -7,7 +7,7 @@
       "sources": [
         {
           "id": "sf-gtfs",
-          "fileName": "511-sf-bay.gtfs",
+          "fileName": "511-sf-bay.gtfs.zip",
           "description": "GTFS data for all agencies in the SF Bay Area",
           "sourceType": "gtfs",
           "url": "http://api.511.org/transit/datafeeds?operator_id=RG&api_key=${SECRET}",
@@ -15,7 +15,7 @@
         },
         {
           "id": "sf-osm",
-          "fileName": "sf-bay.osm.pbf",
+          "fileName": "interline-sf-bay.osm.pbf",
           "description": "OpenStreetMap data for the SF Bay Area",
           "sourceType": "osm",
           "url": "https://app.interline.io/osm_extracts/download_latest?string_id=san-francisco-bay_california&data_format=pbf&api_token=${SECRET}",
