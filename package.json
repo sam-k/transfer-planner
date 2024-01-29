@@ -5,14 +5,19 @@
   "license": "ISC",
   "author": "Sam Kim",
   "type": "module",
-  "packageManager": "pnpm@8.14.1",
+  "packageManager": "pnpm@8.15.0",
   "scripts": {
-    "build": "node ./scripts/tasks/compileJsonSchemas.js && vite build",
-    "installData": "node ./scripts/tasks/installData.js"
+    "compile-json": "node ./scripts/tasks/compileJsonSchemas.js",
+    "build": "vite build",
+    "build-otp": "node ./scripts/tasks/buildOtp.js",
+    "install-data": "node ./scripts/tasks/installData.js"
   },
   "devDependencies": {
     "@html-eslint/eslint-plugin": "^0.22.0",
     "@html-eslint/parser": "^0.22.0",
+    "@octokit/request": "^8.1.6",
+    "@octokit/request-error": "^5.0.1",
+    "@octokit/types": "^12.4.0",
     "@types/lodash-es": "^4.17.12",
     "@types/minimist": "^1.2.5",
     "@types/node": "20.8.2",
