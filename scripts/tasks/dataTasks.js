@@ -1,29 +1,36 @@
 import chalk from 'chalk';
-import {readFileSync} from 'fs';
-import minimist from 'minimist';
+import {existsSync, readFileSync} from 'fs';
 import {join as joinPath} from 'path';
 
+import {CONFIG_DIR, DATA_DIR} from '../constants/index.js';
 import {
   DownloadError,
   downloadFromUrl,
-  getAbsolutePath,
-  handleError,
   printInfo,
-  printUsage,
+  printWarn,
 } from '../utils/index.js';
 
-const DATA_DIR = getAbsolutePath('data');
+/** Path of the config specifying all data sources. */
+const DATA_SOURCES_CONFIG_PATH = joinPath(CONFIG_DIR, 'dataSources.json');
+/** Path of the config specifying any secrets used in fetching data sources. */
+const SECRETS_CONFIG_PATH = joinPath(CONFIG_DIR, 'secrets.json');
 
-const DATA_SOURCES_CONFIG_PATH = getAbsolutePath('config/dataSources.json');
-const SECRETS_CONFIG_PATH = getAbsolutePath('config/secrets.json');
+/**
+ * Gets the full name of a data source.
+ *
+ * @param {string} id
+ * @param {string=} description
+ */
+const getDataName = (id, description) =>
+  id + (description ? ` (${description})` : '');
 
 /**
  * Downloads data specified by data source group IDs.
  *
  * @param {string[]} groupIds Data source group IDs, or all IDs if unspecified
  */
-const downloadDataGroups = async groupIds => {
-  /** @type {import('../../config/schemas').DataSources} */
+export const downloadDataGroups = async groupIds => {
+  /** @type {import('../../config/schemas/index.js').DataSources} */
   const dataSourcesConfig = JSON.parse(
     readFileSync(DATA_SOURCES_CONFIG_PATH).toString()
   );
@@ -34,7 +41,7 @@ const downloadDataGroups = async groupIds => {
     );
   }
 
-  /** @type {import('../../config/schemas').Secrets} */
+  /** @type {import('../../config/schemas/index.js').Secrets} */
   const secretsConfig = JSON.parse(
     readFileSync(SECRETS_CONFIG_PATH).toString()
   );
@@ -43,15 +50,30 @@ const downloadDataGroups = async groupIds => {
   );
 
   for (const group of dataSourcesConfig.groups) {
+    const existingSources = group.sources.filter(
+      source =>
+        source.fileName && existsSync(joinPath(DATA_DIR, source.fileName))
+    );
+    if (existingSources.length) {
+      printWarn(
+        `Deleting existing data for: ${getDataName(
+          chalk.bold(group.id),
+          group.description
+        )}...`,
+        ...existingSources.map(
+          source => `- ${getDataName(source.id, source.description)}`
+        )
+      );
+    }
+  }
+  for (const group of dataSourcesConfig.groups) {
     printInfo(
-      `Fetching data for: ${
-        chalk.bold(group.id) +
-        (group.description ? ` (${group.description})` : '')
-      }...`,
+      `Fetching data for: ${getDataName(
+        chalk.bold(group.id),
+        group.description
+      )}...`,
       ...group.sources.map(
-        source =>
-          `- ${source.id}` +
-          (source.description ? ` (${source.description})` : '')
+        source => `- ${getDataName(source.id, source.description)}`
       )
     );
   }
@@ -99,21 +121,3 @@ const downloadDataGroups = async groupIds => {
       })
   );
 };
-
-const main = async () => {
-  const argv = minimist(process.argv.slice(2));
-  if (argv.h || argv.help) {
-    printUsage(['installData [data-source-group-ids]...', 'installData'], {
-      '-h, --help': 'Display usage information',
-    });
-    return;
-  }
-
-  try {
-    await downloadDataGroups(argv._);
-  } catch (err) {
-    handleError(err);
-  }
-};
-
-main();

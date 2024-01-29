@@ -1,11 +1,19 @@
 import {spawn} from 'child_process';
+import minimist from 'minimist';
 
 import {ProcessError} from './errors.js';
 
 /**
- * @typedef {Object} SpawnCmdReturn
- * @property {string} stdout
- * @property {string} stderr
+ * Gets command-line arguments from the current process.
+ *
+ * @returns {import('minimist').ParsedArgs}
+ */
+export const getArgs = () => minimist(process.argv.slice(2));
+
+/**
+ * @typedef {Object} SpawnCmdReturn Value returned by `spawnCmd`.
+ * @property {string} stdout Collected stdout, if any
+ * @property {string} stderr Collected stderr, if any
  */
 
 /**
@@ -15,8 +23,10 @@ import {ProcessError} from './errors.js';
  * @param {string} props.name Name for this process
  * @param {string} props.cmd
  * @param {string[]=} props.args
- * @param {boolean=} props.collectStdout
- * @param {boolean=} props.collectStderr
+ * @param {boolean=} props.collectStdout Collects stdout if true, prints to
+ * console if false
+ * @param {boolean=} props.collectStderr Collects stderr if true, prints to
+ * console if false
  * @returns {Promise<SpawnCmdReturn>}
  * @throws {ProcessError}
  */
@@ -35,7 +45,7 @@ export const spawnCmd = ({
     proc.stdout.on('data', data => {
       const dataStr = data.toString();
       if (collectStdout) {
-        stdout += dataStr + '\n';
+        stdout += (stdout ? '\n' : '') + dataStr;
       } else {
         console.log(dataStr);
       }
@@ -43,7 +53,7 @@ export const spawnCmd = ({
     proc.stderr.on('data', data => {
       const dataStr = data.toString();
       if (collectStderr) {
-        stderr += dataStr + '\n';
+        stderr += (stderr ? '\n' : '') + dataStr;
       } else {
         console.error(dataStr);
       }
