@@ -33,7 +33,7 @@ export const compileAllSchemasInDir = async dirPath => {
 
   if (existsSync(indexPath)) {
     printWarn(
-      `Replacing existing index file in ${chalk.bold(
+      `Deleting existing index file in ${chalk.bold(
         getRelativePath(dirPath)
       )}...`
     );
@@ -43,7 +43,7 @@ export const compileAllSchemasInDir = async dirPath => {
   const existingSchemaPaths = schemaPaths.filter(existsSync);
   if (existingSchemaPaths.length) {
     printWarn(
-      `Replacing existing JSON schemas in ${chalk.bold(
+      `Deleting existing JSON schemas in ${chalk.bold(
         getRelativePath(dirPath)
       )}...`,
       ...existingSchemaPaths.map(

@@ -56,7 +56,7 @@ export const downloadDataGroups = async groupIds => {
     );
     if (existingSources.length) {
       printWarn(
-        `Replacing existing data for: ${getDataName(
+        `Deleting existing data for: ${getDataName(
           chalk.bold(group.id),
           group.description
         )}...`,
