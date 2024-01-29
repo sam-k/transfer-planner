@@ -8,9 +8,11 @@ import {
   parse as parsePath,
 } from 'path';
 
-import {deepOmit} from '../utils.js';
+import {deepOmit, getAbsolutePath, handleError} from '../utils/index.js';
 
-const SCHEMA_DIR_PATHS = ['./config/schemas'];
+const SCHEMA_DIR_PATHS = ['./config/schemas'].map(path =>
+  getAbsolutePath(path)
+);
 
 /**
  * Compiles all JSON schemas in a directory.
@@ -57,9 +59,13 @@ const compileAllSchemasInDir = async dirPath => {
 };
 
 const main = async () => {
-  await Promise.all(
-    SCHEMA_DIR_PATHS.map(dirPath => compileAllSchemasInDir(dirPath))
-  );
+  try {
+    await Promise.all(
+      SCHEMA_DIR_PATHS.map(dirPath => compileAllSchemasInDir(dirPath))
+    );
+  } catch (err) {
+    handleError(err);
+  }
 };
 
 main();

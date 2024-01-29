@@ -19,6 +19,15 @@ devDependencies:
   '@html-eslint/parser':
     specifier: ^0.22.0
     version: 0.22.0
+  '@octokit/request':
+    specifier: ^8.1.6
+    version: 8.1.6
+  '@octokit/request-error':
+    specifier: ^5.0.1
+    version: 5.0.1
+  '@octokit/types':
+    specifier: ^12.4.0
+    version: 12.4.0
   '@types/lodash-es':
     specifier: ^4.17.12
     version: 4.17.12
@@ -681,6 +690,43 @@ packages:
     dependencies:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.16.0
+    dev: true
+
+  /@octokit/endpoint@9.0.4:
+    resolution: {integrity: sha512-DWPLtr1Kz3tv8L0UvXTDP1fNwM0S+z6EJpRcvH66orY6Eld4XBMCSYsaWp4xIm61jTWxK68BrR7ibO+vSDnZqw==}
+    engines: {node: '>= 18'}
+    dependencies:
+      '@octokit/types': 12.4.0
+      universal-user-agent: 6.0.1
+    dev: true
+
+  /@octokit/openapi-types@19.1.0:
+    resolution: {integrity: sha512-6G+ywGClliGQwRsjvqVYpklIfa7oRPA0vyhPQG/1Feh+B+wU0vGH1JiJ5T25d3g1JZYBHzR2qefLi9x8Gt+cpw==}
+    dev: true
+
+  /@octokit/request-error@5.0.1:
+    resolution: {integrity: sha512-X7pnyTMV7MgtGmiXBwmO6M5kIPrntOXdyKZLigNfQWSEQzVxR4a4vo49vJjTWX70mPndj8KhfT4Dx+2Ng3vnBQ==}
+    engines: {node: '>= 18'}
+    dependencies:
+      '@octokit/types': 12.4.0
+      deprecation: 2.3.1
+      once: 1.4.0
+    dev: true
+
+  /@octokit/request@8.1.6:
+    resolution: {integrity: sha512-YhPaGml3ncZC1NfXpP3WZ7iliL1ap6tLkAp6MvbK2fTTPytzVUyUesBBogcdMm86uRYO5rHaM1xIWxigWZ17MQ==}
+    engines: {node: '>= 18'}
+    dependencies:
+      '@octokit/endpoint': 9.0.4
+      '@octokit/request-error': 5.0.1
+      '@octokit/types': 12.4.0
+      universal-user-agent: 6.0.1
+    dev: true
+
+  /@octokit/types@12.4.0:
+    resolution: {integrity: sha512-FLWs/AvZllw/AGVs+nJ+ELCDZZJk+kY0zMen118xhL2zD0s1etIUHm1odgjP7epxYU1ln7SZxEUWYop5bhsdgQ==}
+    dependencies:
+      '@octokit/openapi-types': 19.1.0
     dev: true
 
   /@pkgjs/parseargs@0.11.0:
@@ -1412,6 +1458,10 @@ packages:
 
   /deep-is@0.1.4:
     resolution: {integrity: sha512-oIPzksmTg4/MriiaYGO+okXDT7ztn/w3Eptv/+gSIdMdKsJo0u4CfYNFJPy+4SKMuCqGw2wxnA+URMg3t8a/bQ==}
+    dev: true
+
+  /deprecation@2.3.1:
+    resolution: {integrity: sha512-xmHIy4F3scKVwMsQ4WnVaS8bHOx0DmVwRywosKhaILI0ywMDWPtBSku2HNxRvF7jtwDRsoEwYQSfbxj8b7RlJQ==}
     dev: true
 
   /dir-glob@3.0.1:
@@ -3259,6 +3309,10 @@ packages:
 
   /uc.micro@1.0.6:
     resolution: {integrity: sha512-8Y75pvTYkLJW2hWQHXxoqRgV7qb9B+9vFEtidML+7koHUFapnVJAZ6cKs+Qjz5Aw3aZWHMC6u0wJE3At+nSGwA==}
+    dev: true
+
+  /universal-user-agent@6.0.1:
+    resolution: {integrity: sha512-yCzhz6FN2wU1NiiQRogkTQszlQSlpWaw8SvVegAc+bDxbzHgh1vX8uIe8OYyMH6DwH+sdTJsgMl36+mSMdRJIQ==}
     dev: true
 
   /update-browserslist-db@1.0.13(browserslist@4.22.2):
