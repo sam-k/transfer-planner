@@ -11,6 +11,7 @@
     "build": "vite build",
     "build-otp": "node ./scripts/buildOtp.js",
     "install-data": "node ./scripts/installData.js",
+    "postinstall": "pnpm run compile-json-schemas",
     "run-otp": "node ./scripts/runOtp.js"
   },
   "devDependencies": {
