@@ -1,5 +1,6 @@
 !.eslintrc.*
 !.prettierrc.*
+!.stylelintrc.*
 !.vscode/
 
 data/

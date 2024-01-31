@@ -84,6 +84,27 @@
               ],
               "additionalProperties": false
             }
+          },
+          "bounds": {
+            "description": "Bounding coordinates of the region this group represents.",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "latitude": {
+                  "description": "Latitude coordinate.",
+                  "type": "number"
+                },
+                "longitude": {
+                  "description": "Longitude coordinate.",
+                  "type": "number"
+                }
+              },
+              "required": [
+                "latitude",
+                "longitude"
+              ]
+            }
           }
         },
         "required": [
