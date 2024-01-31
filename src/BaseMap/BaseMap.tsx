@@ -37,6 +37,7 @@ const BaseMap = (props: BaseMapProps) => {
       center={[37.77919, -122.41914]}
       maxBounds={boundingBox}
       maxBoundsViscosity={1}
+      // TODO: Set zoom based on max bounds.
       zoom={16}
     >
       <TileLayer bounds={boundingBox} {...tileLayerProps} />
