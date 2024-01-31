@@ -30,9 +30,9 @@ const config = {
         '@html-eslint/no-script-style-type': 'error',
         '@html-eslint/no-target-blank': 'error',
         '@html-eslint/no-trailing-spaces': 'error',
+        '@html-eslint/require-closing-tags': 'error',
         '@html-eslint/require-meta-charset': 'error',
         '@html-eslint/require-meta-viewport': 'error',
-        '@html-eslint/require-closing-tags': 'error',
       },
     },
     {

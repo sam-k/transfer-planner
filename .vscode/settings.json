@@ -19,16 +19,18 @@
   "json.format.enable": false,
   "json.schemas": [
     {
-      "fileMatch": ["public/config/dataSources.json"],
-      "url": "public/config/schemas/dataSources.schema.json"
+      "fileMatch": ["config/dataSources.json"],
+      "url": "./config/schemas/dataSources.schema.json"
     },
     {
-      "fileMatch": ["public/config/secrets.json"],
-      "url": "public/config/schemas/secrets.schema.json"
+      "fileMatch": ["config/secrets.json"],
+      "url": "./config/schemas/secrets.schema.json"
     }
   ],
   "search.exclude": {
-    "**/node_modules": true
+    "data/": true,
+    "**/dist/": true,
+    "**/node_modules/": true
   },
   "[css]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
