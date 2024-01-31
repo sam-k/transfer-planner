@@ -1,9 +1,9 @@
 {
-  "groups": [
+  "regions": [
     {
       "id": "sf",
       "description": "San Francisco Bay Area",
-      "lastUpdated": "2024-01-23",
+      "lastUpdated": "2024-01-30",
       "sources": [
         {
           "id": "sf-gtfs",
@@ -20,6 +20,28 @@
           "sourceType": "osm",
           "url": "https://app.interline.io/osm_extracts/download_latest?string_id=san-francisco-bay_california&data_format=pbf&api_token=${SECRET}",
           "secretId": "interline"
+        }
+      ],
+      "bounds": [
+        {
+          "longitude": -123.64,
+          "latitude": 36.791
+        },
+        {
+          "longitude": -123.64,
+          "latitude": 38.719
+        },
+        {
+          "longitude": -121.025,
+          "latitude": 38.719
+        },
+        {
+          "longitude": -121.025,
+          "latitude": 36.791
+        },
+        {
+          "longitude": -123.64,
+          "latitude": 36.791
         }
       ]
     }

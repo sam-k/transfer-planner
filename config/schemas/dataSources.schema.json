@@ -5,28 +5,28 @@
   "description": "Information about how to fetch data for this application.",
   "type": "object",
   "properties": {
-    "groups": {
-      "description": "All groups of data sources for this application.",
+    "regions": {
+      "description": "All geographic regions of data sources for this application.",
       "type": "array",
       "items": {
         "type": "object",
         "properties": {
           "id": {
-            "description": "Short ID for this group.",
+            "description": "Short ID for this region.",
             "type": "string",
             "pattern": "^[ -~]+$"
           },
           "description": {
-            "description": "Description for this group.",
+            "description": "Description for this region.",
             "type": "string"
           },
           "lastUpdated": {
-            "description": "Date on which information about this group was last updated.",
+            "description": "Date on which information about this region was last updated.",
             "type": "string",
             "format": "date"
           },
           "sources": {
-            "description": "All sources contained within this group.",
+            "description": "All data sources for this region.",
             "type": "array",
             "items": {
               "type": "object",
@@ -84,6 +84,27 @@
               ],
               "additionalProperties": false
             }
+          },
+          "bounds": {
+            "description": "Bounding coordinates of this region.",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "latitude": {
+                  "description": "Latitude coordinate.",
+                  "type": "number"
+                },
+                "longitude": {
+                  "description": "Longitude coordinate.",
+                  "type": "number"
+                }
+              },
+              "required": [
+                "latitude",
+                "longitude"
+              ]
+            }
           }
         },
         "required": [
@@ -95,6 +116,6 @@
     },
     "additionalProperties": false
   },
-  "required": ["groups"],
+  "required": ["regions"],
   "additionalProperties": false
 }

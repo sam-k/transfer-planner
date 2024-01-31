@@ -25,19 +25,19 @@ const getDataName = (id, description) =>
   id + (description ? ` (${description})` : '');
 
 /**
- * Downloads data specified by data source group IDs.
+ * Downloads data specified by geographical region IDs.
  *
- * @param {string[]} groupIds Data source group IDs, or all IDs if unspecified
+ * @param {string[]} regionIds Region IDs, or all such IDs if unspecified
  */
-export const downloadDataGroups = async groupIds => {
+export const downloadDataForRegions = async regionIds => {
   /** @type {import('../../config/schemas/index.js').DataSources} */
   const dataSourcesConfig = JSON.parse(
     readFileSync(DATA_SOURCES_CONFIG_PATH).toString()
   );
-  if (groupIds.length) {
-    const groupIdSet = new Set(groupIds);
-    dataSourcesConfig.groups = dataSourcesConfig.groups.filter(group =>
-      groupIdSet.has(group.id)
+  if (regionIds.length) {
+    const regionIdSet = new Set(regionIds);
+    dataSourcesConfig.regions = dataSourcesConfig.regions.filter(region =>
+      regionIdSet.has(region.id)
     );
   }
 
@@ -49,16 +49,16 @@ export const downloadDataGroups = async groupIds => {
     secretsConfig.secrets.map(secret => [secret.id, secret.secret])
   );
 
-  for (const group of dataSourcesConfig.groups) {
-    const existingSources = group.sources.filter(
+  for (const region of dataSourcesConfig.regions) {
+    const existingSources = region.sources.filter(
       source =>
         source.fileName && existsSync(joinPath(DATA_DIR, source.fileName))
     );
     if (existingSources.length) {
       printWarn(
         `Deleting existing data for: ${getDataName(
-          chalk.bold(group.id),
-          group.description
+          chalk.bold(region.id),
+          region.description
         )}...`,
         ...existingSources.map(
           source => `- ${getDataName(source.id, source.description)}`
@@ -66,28 +66,28 @@ export const downloadDataGroups = async groupIds => {
       );
     }
   }
-  for (const group of dataSourcesConfig.groups) {
+  for (const region of dataSourcesConfig.regions) {
     printInfo(
       `Fetching data for: ${getDataName(
-        chalk.bold(group.id),
-        group.description
+        chalk.bold(region.id),
+        region.description
       )}...`,
-      ...group.sources.map(
+      ...region.sources.map(
         source => `- ${getDataName(source.id, source.description)}`
       )
     );
   }
 
   await Promise.all(
-    dataSourcesConfig.groups
-      .flatMap(group =>
-        group.sources.map(source => ({
-          groupId: group.id,
+    dataSourcesConfig.regions
+      .flatMap(region =>
+        region.sources.map(source => ({
+          regionId: region.id,
           ...source,
         }))
       )
       .map(source => {
-        const unifiedId = `${source.groupId}:${source.id}`;
+        const unifiedId = `${source.regionId}:${source.id}`;
         if (!source.fileName) {
           throw new DownloadError(
             unifiedId,
