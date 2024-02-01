@@ -9,7 +9,7 @@ export const REPO_DIR = joinPath(
   '../..'
 );
 
-/** Directory for repository-wide configurations. */
+/** Directory for application-wide configurations. */
 export const CONFIG_DIR = getAbsolutePath('config');
 /** Directory for fetched data and OpenTripPlanner graphs. */
 export const DATA_DIR = getAbsolutePath('data');
