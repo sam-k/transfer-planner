@@ -21,10 +21,6 @@
     {
       "fileMatch": ["config/dataSources.json"],
       "url": "./config/schemas/dataSources.schema.json"
-    },
-    {
-      "fileMatch": ["config/secrets.json"],
-      "url": "./config/schemas/secrets.schema.json"
     }
   ],
   "search.exclude": {

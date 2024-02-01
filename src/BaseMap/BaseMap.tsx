@@ -20,6 +20,7 @@ const BaseMap = (props: BaseMapProps) => {
             '© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
             '<strong><a href="https://www.mapbox.com/map-feedback/">Improve this map</a></strong>',
           ].join(' '),
+          accessToken: process.env.MAPBOX_API_KEY,
         };
       default:
         return {

@@ -53,34 +53,15 @@
                   ]
                 },
                 "url": {
-                  "description": "Download URL for this data source, with any secrets (e.g., API keys) as ${SECRET}.\n\nIf secret is present, secretId must be provided.",
-                  "markdownDescription": "Download URL for this data source, with any secrets (e.g., API keys) as `${SECRET}`.\n\nIf secret is present, `secretId` must be provided.",
+                  "description": "Download URL for this data source, with any secrets (e.g., API keys) as ${SECRET}.\n\nSecrets should be provided in `.env`.",
+                  "markdownDescription": "Download URL for this data source, with any secrets (e.g., API keys) as `${SECRET}`.\n\nSecrets should be provided in `.env`.",
                   "type": "string",
                   "format": "uri"
-                },
-                "secretId": {
-                  "description": "ID corresponding to the secret needed, as defined in secrets.json.",
-                  "type": "string",
-                  "pattern": "^[ -~]+$"
                 }
               },
               "required": [
                 "id",
                 "url"
-              ],
-              "oneOf": [
-                {
-                  "not": {
-                    "properties": {
-                      "url": {
-                        "pattern": "\\${SECRET}"
-                      }
-                    }
-                  }
-                },
-                {
-                  "required": ["secretId"]
-                }
               ],
               "additionalProperties": false
             }

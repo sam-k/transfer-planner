@@ -12,8 +12,9 @@ import {
 
 /** Path of the config specifying all data sources. */
 const DATA_SOURCES_CONFIG_PATH = joinPath(CONFIG_DIR, 'dataSources.json');
-/** Path of the config specifying any secrets used in fetching data sources. */
-const SECRETS_CONFIG_PATH = joinPath(CONFIG_DIR, 'secrets.json');
+
+/** Regex for matching secrets within data source URLs. */
+const SECRET_REGEX = /\${(.+)}/;
 
 /**
  * Gets the full name of a data source.
@@ -40,14 +41,6 @@ export const downloadDataForRegions = async regionIds => {
       regionIdSet.has(region.id)
     );
   }
-
-  /** @type {import('../../config/schemas/index.js').Secrets} */
-  const secretsConfig = JSON.parse(
-    readFileSync(SECRETS_CONFIG_PATH).toString()
-  );
-  const secrets = new Map(
-    secretsConfig.secrets.map(secret => [secret.id, secret.secret])
-  );
 
   for (const region of dataSourcesConfig.regions) {
     const existingSources = region.sources.filter(
@@ -96,21 +89,16 @@ export const downloadDataForRegions = async regionIds => {
         }
 
         let dataUrl = source.url;
-        if (dataUrl.includes('${SECRET}')) {
-          if (!source.secretId) {
-            throw new DownloadError(
-              unifiedId,
-              'Secret ID not provided in data source URL.'
-            );
-          }
-          const secret = secrets.get(source.secretId);
+        const [match, secretId] = dataUrl.match(SECRET_REGEX) ?? [];
+        if (match) {
+          const secret = process.env[secretId];
           if (!secret) {
             throw new DownloadError(
               unifiedId,
-              `Secret not found for ID ${source.secretId}.`
+              `Secret ${chalk.bold(secretId)} not found.`
             );
           }
-          dataUrl = dataUrl.replace('${SECRET}', secret);
+          dataUrl = dataUrl.replace(`\${${secretId}}`, secret);
         }
 
         return downloadFromUrl({

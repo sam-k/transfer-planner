@@ -10,7 +10,7 @@
     "compile-json-schemas": "node ./scripts/compileJsonSchemas.js",
     "build": "vite build",
     "build-otp": "node ./scripts/buildOtp.js",
-    "install-data": "node ./scripts/installData.js",
+    "install-data": "node --require dotenv/config ./scripts/installData.js",
     "postinstall": "pnpm run compile-json-schemas",
     "run-otp": "node ./scripts/runOtp.js"
   },
@@ -32,6 +32,7 @@
     "@types/react-dom": "^18.2.18",
     "@vitejs/plugin-react": "^4.2.1",
     "chalk": "^5.3.0",
+    "dotenv": "^16.4.1",
     "eslint": "^8.56.0",
     "eslint-plugin-jsonc": "^2.12.2",
     "eslint-plugin-markdownlint": "^0.5.0",
