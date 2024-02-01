@@ -1,22 +1,16 @@
 {
   "name": "transfer-planner",
   "version": "1.0.0",
-  "description": "",
   "license": "ISC",
   "author": "Sam Kim",
   "type": "module",
   "packageManager": "pnpm@8.15.1",
   "scripts": {
     "compile-json-schemas": "node ./scripts/compileJsonSchemas.js",
-    "build": "vite build",
     "build-otp": "node ./scripts/buildOtp.js",
     "install-data": "node --require dotenv/config ./scripts/installData.js",
-    "postinstall": "pnpm run compile-json-schemas",
+    "postinstall": "(cd ./packages/client && pnpm install && pnpm run build); pnpm run compile-json-schemas",
     "run-otp": "node ./scripts/runOtp.js"
-  },
-  "dependencies": {
-    "leaflet": "^1.9.4",
-    "react-leaflet": "^4.2.1"
   },
   "devDependencies": {
     "@html-eslint/eslint-plugin": "^0.22.0",
@@ -24,13 +18,9 @@
     "@octokit/request": "^8.1.6",
     "@octokit/request-error": "^5.0.1",
     "@octokit/types": "^12.4.0",
-    "@types/leaflet": "^1.9.8",
     "@types/lodash-es": "^4.17.12",
     "@types/minimist": "^1.2.5",
     "@types/node": "20.8.2",
-    "@types/react": "^18.2.48",
-    "@types/react-dom": "^18.2.18",
-    "@vitejs/plugin-react": "^4.2.1",
     "chalk": "^5.3.0",
     "dotenv": "^16.4.1",
     "eslint": "^8.56.0",
@@ -45,12 +35,7 @@
     "prettier-eslint": "^16.2.0",
     "prettier-plugin-organize-imports": "^3.2.4",
     "stylelint": "^16.2.0",
-    "stylelint-config-standard": "^36.0.0",
-    "vite": "^5.0.11"
-  },
-  "peerDependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "stylelint-config-standard": "^36.0.0"
   },
   "engines": {
     "node": ">=17.0.0"
