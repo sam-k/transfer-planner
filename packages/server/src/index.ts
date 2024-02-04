@@ -4,19 +4,23 @@ import express, {type Request} from 'express';
 import minimist from 'minimist';
 import {join as joinPath} from 'path';
 
-import {fetchWithQuery, type FetchWithQuery} from './api';
-import {REPO_DIR} from './utils';
+import {fetchWithQuery, type FetchWithQueryParams} from './api';
+import {DEFAULT_PORT, REPO_DIR} from './utils';
 
 configDotenv({path: joinPath(REPO_DIR, '.env')});
 
 const args = minimist(process.argv.slice(2));
-const PORT = parseInt(args.port, /* radix= */ 10) || 3000;
+const port = parseInt(args.port, /* radix= */ 10) || DEFAULT_PORT;
 
 const app = express();
 
+// Endpoint for fetching data with query params and environment variables.
 app.get(
   '/fetch',
-  async (req: Request<unknown, unknown, unknown, FetchWithQuery>, res) => {
+  async (
+    req: Request<unknown, unknown, unknown, FetchWithQueryParams>,
+    res
+  ) => {
     try {
       const {encodedUrl, ...queryParams} = req.query;
       const {body, headers} = await fetchWithQuery(encodedUrl, queryParams);
@@ -45,6 +49,6 @@ app.get(
   }
 );
 
-app.listen(PORT, () => {
-  process.stdout.write(`Starting server on port ${chalk.bold(PORT)}...\n`);
+app.listen(port, () => {
+  process.stdout.write(`Starting server on port ${chalk.bold(port)}...\n`);
 });

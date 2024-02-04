@@ -1,9 +1,11 @@
 import React, {useMemo} from 'react';
 import {MapContainer, TileLayer, type TileLayerProps} from 'react-leaflet';
 
+import {API_SERVER_URL} from '../utils';
 import './BaseMap.css';
 import type {BaseMapProps} from './BaseMap.types';
 
+/** Renders the base map for the application. */
 const BaseMap = (props: BaseMapProps) => {
   const {tileServer, boundingBox} = props;
 
@@ -13,7 +15,7 @@ const BaseMap = (props: BaseMapProps) => {
         // TODO: Add Mapbox logo attribution.
         return {
           url:
-            'http://localhost:3000/fetch?' +
+            `${API_SERVER_URL}/fetch?` +
             [
               `encodedUrl=${encodeURIComponent(
                 'https://api.mapbox.com/styles/v1/mapbox/light-v11/tiles/{z}/{x}/{y}?access_token=${MAPBOX_API_KEY}'
