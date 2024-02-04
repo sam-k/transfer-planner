@@ -13,5 +13,11 @@
     "moduleResolution": "Node",
     "outDir": "dist",
     "target": "ESNext"
-  }
+  },
+  "ts-node": {
+    "esm": true,
+    "experimentalResolver": true,
+    "experimentalSpecifierResolution": "node"
+  },
+  "include": ["**/src/"]
 }

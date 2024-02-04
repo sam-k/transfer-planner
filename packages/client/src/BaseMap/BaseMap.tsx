@@ -1,9 +1,11 @@
 import React, {useMemo} from 'react';
 import {MapContainer, TileLayer, type TileLayerProps} from 'react-leaflet';
 
+import {API_SERVER_URL} from '../utils';
 import './BaseMap.css';
 import type {BaseMapProps} from './BaseMap.types';
 
+/** Renders the base map for the application. */
 const BaseMap = (props: BaseMapProps) => {
   const {tileServer, boundingBox} = props;
 
@@ -12,15 +14,21 @@ const BaseMap = (props: BaseMapProps) => {
       case 'mapbox':
         // TODO: Add Mapbox logo attribution.
         return {
-          // TODO: Fetch API token instead of manually hardcoding.
-          url: 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}',
-          id: 'mapbox/light-v11',
+          url:
+            `${API_SERVER_URL}/fetch?` +
+            [
+              `encodedUrl=${encodeURIComponent(
+                'https://api.mapbox.com/styles/v1/mapbox/light-v11/tiles/{z}/{x}/{y}?access_token=${MAPBOX_API_KEY}'
+              )}`,
+              'z={z}',
+              'x={x}',
+              'y={y}',
+            ].join('&'),
           attribution: [
             '© <a href="https://www.mapbox.com/about/maps/">Mapbox</a>',
             '© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
             '<strong><a href="https://www.mapbox.com/map-feedback/">Improve this map</a></strong>',
           ].join(' '),
-          accessToken: process.env.MAPBOX_API_KEY,
         };
       default:
         return {

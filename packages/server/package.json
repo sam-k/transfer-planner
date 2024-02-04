@@ -1,0 +1,27 @@
+{
+  "private": true,
+  "name": "@transfer-planner/server",
+  "version": "1.0.0",
+  "license": "ISC",
+  "author": "Sam Kim",
+  "type": "module",
+  "packageManager": "pnpm@8.15.1",
+  "scripts": {
+    "start": "node --loader=ts-node/esm ./src/index.ts"
+  },
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "dotenv": "^16.4.1",
+    "express": "^4.18.2",
+    "lodash-es": "^4.17.21",
+    "minimist": "^1.2.8"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/lodash": "^4.14.202"
+  },
+  "engines": {
+    "node": ">=17.0.0"
+  },
+  "engineStrict": true
+}
