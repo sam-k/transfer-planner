@@ -1,1 +1,1 @@
-export * from './fetchWithKey';
+export * from './fetch';

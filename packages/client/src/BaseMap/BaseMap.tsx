@@ -13,14 +13,15 @@ const BaseMap = (props: BaseMapProps) => {
         // TODO: Add Mapbox logo attribution.
         return {
           url:
-            'http://localhost:3000/fetch-with-key' +
-            `?encodedUrl=${encodeURIComponent(
-              'https://api.mapbox.com/styles/v1/mapbox/light-v11/tiles/{z}/{x}/{y}?access_token=${KEY}'
-            )}` +
-            '&encodedKeyId=MAPBOX_API_KEY' +
-            '&z={z}' +
-            '&x={x}' +
-            '&y={y}',
+            'http://localhost:3000/fetch?' +
+            [
+              `encodedUrl=${encodeURIComponent(
+                'https://api.mapbox.com/styles/v1/mapbox/light-v11/tiles/{z}/{x}/{y}?access_token=${MAPBOX_API_KEY}'
+              )}`,
+              'z={z}',
+              'x={x}',
+              'y={y}',
+            ].join('&'),
           attribution: [
             '© <a href="https://www.mapbox.com/about/maps/">Mapbox</a>',
             '© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',

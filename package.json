@@ -9,7 +9,7 @@
     "compile-json-schemas": "node ./scripts/compileJsonSchemas.js",
     "build-otp": "node ./scripts/buildOtp.js",
     "install-data": "node --require dotenv/config ./scripts/installData.js",
-    "postinstall": "(cd ./packages/client && pnpm install && pnpm run build); pnpm run compile-json-schemas",
+    "postinstall": "pnpm run compile-json-schemas; (cd ./packages/client && pnpm install && pnpm run build); (cd ./packages/server && pnpm install)",
     "run-otp": "node ./scripts/runOtp.js"
   },
   "devDependencies": {
@@ -37,8 +37,7 @@
     "stylelint": "^16.2.0",
     "stylelint-config-standard": "^36.0.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.3.3",
-    "vite": "^5.0.12"
+    "typescript": "^5.3.3"
   },
   "engines": {
     "node": ">=17.0.0"

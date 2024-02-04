@@ -4,7 +4,7 @@ import express, {type Request} from 'express';
 import minimist from 'minimist';
 import {join as joinPath} from 'path';
 
-import {fetchWithKey, type FetchWithKeyQuery} from './api';
+import {fetchWithQuery, type FetchWithQuery} from './api';
 import {REPO_DIR} from './utils';
 
 configDotenv({path: joinPath(REPO_DIR, '.env')});
@@ -15,15 +15,11 @@ const PORT = parseInt(args.port, /* radix= */ 10) || 3000;
 const app = express();
 
 app.get(
-  '/fetch-with-key',
-  async (req: Request<unknown, unknown, unknown, FetchWithKeyQuery>, res) => {
-    const {encodedUrl, encodedKeyId, ...additionalQueryParams} = req.query;
+  '/fetch',
+  async (req: Request<unknown, unknown, unknown, FetchWithQuery>, res) => {
     try {
-      const {body, headers} = await fetchWithKey(
-        encodedUrl,
-        encodedKeyId,
-        additionalQueryParams
-      );
+      const {encodedUrl, ...queryParams} = req.query;
+      const {body, headers} = await fetchWithQuery(encodedUrl, queryParams);
       if (!body) {
         throw new Error('Body was empty.');
       }
