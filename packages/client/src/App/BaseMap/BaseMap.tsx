@@ -1,16 +1,24 @@
 import React, {useMemo} from 'react';
-import {MapContainer, TileLayer, type TileLayerProps} from 'react-leaflet';
+import {
+  MapContainer,
+  TileLayer,
+  ZoomControl,
+  type TileLayerProps,
+} from 'react-leaflet';
 
-import {API_SERVER_URL} from '../utils';
+import {useAppContext} from '../../AppContext';
+import {API_SERVER_URL} from '../../utils';
 import './BaseMap.css';
 import type {BaseMapProps} from './BaseMap.types';
 
 /** Renders the base map for the application. */
 const BaseMap = (props: BaseMapProps) => {
-  const {tileServer, boundingBox} = props;
+  const {tileApi} = props;
+
+  const {boundingBox} = useAppContext();
 
   const tileLayerProps = useMemo<TileLayerProps>(() => {
-    switch (tileServer) {
+    switch (tileApi) {
       case 'mapbox':
         // TODO: Add Mapbox logo attribution.
         return {
@@ -30,6 +38,7 @@ const BaseMap = (props: BaseMapProps) => {
             '<strong><a href="https://www.mapbox.com/map-feedback/">Improve this map</a></strong>',
           ].join(' '),
         };
+      case 'osm':
       default:
         return {
           url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -37,7 +46,7 @@ const BaseMap = (props: BaseMapProps) => {
             '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
         };
     }
-  }, [tileServer]);
+  }, [tileApi]);
 
   return (
     <MapContainer
@@ -48,8 +57,10 @@ const BaseMap = (props: BaseMapProps) => {
       maxBoundsViscosity={1}
       // TODO: Set zoom based on max bounds.
       zoom={16}
+      zoomControl={false}
     >
       <TileLayer bounds={boundingBox} {...tileLayerProps} />
+      <ZoomControl position="bottomright" />
     </MapContainer>
   );
 };
