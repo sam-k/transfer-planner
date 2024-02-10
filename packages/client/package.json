@@ -10,10 +10,17 @@
     "build": "vite build"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.3",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.15.7",
+    "@mui/material": "^5.15.7",
+    "autosuggest-highlight": "^3.3.4",
     "leaflet": "^1.9.4",
+    "lodash-es": "^4.17.21",
     "react-leaflet": "^4.2.1"
   },
   "devDependencies": {
+    "@types/autosuggest-highlight": "^3.2.3",
     "@types/leaflet": "^1.9.8",
     "@types/react": "^18.2.48",
     "@types/react-dom": "^18.2.18",

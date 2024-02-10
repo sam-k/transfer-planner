@@ -1,0 +1,18 @@
+.searchField {
+  /* TODO: Make this value responsive. */
+  width: 24rem;
+}
+
+.searchField-textField-input {
+  background-color: white;
+}
+
+.searchField-iconContainer {
+  display: 'flex';
+  width: 44px;
+}
+
+.searchField-searchResult {
+  width: calc(100% - 44px);
+  word-wrap: break-word;
+}

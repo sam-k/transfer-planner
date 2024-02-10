@@ -1,0 +1,6 @@
+.sidebar {
+  position: absolute;
+  /* Leaflet sets its own z-indices absurdly high, so we beat it here. */
+  z-index: 99999;
+  padding: 1rem;
+}

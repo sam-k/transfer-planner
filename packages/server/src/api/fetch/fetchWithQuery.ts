@@ -59,7 +59,7 @@ export const fetchWithQuery = async (
     ...matchParamLookups(url, /\${([^${}]+)}/dg, key => process.env[key] ?? ''),
   ]
     .filter(({startIndex}) => startIndex >= 0)
-    .sort(({startIndex: aIndex}, {startIndex: bIndex}) => aIndex - bIndex);
+    .sort(({startIndex: a}, {startIndex: b}) => a - b);
 
   // Replace without overwriting previous replacements.
   let populatedUrl = '';

@@ -1,4 +1,5 @@
 import chalk from 'chalk';
+import cors from 'cors';
 import {configDotenv} from 'dotenv';
 import express, {type Request} from 'express';
 import minimist from 'minimist';
@@ -13,6 +14,7 @@ const args = minimist(process.argv.slice(2));
 const port = parseInt(args.port, /* radix= */ 10) || DEFAULT_PORT;
 
 const app = express();
+app.use(cors());
 
 // Endpoint for fetching data with query params and environment variables.
 app.get(
