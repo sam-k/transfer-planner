@@ -1,11 +1,38 @@
 import {debounce} from 'lodash-es';
 
+/** Parses a string as a float, and returns the value only if valid. */
+export const parseAndCheckFloat = (floatStr: unknown) => {
+  if (typeof floatStr !== 'string') {
+    return undefined;
+  }
+  const floatVal = parseFloat(floatStr);
+  return isNaN(floatVal) ? undefined : floatVal;
+};
+
 /**
- * URL for the local API server.
+ * Calculates the haversine distance between two coordinates.
  *
- * TODO: Fetch port instead of hardcoding.
+ * @param coordsDeg Latitude 1, longitude 1, latitude 2, longitude 2, all in
+ * degrees
+ * @returns Distance in km
  */
-export const API_SERVER_URL = 'http://localhost:3000';
+export const getHaversineDistKm = (
+  ...coordsDeg: [number, number, number, number]
+) => {
+  const [lat1, lon1, lat2, lon2] = coordsDeg.map(
+    coord => (coord * Math.PI) / 180 // Convert to radians
+  );
+  return (
+    2 *
+    6371 * // Earth's approximate average radius, in km
+    Math.asin(
+      Math.sqrt(
+        Math.sin((lat1 - lat2) / 2) ** 2 +
+          Math.cos(lat1) * Math.cos(lat2) * Math.sin((lon1 - lon2) / 2) ** 2
+      )
+    )
+  );
+};
 
 /** Creates an asynchronous debounced function. */
 export const debounceAsync = <TArgs extends unknown[], TReturn>(

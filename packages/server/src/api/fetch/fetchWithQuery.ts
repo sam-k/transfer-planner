@@ -1,5 +1,11 @@
 import {escapeRegExp} from 'lodash-es';
 
+/** Gets the query param regex for the given query `{key}`. */
+const getQueryParamRegex = (key: string) =>
+  new RegExp(`(?<!\\$){(${escapeRegExp(key)})}`, 'dg');
+/** Regex for environment variables of form `${key}`. */
+const ENV_VAR_REGEX = /\${([^${}]+)}/dg;
+
 /** Type for lookup data for any query params included in the URL. */
 interface ParamLookup {
   /** Value with which to replace the param. */
@@ -33,44 +39,70 @@ const matchParamLookups = (
     };
   });
 
+/** Replace elements in a string without overwriting previous replacements. */
+const replaceParamsAtOnce = (
+  originalStr: string,
+  paramLookups: ParamLookup[]
+) => {
+  let populatedStr = '';
+  let restStr = originalStr;
+  let prevEndIndex = 0;
+
+  for (const {value, startIndex, endIndex} of paramLookups) {
+    populatedStr += restStr.slice(0, startIndex - prevEndIndex) + value;
+    restStr = restStr.slice(endIndex - prevEndIndex);
+    prevEndIndex = endIndex;
+  }
+  populatedStr += restStr;
+
+  return populatedStr;
+};
+
 /**
  * Fetch response from the URL with populated query params and environment
  * variables.
  */
-export const fetchWithQuery = async (
-  encodedUrl: string,
-  encodedQueryParams: Record<string, string>
-) => {
+export const fetchWithQuery = async ({
+  encodedUrl,
+  encodedOptions,
+  encodedQueryParams,
+}: {
+  encodedUrl: string;
+  encodedOptions?: string;
+  encodedQueryParams: Record<string, string>;
+}) => {
   if (!encodedUrl) {
     throw new Error('URL cannot be empty.');
   }
 
   const url = decodeURIComponent(encodedUrl);
-  const paramsLookup: ParamLookup[] = [
-    // Query params of form `{KEY}`, with keys specified in request.
-    ...Object.entries(encodedQueryParams).flatMap(([key, encodedValue]) =>
-      matchParamLookups(
-        url,
-        new RegExp(`(?<!\\$){(${escapeRegExp(key)})}`, 'dg'),
-        () => decodeURIComponent(encodedValue)
+  const paramLookups: ParamLookup[] = [
+    // Query param keys are specified in the request.
+    ...Object.entries(encodedQueryParams).flatMap(([key, value]) =>
+      matchParamLookups(url, getQueryParamRegex(key), () =>
+        encodeURIComponent(value)
       )
     ),
-    // Any environment variables of form `${KEY}`.
-    ...matchParamLookups(url, /\${([^${}]+)}/dg, key => process.env[key] ?? ''),
+    ...matchParamLookups(url, ENV_VAR_REGEX, key => process.env[key] ?? ''),
   ]
     .filter(({startIndex}) => startIndex >= 0)
     .sort(({startIndex: a}, {startIndex: b}) => a - b);
+  const populatedUrl = replaceParamsAtOnce(url, paramLookups);
 
-  // Replace without overwriting previous replacements.
-  let populatedUrl = '';
-  let restUrl = url;
-  let prevEndIndex = 0;
-  for (const {value, startIndex, endIndex} of paramsLookup) {
-    populatedUrl += restUrl.slice(0, startIndex - prevEndIndex) + value;
-    restUrl = restUrl.slice(endIndex - prevEndIndex);
-    prevEndIndex = endIndex;
-  }
-  populatedUrl += restUrl;
+  const populatedOptions = encodedOptions
+    ? JSON.parse(decodeURIComponent(encodedOptions), (key, value) =>
+        typeof value === 'string'
+          ? replaceParamsAtOnce(
+              value,
+              matchParamLookups(
+                value,
+                ENV_VAR_REGEX,
+                key => process.env[key] ?? ''
+              )
+            )
+          : value
+      )
+    : undefined;
 
-  return await fetch(populatedUrl);
+  return await fetch(populatedUrl, populatedOptions);
 };
