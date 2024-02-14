@@ -24,18 +24,17 @@ app.get(
     res
   ) => {
     try {
-      const {encodedUrl, ...queryParams} = req.query;
-      const {body, headers} = await fetchWithQuery(encodedUrl, queryParams);
+      const {encodedUrl, encodedOptions, ...encodedQueryParams} = req.query;
+      const {body} = await fetchWithQuery({
+        encodedUrl,
+        encodedOptions,
+        encodedQueryParams,
+      });
       if (!body) {
         throw new Error('Body was empty.');
       }
       await body.pipeTo(
         new WritableStream({
-          start: () => {
-            headers.forEach((val, name) => {
-              res.setHeader(name, val);
-            });
-          },
           write: chunk => {
             res.write(chunk);
           },
@@ -45,7 +44,7 @@ app.get(
         })
       );
     } catch (err) {
-      process.stderr.write(`${err}\n`);
+      process.stderr.write(chalk.red(chalk.bold('ERROR:'), `${err}\n`));
       res.status(500).send(err);
     }
   }

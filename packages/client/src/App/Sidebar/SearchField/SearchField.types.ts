@@ -13,12 +13,12 @@ export interface SearchResult {
   label: string;
   /** Description of this search result, usually the remaining full address. */
   description: string;
-  /** Latitude of this location. */
-  latitude: number;
-  /** Longitude of this location. */
-  longitude: number;
   /** Full name of this search result, usually the full address. */
   fullName: string;
+  /** Latitude of this location. */
+  latitude?: number;
+  /** Longitude of this location. */
+  longitude?: number;
 }
 
 /**
@@ -30,8 +30,34 @@ export interface HighlightedSearchResult extends SearchResult {
 }
 
 /**
+ * Response from the Foursquare Autocomplete API, in JSON format. Includes only
+ * those fields that may be relevant for this application.
+ *
+ * Abridged from https://location.foursquare.com/developer/reference/autocomplete-1.
+ */
+export interface FoursquareAutocompleteResponse {
+  results?: Array<{
+    type?: 'place' | 'address' | 'search' | 'geo';
+    text?: {
+      primary?: string;
+      secondary?: string;
+      highlight?: Array<{
+        start?: number;
+        length?: number;
+      }>;
+    };
+    place?: {
+      fsq_id?: string;
+    };
+    address?: {
+      address_id?: string;
+    };
+  }>;
+}
+
+/**
  * Response from the Nominatim `search` API, in JSONv2 format. Includes only
- * those fields that are relevant for this application.
+ * those fields that may be relevant for this application.
  *
  * Abridged from https://nominatim.org/release-docs/develop/api/Output/.
  *
@@ -39,7 +65,7 @@ export interface HighlightedSearchResult extends SearchResult {
  * - https://wiki.openstreetmap.org/wiki/Elements
  * - https://wiki.openstreetmap.org/wiki/Key:place
  */
-export type NominatimJSONv2Response = Array<{
+export type NominatimSearchResponse = Array<{
   place_id?: number;
   licence?: string;
   osm_type?: 'node' | 'relation' | 'way';

@@ -7,7 +7,7 @@ import {
 } from 'react-leaflet';
 
 import {useAppContext} from '../../AppContext';
-import {API_SERVER_URL} from '../../utils';
+import {API_SERVER_URL, ENV_VARS} from '../../constants';
 import './BaseMap.css';
 import type {BaseMapProps} from './BaseMap.types';
 
@@ -26,7 +26,8 @@ const BaseMap = (props: BaseMapProps) => {
             `${API_SERVER_URL}/fetch?` +
             [
               `encodedUrl=${encodeURIComponent(
-                'https://api.mapbox.com/styles/v1/mapbox/light-v11/tiles/{z}/{x}/{y}?access_token=${MAPBOX_API_KEY}'
+                'https://api.mapbox.com/styles/v1/mapbox/light-v11/tiles/{z}/{x}/{y}?' +
+                  `access_token=${ENV_VARS.mapboxApiKey}`
               )}`,
               'z={z}',
               'x={x}',
