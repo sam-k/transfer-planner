@@ -1,4 +1,4 @@
-import type {LatLngBoundsLiteral} from 'leaflet';
+import type {LatLngBoundsLiteral, LatLngTuple} from 'leaflet';
 
 /** Supported tile APIs. */
 export type TileApi = 'mapbox' | 'osm';
@@ -20,6 +20,8 @@ export interface AppProps {
    * @default 'nominatim'
    */
   searchApi?: SearchApi;
+  /** Default center coordinates for the map. */
+  defaultCenter?: LatLngTuple;
   /** Max bounds for the map. */
   boundingBox?: LatLngBoundsLiteral;
 }

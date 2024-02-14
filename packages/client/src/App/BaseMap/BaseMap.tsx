@@ -1,4 +1,5 @@
-import React, {useMemo} from 'react';
+import type {Map} from 'leaflet';
+import React, {useEffect, useMemo, useRef} from 'react';
 import {
   MapContainer,
   TileLayer,
@@ -15,7 +16,23 @@ import type {BaseMapProps} from './BaseMap.types';
 const BaseMap = (props: BaseMapProps) => {
   const {tileApi} = props;
 
-  const {boundingBox} = useAppContext();
+  const {currentPos, defaultCenter, boundingBox} = useAppContext();
+
+  const mapRef = useRef<Map>(null);
+
+  // Whether the map is centered at the current location.
+  const isCenteredAtCurrentPos = useRef(false);
+  useEffect(() => {
+    if (!mapRef.current || !currentPos || isCenteredAtCurrentPos.current) {
+      // Update map center only upon first fetch.
+      return;
+    }
+    mapRef.current.setView([
+      currentPos.coords.latitude,
+      currentPos.coords.longitude,
+    ]);
+    isCenteredAtCurrentPos.current = true;
+  }, [currentPos]);
 
   const tileLayerProps = useMemo<TileLayerProps>(() => {
     switch (tileApi) {
@@ -52,13 +69,13 @@ const BaseMap = (props: BaseMapProps) => {
   return (
     <MapContainer
       className="map"
-      // TODO: Fetch current location instead of hardcoding.
-      center={[37.77919, -122.41914]}
+      center={defaultCenter}
       maxBounds={boundingBox}
       maxBoundsViscosity={1}
       // TODO: Set zoom based on max bounds.
       zoom={16}
       zoomControl={false}
+      ref={mapRef}
     >
       <TileLayer bounds={boundingBox} {...tileLayerProps} />
       <ZoomControl position="bottomright" />
