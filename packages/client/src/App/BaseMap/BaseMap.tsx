@@ -1,4 +1,4 @@
-import type {Map} from 'leaflet';
+import type {Map as LeafletMap} from 'leaflet';
 import React, {useEffect, useMemo, useRef} from 'react';
 import {
   MapContainer,
@@ -18,7 +18,7 @@ const BaseMap = (props: BaseMapProps) => {
 
   const {currentPos, defaultCenter, boundingBox} = useAppContext();
 
-  const mapRef = useRef<Map>(null);
+  const mapRef = useRef<LeafletMap>(null);
 
   // Whether the map is centered at the current location.
   const isCenteredAtCurrentPos = useRef(false);

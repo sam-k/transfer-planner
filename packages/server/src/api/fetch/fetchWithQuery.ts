@@ -44,7 +44,6 @@ const replaceParamsAtOnce = (
   originalStr: string,
   paramLookups: ParamLookup[]
 ) => {
-  // Replace without overwriting previous replacements.
   let populatedStr = '';
   let restStr = originalStr;
   let prevEndIndex = 0;
