@@ -105,6 +105,7 @@ const BaseMap = (props: BaseMapProps) => {
             className="currentPos-accuracy"
             center={[currentPos.coords.latitude, currentPos.coords.longitude]}
             radius={currentPos.coords.accuracy} // Radius in m
+            interactive={false}
           />
           <Marker
             position={[currentPos.coords.latitude, currentPos.coords.longitude]}
@@ -116,6 +117,7 @@ const BaseMap = (props: BaseMapProps) => {
                 iconAnchor: [11.25, 11.25], // In px
               })
             }
+            interactive={false}
           />
         </>
       )}
