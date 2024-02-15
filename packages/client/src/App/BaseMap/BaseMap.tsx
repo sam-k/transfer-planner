@@ -1,7 +1,10 @@
-import type {Map as LeafletMap} from 'leaflet';
+import {DivIcon, type Map as LeafletMap} from 'leaflet';
+import {inRange} from 'lodash-es';
 import React, {useEffect, useMemo, useRef} from 'react';
 import {
+  Circle,
   MapContainer,
+  Marker,
   TileLayer,
   ZoomControl,
   type TileLayerProps,
@@ -20,19 +23,37 @@ const BaseMap = (props: BaseMapProps) => {
 
   const mapRef = useRef<LeafletMap>(null);
 
-  // Whether the map is centered at the current location.
-  const isCenteredAtCurrentPos = useRef(false);
+  // Whether we should try to center the map at the current location.
+  const shouldCenterAtCurrentPos = useRef(true);
   useEffect(() => {
-    if (!mapRef.current || !currentPos || isCenteredAtCurrentPos.current) {
+    if (!mapRef.current || !currentPos || !shouldCenterAtCurrentPos.current) {
       // Update map center only upon first fetch.
       return;
     }
+
+    if (
+      boundingBox &&
+      (!inRange(
+        currentPos.coords.latitude,
+        boundingBox[0][0],
+        boundingBox[1][0]
+      ) ||
+        !inRange(
+          currentPos.coords.longitude,
+          boundingBox[0][1],
+          boundingBox[1][1]
+        ))
+    ) {
+      // Current position lies outside the bounding box.
+      return;
+    }
+
     mapRef.current.setView([
       currentPos.coords.latitude,
       currentPos.coords.longitude,
     ]);
-    isCenteredAtCurrentPos.current = true;
-  }, [currentPos]);
+    shouldCenterAtCurrentPos.current = false;
+  }, [currentPos, boundingBox]);
 
   const tileLayerProps = useMemo<TileLayerProps>(() => {
     switch (tileApi) {
@@ -78,6 +99,26 @@ const BaseMap = (props: BaseMapProps) => {
       ref={mapRef}
     >
       <TileLayer bounds={boundingBox} {...tileLayerProps} />
+      {currentPos && (
+        <>
+          <Circle
+            className="currentPos-accuracy"
+            center={[currentPos.coords.latitude, currentPos.coords.longitude]}
+            radius={currentPos.coords.accuracy} // Radius in m
+          />
+          <Marker
+            position={[currentPos.coords.latitude, currentPos.coords.longitude]}
+            icon={
+              new DivIcon({
+                className: 'currentPos-marker',
+                iconSize: [15, 15], // In px
+                // Center offset of 15px x 15px circle with 3.75px borders.
+                iconAnchor: [11.25, 11.25], // In px
+              })
+            }
+          />
+        </>
+      )}
       <ZoomControl position="bottomright" />
     </MapContainer>
   );
