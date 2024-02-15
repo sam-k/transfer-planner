@@ -23,19 +23,17 @@ const transformFoursquareAutocompleteResponse = (
     ?.filter(({type}) => type === 'place' || type === 'address')
     // Exclude individual apartment units.
     .filter(result => !/Apt\s[^\s]+$/.test(result.text?.primary ?? ''))
-    .map(result => {
-      return {
-        // TODO: Support proper attribution.
-        attribution: 'Powered by Foursquare. https://foursquare.com/',
-        label: result.text?.primary ?? '',
-        // Format `City State Zipcode` to `City, State`.
-        description:
-          result.text?.secondary?.replace(/\s([A-Z]+)\s\d+$/, ', $1') ?? '',
-        fullName: [result.text?.primary, result.text?.secondary]
-          .filter(Boolean)
-          .join(', '),
-      };
-    }) ?? [];
+    .map(result => ({
+      // TODO: Support proper attribution.
+      attribution: 'Powered by Foursquare. https://foursquare.com/',
+      label: result.text?.primary ?? '',
+      // Format `City State Zipcode` to `City, State`.
+      description:
+        result.text?.secondary?.replace(/\s([A-Z]+)\s\d+$/, "', $1'") ?? '',
+      fullName: [result.text?.primary, result.text?.secondary]
+        .filter(Boolean)
+        .join(', '),
+    })) ?? [];
 
 /**
  * Transforms a JSONv2 search response from Nominatim into standardized search
