@@ -1,12 +1,9 @@
-import type {Dispatch, SetStateAction} from 'react';
 import type {LocationInfo, SidebarProps} from '../Sidebar.types';
 
 /** Type for props for the location search field. */
 export interface SearchFieldProps extends Pick<SidebarProps, 'searchApi'> {
   /** */
-  selectedValue: HighlightedSearchResult | null;
-  /** */
-  setSelectedValue: Dispatch<SetStateAction<HighlightedSearchResult | null>>;
+  onChange?: (newValue: HighlightedSearchResult | null) => void;
 }
 
 /** Location search result. */

@@ -4,7 +4,7 @@ import type {LocationInfo, SidebarProps} from '../Sidebar.types';
 /** */
 export interface InfoboxProps extends Pick<SidebarProps, 'searchApi'> {
   /** */
-  searchResult: SearchResult;
+  searchResult: SearchResult | null;
 }
 
 /** */

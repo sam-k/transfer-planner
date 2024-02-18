@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {memo, useCallback, useState} from 'react';
 
 import Infobox from './Infobox';
 import SearchField, {type HighlightedSearchResult} from './SearchField';
@@ -9,21 +9,22 @@ import type {SidebarProps} from './Sidebar.types';
 const Sidebar = (props: SidebarProps) => {
   const {searchApi} = props;
 
-  const [selectedValue, setSelectedValue] =
+  const [selectedSearchResult, setSelectedSearchResult] =
     useState<HighlightedSearchResult | null>(null);
+
+  const onSearchResultChange = useCallback(
+    (newSearchResult: HighlightedSearchResult | null) => {
+      setSelectedSearchResult(newSearchResult);
+    },
+    []
+  );
 
   return (
     <div className="sidebar">
-      <SearchField
-        searchApi={searchApi}
-        selectedValue={selectedValue}
-        setSelectedValue={setSelectedValue}
-      />
-      {selectedValue && (
-        <Infobox searchApi={searchApi} searchResult={selectedValue} />
-      )}
+      <SearchField searchApi={searchApi} onChange={onSearchResultChange} />
+      <Infobox searchApi={searchApi} searchResult={selectedSearchResult} />
     </div>
   );
 };
 
-export default Sidebar;
+export default memo(Sidebar);

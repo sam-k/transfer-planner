@@ -3,7 +3,7 @@ import {Autocomplete, TextField, Typography} from '@mui/material';
 import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';
 import {inRange} from 'lodash-es';
-import React, {useEffect, useMemo, useRef, useState} from 'react';
+import React, {memo, useEffect, useMemo, useRef, useState} from 'react';
 
 import {useAppContext} from '../../../AppContext';
 import {API_SERVER_URL, DEBOUNCE_MS, ENV_VARS} from '../../../constants';
@@ -18,7 +18,7 @@ import {transformSearchResponse} from './SearchField.utils';
 
 /** Renders a search field for looking up locations. */
 const SearchField = (props: SearchFieldProps) => {
-  const {searchApi, selectedValue, setSelectedValue} = props;
+  const {searchApi, onChange} = props;
 
   const {currentPos, boundingBox} = useAppContext();
 
@@ -28,6 +28,8 @@ const SearchField = (props: SearchFieldProps) => {
   const [searchResults, setSearchResults] = useState<
     ReadonlySet<HighlightedSearchResult>
   >(new Set());
+  const [selectedValue, setSelectedValue] =
+    useState<HighlightedSearchResult | null>(null);
 
   /** Whether the current text input is from a selected value. */
   const isInputFromValue = useRef(false);
@@ -219,8 +221,11 @@ const SearchField = (props: SearchFieldProps) => {
           />
         );
       }}
-      onInputChange={(event, newInput) => {
-        isInputFromValue.current = false;
+      onInputChange={(event, newInput, reason) => {
+        if (reason !== 'reset') {
+          // Update ref upon user input only.
+          isInputFromValue.current = false;
+        }
         setTextInput(newInput);
       }}
       // Selected value props.
@@ -232,6 +237,7 @@ const SearchField = (props: SearchFieldProps) => {
         } else {
           setSelectedValue(null);
         }
+        onChange?.(newValue);
       }}
       autoComplete
       includeInputInList
@@ -281,4 +287,4 @@ const SearchField = (props: SearchFieldProps) => {
   );
 };
 
-export default SearchField;
+export default memo(SearchField);

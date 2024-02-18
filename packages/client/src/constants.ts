@@ -14,4 +14,4 @@ export const ENV_VARS = {
 } as const;
 
 /** Time to wait when debouncing a request, in milliseconds. */
-export const DEBOUNCE_MS = 1000;
+export const DEBOUNCE_MS = 1500;

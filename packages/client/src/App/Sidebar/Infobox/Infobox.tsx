@@ -4,7 +4,7 @@ import {
   type SvgIconComponent,
 } from '@mui/icons-material';
 import {LinearProgress, Typography} from '@mui/material';
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, {memo, useCallback, useEffect, useMemo, useState} from 'react';
 
 import {API_SERVER_URL, ENV_VARS} from '../../../constants';
 import {convertDdToDmsCoords} from '../../../utils';
@@ -60,7 +60,6 @@ const Infobox = (props: InfoboxProps) => {
         break;
     }
 
-    console.log(url);
     return {
       encodedUrl: encodeURIComponent(url),
       encodedOptions: options && encodeURIComponent(JSON.stringify(options)),
@@ -124,6 +123,9 @@ const Infobox = (props: InfoboxProps) => {
   //
   const [selectedValue, setSelectedValue] = useState<LocationInfo>();
   useEffect(() => {
+    if (!selectedSearchResult) {
+      return;
+    }
     fetchLocationInfo(selectedSearchResult).then(location => {
       setSelectedValue(location);
     });
@@ -131,6 +133,9 @@ const Infobox = (props: InfoboxProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedSearchResult]);
 
+  if (!selectedSearchResult) {
+    return null;
+  }
   return (
     <div className="infobox">
       {!selectedValue || isLoading ? (
@@ -163,4 +168,4 @@ const Infobox = (props: InfoboxProps) => {
   );
 };
 
-export default Infobox;
+export default memo(Infobox);
