@@ -19,7 +19,9 @@ const Sidebar = (props: SidebarProps) => {
         selectedValue={selectedValue}
         setSelectedValue={setSelectedValue}
       />
-      {selectedValue && <Infobox searchResult={selectedValue} />}
+      {selectedValue && (
+        <Infobox searchApi={searchApi} searchResult={selectedValue} />
+      )}
     </div>
   );
 };

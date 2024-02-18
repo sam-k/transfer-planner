@@ -16,9 +16,9 @@ import CurrentPosMarker from './CurrentPosMarker';
 
 /** Renders the base map for the application. */
 const BaseMap = (props: BaseMapProps) => {
-  const {tileApi} = props;
+  const {tileApi, defaultCenter} = props;
 
-  const {currentPos, defaultCenter, boundingBox} = useAppContext();
+  const {currentPos, boundingBox} = useAppContext();
 
   const mapRef = useRef<LeafletMap>();
 

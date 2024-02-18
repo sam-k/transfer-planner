@@ -6,7 +6,7 @@ import {inRange} from 'lodash-es';
 import React, {useEffect, useMemo, useRef, useState} from 'react';
 
 import {useAppContext} from '../../../AppContext';
-import {API_SERVER_URL, ENV_VARS} from '../../../constants';
+import {API_SERVER_URL, DEBOUNCE_MS, ENV_VARS} from '../../../constants';
 import {debounceAsync, getHaversineDistKm} from '../../../utils';
 import './SearchField.css';
 import type {
@@ -14,7 +14,7 @@ import type {
   SearchFieldProps,
   SearchResult,
 } from './SearchField.types';
-import {DEBOUNCE_MS, transformSearchResponse} from './SearchField.utils';
+import {transformSearchResponse} from './SearchField.utils';
 
 /** Renders a search field for looking up locations. */
 const SearchField = (props: SearchFieldProps) => {
@@ -65,7 +65,7 @@ const SearchField = (props: SearchFieldProps) => {
   }, [currentPos, boundingBox]);
 
   /** Encoded search URL with the URI param `query`. */
-  const encodedSearchOptions = useMemo(() => {
+  const encodedFetchSearchData = useMemo(() => {
     let baseUrl: string;
     let uriParams: string[];
     let options: {} | undefined = undefined;
@@ -139,7 +139,7 @@ const SearchField = (props: SearchFieldProps) => {
     () =>
       debounceAsync(
         async (query: string): Promise<SearchResult[]> => {
-          const {encodedUrl, encodedOptions} = encodedSearchOptions;
+          const {encodedUrl, encodedOptions} = encodedFetchSearchData;
           const responseJson = await (
             await fetch(
               `${API_SERVER_URL}/fetch?` +
@@ -166,7 +166,7 @@ const SearchField = (props: SearchFieldProps) => {
           },
         }
       ),
-    [searchApi, encodedSearchOptions]
+    [searchApi, encodedFetchSearchData]
   );
 
   // Update search results.
@@ -241,7 +241,7 @@ const SearchField = (props: SearchFieldProps) => {
       loadingText="Searching..."
       noOptionsText="No results"
       getOptionLabel={option => option.label}
-      getOptionKey={option => option.fullName}
+      getOptionKey={option => option.id}
       renderOption={(optionProps, option) => (
         <li {...optionProps}>
           <div className="searchField-result">
@@ -273,7 +273,7 @@ const SearchField = (props: SearchFieldProps) => {
       disablePortal
       blurOnSelect
       isOptionEqualToValue={(option, selectedValue) =>
-        option.fullName === selectedValue.fullName
+        option.id === selectedValue.id
       }
       // Remove MUI's default `filterOptions`.
       filterOptions={options => options}

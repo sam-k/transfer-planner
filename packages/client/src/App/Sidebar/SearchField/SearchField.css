@@ -1,7 +1,7 @@
 .searchField-inputRoot {
   background-color: white;
   border-radius: 16px;
-  box-shadow: 0 0 8px rgba(0 0 0 / 50%);
+  box-shadow: 0 0 8px rgba(0 0 0 / 25%);
 }
 
 .searchField-inputRoot:focus-within {
@@ -10,7 +10,7 @@
 
 .searchField-resultsContainer {
   border-radius: 0 0 16px 16px;
-  box-shadow: 0 0 8px rgba(0 0 0 / 50%);
+  box-shadow: 0 0 8px rgba(0 0 0 / 25%);
 }
 
 .searchField-result {
@@ -19,6 +19,8 @@
 }
 
 .searchField-result-iconContainer {
+  display: flex;
+  align-items: center;
   width: 44px;
 }
 

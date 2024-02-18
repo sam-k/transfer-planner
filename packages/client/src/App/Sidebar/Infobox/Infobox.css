@@ -6,7 +6,17 @@
   background-color: white;
   border: 1px solid rgba(0 0 0 / 23%);
   border-radius: 16px;
-  box-shadow: 0 0 8px rgba(0 0 0 / 50%);
+  box-shadow: 0 0 8px rgba(0 0 0 / 25%);
+}
+
+.infobox-loadingContainer {
+  display: flex;
+  justify-content: center;
+  padding: 0.5625rem;
+}
+
+.infobox-loading {
+  width: 100%;
 }
 
 .infobox-name {
@@ -26,6 +36,8 @@
 }
 
 .infobox-details-iconContainer {
+  display: flex;
+  justify-items: center;
   width: 44px;
 }
 

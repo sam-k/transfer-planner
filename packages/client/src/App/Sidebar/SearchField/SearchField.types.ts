@@ -1,5 +1,5 @@
 import type {Dispatch, SetStateAction} from 'react';
-import type {SidebarProps} from '../Sidebar.types';
+import type {LocationInfo, SidebarProps} from '../Sidebar.types';
 
 /** Type for props for the location search field. */
 export interface SearchFieldProps extends Pick<SidebarProps, 'searchApi'> {
@@ -10,22 +10,16 @@ export interface SearchFieldProps extends Pick<SidebarProps, 'searchApi'> {
 }
 
 /** Location search result. */
-export interface SearchResult {
-  /** Attribution for how this search result was obtained. */
-  attribution: string;
-  /**
-   * Label of this search result, usually the place name or the street number.
-   */
-  label: string;
-  /** Description of this search result, usually the remaining full address. */
-  description: string;
-  /** Full name of this search result, usually the full address. */
-  fullName: string;
-  /** Latitude of this location. */
-  latitude?: number;
-  /** Longitude of this location. */
-  longitude?: number;
-}
+export type SearchResult = Pick<
+  LocationInfo,
+  'label' | 'description' | 'attribution'
+> &
+  Partial<Pick<LocationInfo, 'address' | 'latitude' | 'longitude'>> & {
+    /** Some unique identifier for this search result. */
+    id: string;
+    /** Identifier for this search result from the search API. */
+    apiId?: string;
+  };
 
 /**
  * Location search result, with information about which substrings to highlight.
@@ -36,8 +30,8 @@ export interface HighlightedSearchResult extends SearchResult {
 }
 
 /**
- * Response from the Foursquare Autocomplete API, in JSON format. Includes only
- * those fields that may be relevant for this application.
+ * Response from the Foursquare Autocomplete API. Includes only those fields
+ * that may be relevant for this application.
  *
  * Abridged from https://location.foursquare.com/developer/reference/autocomplete-1.
  */
@@ -54,6 +48,23 @@ export interface FoursquareAutocompleteResponse {
     };
     place?: {
       fsq_id?: string;
+      categories?: Array<{
+        id?: number;
+        name?: string;
+      }>;
+      location?: {
+        address?: string;
+        locality?: string;
+        region?: string;
+        postcode?: string;
+        country?: string;
+      };
+      geocodes?: {
+        main?: {
+          latitude?: number;
+          longitude?: number;
+        };
+      };
     };
     address?: {
       address_id?: string;

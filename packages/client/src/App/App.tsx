@@ -8,7 +8,7 @@ import Sidebar from './Sidebar';
 
 /** Renders the main application. */
 const App = (props: AppProps) => {
-  const {tileApi, searchApi, ...additionalProps} = props;
+  const {tileApi, searchApi, defaultCenter, ...additionalProps} = props;
 
   // Current position of the user device.
   const [currentPos, setCurrentPos] = useState<GeolocationPosition>();
@@ -28,7 +28,7 @@ const App = (props: AppProps) => {
     <StyledEngineProvider injectFirst>
       <AppContextProvider currentPos={currentPos} {...additionalProps}>
         <Sidebar searchApi={searchApi} />
-        <BaseMap tileApi={tileApi} />
+        <BaseMap tileApi={tileApi} defaultCenter={defaultCenter} />
       </AppContextProvider>
     </StyledEngineProvider>
   );

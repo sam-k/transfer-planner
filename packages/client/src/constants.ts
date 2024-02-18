@@ -12,3 +12,6 @@ export const ENV_VARS = {
   foursquareApiKey: '${FOURSQUARE_API_KEY}',
   mapboxApiKey: '${MAPBOX_API_KEY}',
 } as const;
+
+/** Time to wait when debouncing a request, in milliseconds. */
+export const DEBOUNCE_MS = 1000;
