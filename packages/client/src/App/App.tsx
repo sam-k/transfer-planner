@@ -1,3 +1,4 @@
+import {StyledEngineProvider} from '@mui/material';
 import React, {useEffect, useState} from 'react';
 
 import {AppContextProvider} from '../AppContext';
@@ -24,10 +25,12 @@ const App = (props: AppProps) => {
   }, []);
 
   return (
-    <AppContextProvider currentPos={currentPos} {...additionalProps}>
-      <Sidebar searchApi={searchApi} />
-      <BaseMap tileApi={tileApi} />
-    </AppContextProvider>
+    <StyledEngineProvider injectFirst>
+      <AppContextProvider currentPos={currentPos} {...additionalProps}>
+        <Sidebar searchApi={searchApi} />
+        <BaseMap tileApi={tileApi} />
+      </AppContextProvider>
+    </StyledEngineProvider>
   );
 };
 

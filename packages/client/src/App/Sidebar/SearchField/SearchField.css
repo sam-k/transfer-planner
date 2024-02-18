@@ -1,22 +1,32 @@
-.searchField {
-  /* TODO: Make this value responsive. */
-  width: 24rem;
-}
-
-.searchField-textField-input {
+.searchField-inputRoot {
   background-color: white;
+  border-radius: 16px;
+  box-shadow: 0 0 8px rgba(0 0 0 / 50%);
 }
 
-.searchField-iconContainer {
-  display: 'flex';
+.searchField-inputRoot:focus-within {
+  border-radius: 16px 16px 0 0;
+}
+
+.searchField-resultsContainer {
+  border-radius: 0 0 16px 16px;
+  box-shadow: 0 0 8px rgba(0 0 0 / 50%);
+}
+
+.searchField-result {
+  display: flex;
+  align-items: center;
+}
+
+.searchField-result-iconContainer {
   width: 44px;
 }
 
-.searchField-searchResult {
+.searchField-result-name {
   width: calc(100% - 44px);
   word-wrap: break-word;
 }
 
-.searchField-searchResult-highlight {
+.searchField-result-name-highlight {
   font-weight: bold;
 }

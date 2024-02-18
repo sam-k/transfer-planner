@@ -1,6 +1,7 @@
-import React from 'react';
+import React, {useState} from 'react';
 
-import SearchField from './SearchField';
+import Infobox from './Infobox';
+import SearchField, {type HighlightedSearchResult} from './SearchField';
 import './Sidebar.css';
 import type {SidebarProps} from './Sidebar.types';
 
@@ -8,9 +9,17 @@ import type {SidebarProps} from './Sidebar.types';
 const Sidebar = (props: SidebarProps) => {
   const {searchApi} = props;
 
+  const [selectedValue, setSelectedValue] =
+    useState<HighlightedSearchResult | null>(null);
+
   return (
     <div className="sidebar">
-      <SearchField searchApi={searchApi} />
+      <SearchField
+        searchApi={searchApi}
+        selectedValue={selectedValue}
+        setSelectedValue={setSelectedValue}
+      />
+      {selectedValue && <Infobox searchResult={selectedValue} />}
     </div>
   );
 };

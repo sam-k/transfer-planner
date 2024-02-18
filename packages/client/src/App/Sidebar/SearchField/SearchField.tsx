@@ -1,5 +1,5 @@
-import {LocationOn as LocationOnIcon} from '@mui/icons-material';
-import {Autocomplete, Grid, TextField, Typography} from '@mui/material';
+import {Place as PlaceIcon} from '@mui/icons-material';
+import {Autocomplete, TextField, Typography} from '@mui/material';
 import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';
 import {inRange} from 'lodash-es';
@@ -18,15 +18,12 @@ import {DEBOUNCE_MS, transformSearchResponse} from './SearchField.utils';
 
 /** Renders a search field for looking up locations. */
 const SearchField = (props: SearchFieldProps) => {
-  const {searchApi} = props;
+  const {searchApi, selectedValue, setSelectedValue} = props;
 
   const {currentPos, boundingBox} = useAppContext();
 
   // Current text input in the search field.
   const [textInput, setTextInput] = useState('');
-  // Currently selected search result.
-  const [selectedValue, setSelectedValue] =
-    useState<HighlightedSearchResult | null>(null);
   // All fetched search results.
   const [searchResults, setSearchResults] = useState<
     ReadonlySet<HighlightedSearchResult>
@@ -208,22 +205,17 @@ const SearchField = (props: SearchFieldProps) => {
 
   return (
     <Autocomplete
-      className="searchField"
+      classes={{
+        inputRoot: 'searchField-inputRoot',
+        paper: 'searchField-resultsContainer',
+      }}
       // Text input field props.
       renderInput={renderInputProps => {
-        const {
-          InputProps: renderInputInputProps,
-          ...additionalRenderInputProps
-        } = renderInputProps;
         return (
           <TextField
-            {...additionalRenderInputProps}
+            {...renderInputProps}
             placeholder="Search for a location"
             fullWidth
-            InputProps={{
-              ...renderInputInputProps,
-              className: 'searchField-textField-input',
-            }}
           />
         );
       }}
@@ -252,18 +244,18 @@ const SearchField = (props: SearchFieldProps) => {
       getOptionKey={option => option.fullName}
       renderOption={(optionProps, option) => (
         <li {...optionProps}>
-          <Grid container alignItems="center">
-            <Grid item className="searchField-iconContainer">
-              <LocationOnIcon sx={{color: 'text.secondary'}} />
-            </Grid>
-            <Grid item className="searchField-searchResult">
+          <div className="searchField-result">
+            <div className="searchField-result-iconContainer">
+              <PlaceIcon sx={{color: 'text.secondary'}} />
+            </div>
+            <div className="searchField-result-name">
               {parse(option.label, option.matchedRanges).map(
                 (matchedPart, index) => (
                   <span
                     key={index}
                     className={
                       matchedPart.highlight
-                        ? 'searchField-searchResult-highlight'
+                        ? 'searchField-result-name-highlight'
                         : ''
                     }
                   >
@@ -274,10 +266,12 @@ const SearchField = (props: SearchFieldProps) => {
               <Typography variant="body2" color="text.secondary">
                 {option.description}
               </Typography>
-            </Grid>
-          </Grid>
+            </div>
+          </div>
         </li>
       )}
+      disablePortal
+      blurOnSelect
       isOptionEqualToValue={(option, selectedValue) =>
         option.fullName === selectedValue.fullName
       }

@@ -1,0 +1,35 @@
+.infobox {
+  display: flex;
+  flex-direction: column;
+  row-gap: 1rem;
+  padding: 1rem;
+  background-color: white;
+  border: 1px solid rgba(0 0 0 / 23%);
+  border-radius: 16px;
+  box-shadow: 0 0 8px rgba(0 0 0 / 50%);
+}
+
+.infobox-name {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.infobox-detailsContainer {
+  display: flex;
+  flex-direction: column;
+  row-gap: 0.5rem;
+}
+
+.infobox-details {
+  display: flex;
+  align-items: center;
+}
+
+.infobox-details-iconContainer {
+  width: 44px;
+}
+
+.infobox-details-textContainer {
+  width: calc(100% - 44px);
+  word-wrap: break-word;
+}
