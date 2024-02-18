@@ -35,7 +35,7 @@ export interface HighlightedSearchResult extends SearchResult {
  *
  * Abridged from https://location.foursquare.com/developer/reference/autocomplete-1.
  */
-export interface FoursquareAutocompleteResponse {
+export interface FsqAutocompleteResponse {
   results?: Array<{
     type?: 'place' | 'address' | 'search' | 'geo';
     text?: {

@@ -12,7 +12,7 @@ import type {SearchResult} from '../SearchField';
 import type {LocationInfo} from '../Sidebar.types';
 import './Infobox.css';
 import type {InfoboxProps} from './Infobox.types';
-import {transformFoursquareAddressDetailsResponse} from './Infobox.utils';
+import {transformFsqAddressDetailsResponse} from './Infobox.utils';
 
 /** */
 const InfoboxDetails = ({
@@ -49,7 +49,7 @@ const Infobox = (props: InfoboxProps) => {
         url = 'https://api.foursquare.com/v3/address/{id}';
         options = {
           headers: {
-            Authorization: ENV_VARS.foursquareApiKey,
+            Authorization: ENV_VARS.fsqApiKey,
           },
         };
         break;
@@ -105,7 +105,7 @@ const Infobox = (props: InfoboxProps) => {
           ).json();
           locationInfo = {
             ...locationInfo,
-            ...transformFoursquareAddressDetailsResponse(responseJson),
+            ...transformFsqAddressDetailsResponse(responseJson),
           };
           break;
         }

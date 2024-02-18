@@ -3,7 +3,7 @@ import {uniqWith} from 'lodash-es';
 import {parseAndCheckFloat} from '../../../utils';
 import type {SearchApi} from '../../App.types';
 import type {
-  FoursquareAutocompleteResponse,
+  FsqAutocompleteResponse,
   NominatimSearchResponse,
   SearchResult,
 } from './SearchField.types';
@@ -12,8 +12,8 @@ import type {
  * Transforms an Autocomplete response from Fourquare into standardized search
  * results.
  */
-const transformFoursquareAutocompleteResponse = (
-  response: FoursquareAutocompleteResponse
+const transformFsqAutocompleteResponse = (
+  response: FsqAutocompleteResponse
 ): SearchResult[] =>
   response.results
     // Exclude place queries and regions.
@@ -153,8 +153,8 @@ export const transformSearchResponse = (
   let searchResults;
   switch (searchApi) {
     case 'foursquare':
-      searchResults = transformFoursquareAutocompleteResponse(
-        responseJson as FoursquareAutocompleteResponse
+      searchResults = transformFsqAutocompleteResponse(
+        responseJson as FsqAutocompleteResponse
       );
       break;
     case 'nominatim':

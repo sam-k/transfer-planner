@@ -1,11 +1,8 @@
-import type {
-  FoursquareAddressDetailsResponse,
-  LocationResult,
-} from './Infobox.types';
+import type {FsqAddressDetailsResponse, LocationResult} from './Infobox.types';
 
 /** */
-export const transformFoursquareAddressDetailsResponse = (
-  response: FoursquareAddressDetailsResponse
+export const transformFsqAddressDetailsResponse = (
+  response: FsqAddressDetailsResponse
 ): LocationResult => {
   const {
     location: {

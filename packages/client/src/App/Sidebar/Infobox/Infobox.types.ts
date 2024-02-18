@@ -19,7 +19,7 @@ export type LocationResult = Pick<
  *
  * Abridged from https://location.foursquare.com/developer/reference/address-details.
  */
-export interface FoursquareAddressDetailsResponse {
+export interface FsqAddressDetailsResponse {
   fsq_addr_id?: string;
   location?: {
     address?: string;

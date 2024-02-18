@@ -91,7 +91,7 @@ const SearchField = (props: SearchFieldProps) => {
         ];
         options = {
           headers: {
-            Authorization: ENV_VARS.foursquareApiKey,
+            Authorization: ENV_VARS.fsqApiKey,
           },
         };
         break;
