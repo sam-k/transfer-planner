@@ -1,6 +1,9 @@
 import type {FsqAddressDetailsResponse, LocationResult} from './Infobox.types';
 
-/** */
+/**
+ * Transforms an Address Details response from Fourquare into a standardized
+ * location information result.
+ */
 export const transformFsqAddressDetailsResponse = (
   response: FsqAddressDetailsResponse
 ): LocationResult => {

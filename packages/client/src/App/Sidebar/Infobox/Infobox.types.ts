@@ -1,13 +1,13 @@
 import type {SearchResult} from '../SearchField';
 import type {LocationInfo, SidebarProps} from '../Sidebar.types';
 
-/** */
+/** Type for props for an infobox about a location. */
 export interface InfoboxProps extends Pick<SidebarProps, 'searchApi'> {
-  /** */
+  /** The search result corresponding to this location. */
   searchResult: SearchResult | null;
 }
 
-/** */
+/** Location information result. */
 export type LocationResult = Pick<
   LocationInfo,
   'address' | 'latitude' | 'longitude' | 'attribution'

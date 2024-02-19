@@ -14,7 +14,7 @@ import './Infobox.css';
 import type {InfoboxProps} from './Infobox.types';
 import {transformFsqAddressDetailsResponse} from './Infobox.utils';
 
-/** */
+/** Renders a row showing given details about the location. */
 const InfoboxDetails = ({
   Icon,
   text,
@@ -32,14 +32,14 @@ const InfoboxDetails = ({
   </div>
 );
 
-/** */
+/** Renders information about a location. */
 const Infobox = (props: InfoboxProps) => {
   const {searchApi, searchResult: selectedSearchResult} = props;
 
-  //
+  // Whether the infobox is currently loading.
   const [isLoading, setIsLoading] = useState(false);
 
-  /** Encoded search URL with the param `id`. */
+  /** Encoded fetch URL with the param `id`. */
   const encodedFetchLocationData = useMemo(() => {
     let url = '';
     let options: {} | undefined = undefined;
@@ -120,7 +120,7 @@ const Infobox = (props: InfoboxProps) => {
     [searchApi, encodedFetchLocationData]
   );
 
-  //
+  // The selected location.
   const [selectedValue, setSelectedValue] = useState<LocationInfo>();
   useEffect(() => {
     if (!selectedSearchResult) {
@@ -129,7 +129,7 @@ const Infobox = (props: InfoboxProps) => {
     fetchLocationInfo(selectedSearchResult).then(location => {
       setSelectedValue(location);
     });
-    //
+    // Do not refetch if fetch function changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedSearchResult]);
 

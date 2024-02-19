@@ -1,6 +1,6 @@
 import {Map as LeafletMap} from 'leaflet';
 import {inRange} from 'lodash-es';
-import React, {useEffect, useMemo, useRef} from 'react';
+import React, {memo, useEffect, useMemo, useRef} from 'react';
 import {
   MapContainer,
   TileLayer,
@@ -110,4 +110,4 @@ const BaseMap = (props: BaseMapProps) => {
   );
 };
 
-export default BaseMap;
+export default memo(BaseMap);

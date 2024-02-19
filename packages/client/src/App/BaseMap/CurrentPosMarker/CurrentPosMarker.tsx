@@ -1,5 +1,5 @@
 import {DivIcon} from 'leaflet';
-import React from 'react';
+import React, {memo} from 'react';
 import {Circle, Marker} from 'react-leaflet';
 
 import {useAppContext} from '../../../AppContext';
@@ -37,4 +37,4 @@ const CurrentPosMarker = () => {
   );
 };
 
-export default CurrentPosMarker;
+export default memo(CurrentPosMarker);

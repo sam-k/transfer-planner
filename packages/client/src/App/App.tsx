@@ -1,5 +1,5 @@
 import {StyledEngineProvider} from '@mui/material';
-import React, {useEffect, useState} from 'react';
+import React, {memo, useEffect, useState} from 'react';
 
 import {AppContextProvider} from '../AppContext';
 import type {AppProps} from './App.types';
@@ -34,4 +34,4 @@ const App = (props: AppProps) => {
   );
 };
 
-export default App;
+export default memo(App);

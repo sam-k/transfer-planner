@@ -34,7 +34,13 @@ export const getHaversineDistKm = (
   );
 };
 
-/** */
+/**
+ * Converts coordinates from decimal degrees to degrees–minutes–seconds, with
+ * cardinal directions.
+ *
+ * @param secondsDecimalPlaces Number of decimal places to include in the
+ * seconds place.
+ */
 export const convertDdToDmsCoords = (
   latDd: number,
   lonDd: number,

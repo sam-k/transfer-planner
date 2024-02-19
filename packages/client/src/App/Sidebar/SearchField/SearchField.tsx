@@ -66,7 +66,7 @@ const SearchField = (props: SearchFieldProps) => {
     return Math.round(maxDistKm * 1000); // Convert to m
   }, [currentPos, boundingBox]);
 
-  /** Encoded search URL with the URI param `query`. */
+  /** Encoded fetch URL with the URI param `query`. */
   const encodedFetchSearchData = useMemo(() => {
     let baseUrl: string;
     let uriParams: string[];
@@ -201,7 +201,7 @@ const SearchField = (props: SearchFieldProps) => {
       .catch(() => {
         setSearchResults(new Set());
       });
-    // Do not rerun search if fetch function changes.
+    // Do not refetch if fetch function changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [textInput, selectedValue]);
 
