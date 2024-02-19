@@ -278,6 +278,7 @@ const SearchField = (props: SearchFieldProps) => {
       )}
       disablePortal
       blurOnSelect
+      openOnFocus
       isOptionEqualToValue={(option, selectedValue) =>
         option.id === selectedValue.id
       }

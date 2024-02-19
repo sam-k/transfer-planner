@@ -101,6 +101,7 @@ const BaseMap = (props: BaseMapProps) => {
         }
         mapRef.current = el;
       }}
+      keyboard={false}
     >
       <TileLayer bounds={boundingBox} {...tileLayerProps} />
       <CurrentPosMarker />
