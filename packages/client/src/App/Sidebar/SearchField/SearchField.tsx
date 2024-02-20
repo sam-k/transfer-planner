@@ -25,7 +25,7 @@ const SearchField = (props: SearchFieldProps) => {
   // Current text input in the search field.
   const [textInput, setTextInput] = useState('');
   // Currently selected search result.
-  const [selectedValue, setSelectedValue] =
+  const [selectedSearchResult, setSelectedSearchResult] =
     useState<HighlightedSearchResult | null>(null);
   // All fetched search results.
   const [searchResults, setSearchResults] = useState<
@@ -182,7 +182,9 @@ const SearchField = (props: SearchFieldProps) => {
 
     if (textInput === '') {
       // Reset search results.
-      setSearchResults(new Set(selectedValue ? [selectedValue] : []));
+      setSearchResults(
+        new Set(selectedSearchResult ? [selectedSearchResult] : [])
+      );
       return;
     }
 
@@ -204,7 +206,7 @@ const SearchField = (props: SearchFieldProps) => {
       });
     // Do not refetch if fetch function changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [textInput, selectedValue]);
+  }, [textInput, selectedSearchResult]);
 
   return (
     <Autocomplete
@@ -222,7 +224,7 @@ const SearchField = (props: SearchFieldProps) => {
           />
         );
       }}
-      onInputChange={(event, newInput, reason) => {
+      onInputChange={(_, newInput, reason) => {
         if (reason !== 'reset') {
           // Update ref upon user input only.
           isInputFromValue.current = false;
@@ -230,13 +232,13 @@ const SearchField = (props: SearchFieldProps) => {
         setTextInput(newInput);
       }}
       // Selected value props.
-      value={selectedValue}
-      onChange={(event, newValue) => {
+      value={selectedSearchResult}
+      onChange={(_, newValue) => {
         if (newValue) {
           isInputFromValue.current = true;
-          setSelectedValue(newValue);
+          setSelectedSearchResult(newValue);
         } else {
-          setSelectedValue(null);
+          setSelectedSearchResult(null);
         }
         onChange?.(newValue);
       }}

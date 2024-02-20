@@ -121,13 +121,14 @@ const Infobox = (props: InfoboxProps) => {
   );
 
   // The selected location.
-  const [selectedValue, setSelectedValue] = useState<LocationInfo>();
+  const [selectedLocationInfo, setSelectedLocationInfo] =
+    useState<LocationInfo>();
   useEffect(() => {
     if (!selectedSearchResult) {
       return;
     }
     fetchLocationInfo(selectedSearchResult).then(location => {
-      setSelectedValue(location);
+      setSelectedLocationInfo(location);
     });
     // Do not refetch if fetch function changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -138,7 +139,7 @@ const Infobox = (props: InfoboxProps) => {
   }
   return (
     <div className="infobox">
-      {!selectedValue || isLoading ? (
+      {!selectedLocationInfo || isLoading ? (
         <Typography className="infobox-loadingContainer" color="text.disabled">
           <LinearProgress className="infobox-loading" color="inherit" />
         </Typography>
@@ -146,19 +147,22 @@ const Infobox = (props: InfoboxProps) => {
         <>
           <div>
             <Typography className="infobox-name" color="text.primary">
-              {selectedValue.label}
+              {selectedLocationInfo.label}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              {selectedValue.description}
+              {selectedLocationInfo.description}
             </Typography>
           </div>
           <div className="infobox-detailsContainer">
-            <InfoboxDetails Icon={MapIcon} text={selectedValue.address} />
+            <InfoboxDetails
+              Icon={MapIcon}
+              text={selectedLocationInfo.address}
+            />
             <InfoboxDetails
               Icon={PublicIcon}
               text={convertDdToDmsCoords(
-                selectedValue.latitude,
-                selectedValue.longitude
+                selectedLocationInfo.latitude,
+                selectedLocationInfo.longitude
               )}
             />
           </div>
