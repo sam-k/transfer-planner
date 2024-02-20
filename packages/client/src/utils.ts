@@ -34,6 +34,37 @@ export const getHaversineDistKm = (
   );
 };
 
+/**
+ * Converts coordinates from decimal degrees to degrees–minutes–seconds, with
+ * cardinal directions.
+ *
+ * @param secondsDecimalPlaces Number of decimal places to include in the
+ * seconds place
+ */
+export const convertDdToDmsCoords = (
+  latDd: number,
+  lonDd: number,
+  secondsDecimalPlaces = 3
+): string => {
+  const ddToDms = (dd: number): {deg: number; min: number; sec: number} => {
+    const deg = Math.trunc(dd);
+    const min = Math.trunc((dd - deg) * 60);
+    const sec =
+      Math.round(((dd - deg) * 60 - min) * 60 * 10 ** secondsDecimalPlaces) /
+      10 ** secondsDecimalPlaces;
+
+    return {deg, min, sec};
+  };
+
+  const latDms = ddToDms(Math.abs(latDd));
+  const lonDms = ddToDms(Math.abs(lonDd));
+
+  return [
+    `${latDms.deg}°${latDms.min}′${latDms.sec}″${latDd >= 0 ? 'N' : 'S'}`,
+    `${lonDms.deg}°${lonDms.min}′${lonDms.sec}″${lonDd >= 0 ? 'E' : 'W'}`,
+  ].join(', ');
+};
+
 /** Creates an asynchronous debounced function. */
 export const debounceAsync = <TArgs extends unknown[], TReturn>(
   func: (...args: TArgs) => Promise<TReturn>,

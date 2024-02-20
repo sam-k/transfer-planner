@@ -2,5 +2,10 @@
   position: absolute;
   /* Leaflet sets its own z-indices absurdly high, so we beat it here. */
   z-index: 99999;
+  /* TODO: Make this value responsive. */
+  width: 24rem;
+  display: flex;
+  flex-direction: column;
+  row-gap: 1rem;
   padding: 1rem;
 }

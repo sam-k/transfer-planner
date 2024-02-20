@@ -1,4 +1,5 @@
-import React, {useEffect, useState} from 'react';
+import {StyledEngineProvider} from '@mui/material';
+import React, {memo, useEffect, useState} from 'react';
 
 import {AppContextProvider} from '../AppContext';
 import type {AppProps} from './App.types';
@@ -7,7 +8,7 @@ import Sidebar from './Sidebar';
 
 /** Renders the main application. */
 const App = (props: AppProps) => {
-  const {tileApi, searchApi, ...additionalProps} = props;
+  const {tileApi, searchApi, defaultCenter, ...additionalProps} = props;
 
   // Current position of the user device.
   const [currentPos, setCurrentPos] = useState<GeolocationPosition>();
@@ -24,11 +25,13 @@ const App = (props: AppProps) => {
   }, []);
 
   return (
-    <AppContextProvider currentPos={currentPos} {...additionalProps}>
-      <Sidebar searchApi={searchApi} />
-      <BaseMap tileApi={tileApi} />
-    </AppContextProvider>
+    <StyledEngineProvider injectFirst>
+      <AppContextProvider currentPos={currentPos} {...additionalProps}>
+        <Sidebar searchApi={searchApi} />
+        <BaseMap tileApi={tileApi} defaultCenter={defaultCenter} />
+      </AppContextProvider>
+    </StyledEngineProvider>
   );
 };
 
-export default App;
+export default memo(App);

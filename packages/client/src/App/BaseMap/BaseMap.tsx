@@ -1,6 +1,6 @@
 import {Map as LeafletMap} from 'leaflet';
 import {inRange} from 'lodash-es';
-import React, {useEffect, useMemo, useRef} from 'react';
+import React, {memo, useEffect, useMemo, useRef} from 'react';
 import {
   MapContainer,
   TileLayer,
@@ -16,9 +16,9 @@ import CurrentPosMarker from './CurrentPosMarker';
 
 /** Renders the base map for the application. */
 const BaseMap = (props: BaseMapProps) => {
-  const {tileApi} = props;
+  const {tileApi, defaultCenter} = props;
 
-  const {currentPos, defaultCenter, boundingBox} = useAppContext();
+  const {currentPos, boundingBox} = useAppContext();
 
   const mapRef = useRef<LeafletMap>();
 
@@ -101,6 +101,7 @@ const BaseMap = (props: BaseMapProps) => {
         }
         mapRef.current = el;
       }}
+      keyboard={false}
     >
       <TileLayer bounds={boundingBox} {...tileLayerProps} />
       <CurrentPosMarker />
@@ -109,4 +110,4 @@ const BaseMap = (props: BaseMapProps) => {
   );
 };
 
-export default BaseMap;
+export default memo(BaseMap);

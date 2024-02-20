@@ -3,8 +3,7 @@ import type {ProviderProps} from 'react';
 import type {AppProps} from '../App';
 
 /** Type for the value provided by `AppContext`. */
-export interface AppContextValue
-  extends Pick<AppProps, 'defaultCenter' | 'boundingBox'> {
+export interface AppContextValue extends Pick<AppProps, 'boundingBox'> {
   /** Current position of the user device. */
   currentPos?: GeolocationPosition;
 }

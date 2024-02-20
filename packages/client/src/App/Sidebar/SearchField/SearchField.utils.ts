@@ -3,37 +3,61 @@ import {uniqWith} from 'lodash-es';
 import {parseAndCheckFloat} from '../../../utils';
 import type {SearchApi} from '../../App.types';
 import type {
-  FoursquareAutocompleteResponse,
+  FsqAutocompleteResponse,
   NominatimSearchResponse,
   SearchResult,
 } from './SearchField.types';
-
-/** Time to wait when debouncing a search request, in milliseconds. */
-export const DEBOUNCE_MS = 1000;
 
 /**
  * Transforms an Autocomplete response from Fourquare into standardized search
  * results.
  */
-const transformFoursquareAutocompleteResponse = (
-  response: FoursquareAutocompleteResponse
+const transformFsqAutocompleteResponse = (
+  response: FsqAutocompleteResponse
 ): SearchResult[] =>
   response.results
     // Exclude place queries and regions.
     ?.filter(({type}) => type === 'place' || type === 'address')
     // Exclude individual apartment units.
     .filter(result => !/Apt\s[^\s]+$/.test(result.text?.primary ?? ''))
-    .map(result => ({
-      // TODO: Support proper attribution.
-      attribution: 'Powered by Foursquare. https://foursquare.com/',
-      label: result.text?.primary ?? '',
-      // Format `City State Zipcode` to `City, State`.
-      description:
-        result.text?.secondary?.replace(/\s([A-Z]+)\s\d+$/, "', $1'") ?? '',
-      fullName: [result.text?.primary, result.text?.secondary]
-        .filter(Boolean)
-        .join(', '),
-    })) ?? [];
+    .map(result => {
+      const {
+        text: {primary, secondary} = {},
+        place: {
+          fsq_id,
+          location: {
+            address: streetAddress = undefined,
+            locality = undefined,
+            region = undefined,
+            postcode = undefined,
+          } = {},
+          geocodes: {
+            main: {latitude = undefined, longitude = undefined} = {},
+          } = {},
+        } = {},
+        address: {address_id} = {},
+      } = result;
+
+      const apiId = fsq_id || address_id;
+
+      const address =
+        [[streetAddress, locality, region].filter(Boolean).join(', '), postcode]
+          .filter(Boolean)
+          .join(' ') || undefined;
+
+      return {
+        id: apiId || self.crypto.randomUUID(),
+        apiId,
+        label: primary ?? '',
+        // Format `City State Zipcode` to `City, State`.
+        description: secondary?.replace(/,?\s([A-Z]+)\s\d+$/, ', $1') ?? '',
+        address,
+        latitude,
+        longitude,
+        // TODO: Support proper attribution.
+        attribution: 'Powered by Foursquare. https://foursquare.com/',
+      } satisfies SearchResult;
+    }) ?? [];
 
 /**
  * Transforms a JSONv2 search response from Nominatim into standardized search
@@ -45,13 +69,9 @@ const transformNominatimSearchResponse = (
   response
     // Exclude regions.
     .filter(({osm_type}) => osm_type !== 'relation')
-    .map(place => {
+    .map(result => {
       const {
-        licence,
-        lat,
-        lon,
         name,
-        display_name,
         address: {
           house_number,
           road,
@@ -68,32 +88,58 @@ const transformNominatimSearchResponse = (
           state,
           state_district,
           region,
+          postcode,
         } = {},
-      } = place;
+        lat,
+        lon,
+        place_id,
+        licence,
+      } = result;
+
+      const apiId = place_id?.toString();
+
+      const resolvedNeighborhood =
+        neighbourhood ||
+        allotments ||
+        quarter ||
+        hamlet ||
+        croft ||
+        isolated_dwelling;
+      const resolvedLocality = city || town || village || municipality;
+      const resolvedRegion = state || state_district || region;
 
       const label = name || [house_number, road].filter(Boolean).join(' ');
       const description = [
         name && road,
-        neighbourhood ||
-          allotments ||
-          quarter ||
-          hamlet ||
-          croft ||
-          isolated_dwelling,
-        city || town || village || municipality,
-        state || state_district || region,
+        resolvedNeighborhood,
+        resolvedLocality,
+        resolvedRegion,
       ]
         .filter(Boolean)
         .join(', ');
+      const address = [
+        [
+          [house_number, road].filter(Boolean).join(' '),
+          resolvedLocality,
+          resolvedRegion,
+        ]
+          .filter(Boolean)
+          .join(', '),
+        postcode,
+      ]
+        .filter(Boolean)
+        .join(' ');
 
       return {
-        attribution: licence ?? '',
+        id: apiId || self.crypto.randomUUID(),
+        apiId,
         label,
         description,
-        fullName: display_name ?? '',
+        address,
         latitude: parseAndCheckFloat(lat),
         longitude: parseAndCheckFloat(lon),
-      };
+        attribution: licence ?? '',
+      } satisfies SearchResult;
     });
 
 /**
@@ -107,8 +153,8 @@ export const transformSearchResponse = (
   let searchResults;
   switch (searchApi) {
     case 'foursquare':
-      searchResults = transformFoursquareAutocompleteResponse(
-        responseJson as FoursquareAutocompleteResponse
+      searchResults = transformFsqAutocompleteResponse(
+        responseJson as FsqAutocompleteResponse
       );
       break;
     case 'nominatim':

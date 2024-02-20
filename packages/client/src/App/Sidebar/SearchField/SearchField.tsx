@@ -1,12 +1,12 @@
-import {LocationOn as LocationOnIcon} from '@mui/icons-material';
-import {Autocomplete, Grid, TextField, Typography} from '@mui/material';
+import {Place as PlaceIcon} from '@mui/icons-material';
+import {Autocomplete, TextField, Typography} from '@mui/material';
 import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';
 import {inRange} from 'lodash-es';
-import React, {useEffect, useMemo, useRef, useState} from 'react';
+import React, {memo, useEffect, useMemo, useRef, useState} from 'react';
 
 import {useAppContext} from '../../../AppContext';
-import {API_SERVER_URL, ENV_VARS} from '../../../constants';
+import {API_SERVER_URL, DEBOUNCE_MS, ENV_VARS} from '../../../constants';
 import {debounceAsync, getHaversineDistKm} from '../../../utils';
 import './SearchField.css';
 import type {
@@ -14,18 +14,18 @@ import type {
   SearchFieldProps,
   SearchResult,
 } from './SearchField.types';
-import {DEBOUNCE_MS, transformSearchResponse} from './SearchField.utils';
+import {transformSearchResponse} from './SearchField.utils';
 
 /** Renders a search field for looking up locations. */
 const SearchField = (props: SearchFieldProps) => {
-  const {searchApi} = props;
+  const {searchApi, onChange} = props;
 
   const {currentPos, boundingBox} = useAppContext();
 
   // Current text input in the search field.
   const [textInput, setTextInput] = useState('');
   // Currently selected search result.
-  const [selectedValue, setSelectedValue] =
+  const [selectedSearchResult, setSelectedSearchResult] =
     useState<HighlightedSearchResult | null>(null);
   // All fetched search results.
   const [searchResults, setSearchResults] = useState<
@@ -67,8 +67,8 @@ const SearchField = (props: SearchFieldProps) => {
     return Math.round(maxDistKm * 1000); // Convert to m
   }, [currentPos, boundingBox]);
 
-  /** Encoded search URL with the URI param `query`. */
-  const encodedSearchOptions = useMemo(() => {
+  /** Encoded fetch URL with the URI param `query`. */
+  const encodedFetchSearchData = useMemo(() => {
     let baseUrl: string;
     let uriParams: string[];
     let options: {} | undefined = undefined;
@@ -94,7 +94,7 @@ const SearchField = (props: SearchFieldProps) => {
         ];
         options = {
           headers: {
-            Authorization: ENV_VARS.foursquareApiKey,
+            Authorization: ENV_VARS.fsqApiKey,
           },
         };
         break;
@@ -142,7 +142,7 @@ const SearchField = (props: SearchFieldProps) => {
     () =>
       debounceAsync(
         async (query: string): Promise<SearchResult[]> => {
-          const {encodedUrl, encodedOptions} = encodedSearchOptions;
+          const {encodedUrl, encodedOptions} = encodedFetchSearchData;
           const responseJson = await (
             await fetch(
               `${API_SERVER_URL}/fetch?` +
@@ -169,7 +169,7 @@ const SearchField = (props: SearchFieldProps) => {
           },
         }
       ),
-    [searchApi, encodedSearchOptions]
+    [searchApi, encodedFetchSearchData]
   );
 
   // Update search results.
@@ -182,7 +182,9 @@ const SearchField = (props: SearchFieldProps) => {
 
     if (textInput === '') {
       // Reset search results.
-      setSearchResults(new Set(selectedValue ? [selectedValue] : []));
+      setSearchResults(
+        new Set(selectedSearchResult ? [selectedSearchResult] : [])
+      );
       return;
     }
 
@@ -202,44 +204,43 @@ const SearchField = (props: SearchFieldProps) => {
       .catch(() => {
         setSearchResults(new Set());
       });
-    // Do not rerun search if fetch function changes.
+    // Do not refetch if fetch function changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [textInput, selectedValue]);
+  }, [textInput, selectedSearchResult]);
 
   return (
     <Autocomplete
-      className="searchField"
+      classes={{
+        inputRoot: 'searchField-inputRoot',
+        paper: 'searchField-resultsContainer',
+      }}
       // Text input field props.
       renderInput={renderInputProps => {
-        const {
-          InputProps: renderInputInputProps,
-          ...additionalRenderInputProps
-        } = renderInputProps;
         return (
           <TextField
-            {...additionalRenderInputProps}
+            {...renderInputProps}
             placeholder="Search for a location"
             fullWidth
-            InputProps={{
-              ...renderInputInputProps,
-              className: 'searchField-textField-input',
-            }}
           />
         );
       }}
-      onInputChange={(event, newInput) => {
-        isInputFromValue.current = false;
+      onInputChange={(_, newInput, reason) => {
+        if (reason !== 'reset') {
+          // Update ref upon user input only.
+          isInputFromValue.current = false;
+        }
         setTextInput(newInput);
       }}
       // Selected value props.
-      value={selectedValue}
-      onChange={(event, newValue) => {
+      value={selectedSearchResult}
+      onChange={(_, newValue) => {
         if (newValue) {
           isInputFromValue.current = true;
-          setSelectedValue(newValue);
+          setSelectedSearchResult(newValue);
         } else {
-          setSelectedValue(null);
+          setSelectedSearchResult(null);
         }
+        onChange?.(newValue);
       }}
       autoComplete
       includeInputInList
@@ -249,21 +250,21 @@ const SearchField = (props: SearchFieldProps) => {
       loadingText="Searching..."
       noOptionsText="No results"
       getOptionLabel={option => option.label}
-      getOptionKey={option => option.fullName}
+      getOptionKey={option => option.id}
       renderOption={(optionProps, option) => (
         <li {...optionProps}>
-          <Grid container alignItems="center">
-            <Grid item className="searchField-iconContainer">
-              <LocationOnIcon sx={{color: 'text.secondary'}} />
-            </Grid>
-            <Grid item className="searchField-searchResult">
+          <div className="searchField-result">
+            <div className="searchField-result-iconContainer">
+              <PlaceIcon sx={{color: 'text.secondary'}} />
+            </div>
+            <div className="searchField-result-name">
               {parse(option.label, option.matchedRanges).map(
                 (matchedPart, index) => (
                   <span
                     key={index}
                     className={
                       matchedPart.highlight
-                        ? 'searchField-searchResult-highlight'
+                        ? 'searchField-result-name-highlight'
                         : ''
                     }
                   >
@@ -274,12 +275,15 @@ const SearchField = (props: SearchFieldProps) => {
               <Typography variant="body2" color="text.secondary">
                 {option.description}
               </Typography>
-            </Grid>
-          </Grid>
+            </div>
+          </div>
         </li>
       )}
+      disablePortal
+      blurOnSelect
+      openOnFocus
       isOptionEqualToValue={(option, selectedValue) =>
-        option.fullName === selectedValue.fullName
+        option.id === selectedValue.id
       }
       // Remove MUI's default `filterOptions`.
       filterOptions={options => options}
@@ -287,4 +291,4 @@ const SearchField = (props: SearchFieldProps) => {
   );
 };
 
-export default SearchField;
+export default memo(SearchField);
