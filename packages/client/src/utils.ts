@@ -39,7 +39,7 @@ export const getHaversineDistKm = (
  * cardinal directions.
  *
  * @param secondsDecimalPlaces Number of decimal places to include in the
- * seconds place.
+ * seconds place
  */
 export const convertDdToDmsCoords = (
   latDd: number,

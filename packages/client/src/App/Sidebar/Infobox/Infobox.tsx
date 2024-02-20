@@ -36,7 +36,7 @@ const InfoboxDetails = ({
 const Infobox = (props: InfoboxProps) => {
   const {searchApi, searchResult: selectedSearchResult} = props;
 
-  // Whether the infobox is currently loading.
+  // Whether the infobox contents are currently loading.
   const [isLoading, setIsLoading] = useState(false);
 
   /** Encoded fetch URL with the param `id`. */

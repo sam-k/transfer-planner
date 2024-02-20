@@ -24,12 +24,13 @@ const SearchField = (props: SearchFieldProps) => {
 
   // Current text input in the search field.
   const [textInput, setTextInput] = useState('');
+  // Currently selected search result.
+  const [selectedValue, setSelectedValue] =
+    useState<HighlightedSearchResult | null>(null);
   // All fetched search results.
   const [searchResults, setSearchResults] = useState<
     ReadonlySet<HighlightedSearchResult>
   >(new Set());
-  const [selectedValue, setSelectedValue] =
-    useState<HighlightedSearchResult | null>(null);
 
   /** Whether the current text input is from a selected value. */
   const isInputFromValue = useRef(false);
