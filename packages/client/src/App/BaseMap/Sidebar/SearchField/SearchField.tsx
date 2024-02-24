@@ -2,12 +2,16 @@ import {Place as PlaceIcon} from '@mui/icons-material';
 import {Autocomplete, TextField, Typography} from '@mui/material';
 import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';
-import {inRange} from 'lodash-es';
 import React, {memo, useEffect, useMemo, useRef, useState} from 'react';
 
-import {useAppContext} from '../../../../AppContext';
 import {API_SERVER_URL, DEBOUNCE_MS, ENV_VARS} from '../../../../constants';
-import {debounceAsync, getHaversineDistKm} from '../../../../utils';
+import type {LatLngCoords} from '../../../../types';
+import {
+  areCoordsInBounds,
+  debounceAsync,
+  getHaversineDistKm,
+} from '../../../../utils';
+import {useBaseMapContext} from '../../../BaseMapContext';
 import './SearchField.css';
 import type {
   HighlightedSearchResult,
@@ -20,7 +24,7 @@ import {transformSearchResponse} from './SearchField.utils';
 const SearchField = (props: SearchFieldProps) => {
   const {searchApi, onChange} = props;
 
-  const {currentPos, boundingBox} = useAppContext();
+  const {currentPos, boundingBox} = useBaseMapContext();
 
   // Current text input in the search field.
   const [textInput, setTextInput] = useState('');
@@ -48,21 +52,21 @@ const SearchField = (props: SearchFieldProps) => {
       return undefined;
     }
 
-    const {latitude: currentLat, longitude: currentLon} = currentPos.coords;
-    const [[latBound1, lonBound1], [latBound2, lonBound2]] = boundingBox;
-    if (
-      !inRange(currentLat, latBound1, latBound2) ||
-      !inRange(currentLon, lonBound1, lonBound2)
-    ) {
+    const currentCoords: LatLngCoords = [
+      currentPos.coords.latitude,
+      currentPos.coords.longitude,
+    ];
+    if (!areCoordsInBounds(currentCoords, boundingBox)) {
       // Current position lies outside the bounding box.
       return undefined;
     }
 
+    const [[latBound1, lonBound1], [latBound2, lonBound2]] = boundingBox;
     const maxDistKm = Math.max(
-      getHaversineDistKm(currentLat, currentLon, latBound1, lonBound1),
-      getHaversineDistKm(currentLat, currentLon, latBound1, lonBound2),
-      getHaversineDistKm(currentLat, currentLon, latBound2, lonBound1),
-      getHaversineDistKm(currentLat, currentLon, latBound2, lonBound2)
+      getHaversineDistKm(currentCoords, [latBound1, lonBound1]),
+      getHaversineDistKm(currentCoords, [latBound1, lonBound2]),
+      getHaversineDistKm(currentCoords, [latBound2, lonBound1]),
+      getHaversineDistKm(currentCoords, [latBound2, lonBound2])
     );
     return Math.round(maxDistKm * 1000); // Convert to m
   }, [currentPos, boundingBox]);
@@ -106,15 +110,10 @@ const SearchField = (props: SearchFieldProps) => {
         uriParams = [
           'format=jsonv2',
           'addressdetails=1',
-          // Convert latitude-longitude pairs to X-Y pairs.
           boundingBox
             ? `viewbox=${encodeURIComponent(
-                [
-                  boundingBox[0][1],
-                  boundingBox[0][0],
-                  boundingBox[1][1],
-                  boundingBox[1][0],
-                ].join(',')
+                // Convert latitude-longitude pairs to X-Y pairs.
+                boundingBox.flatMap(([lat, lon]) => [lon, lat]).join(',')
               )}`
             : '',
           'bounded=1',

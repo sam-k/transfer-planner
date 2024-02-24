@@ -1,9 +1,15 @@
-import type {Dispatch, ProviderProps, SetStateAction} from 'react';
+import type {Map as LeafletMap} from 'leaflet';
+import type {Dispatch, ProviderProps, RefObject, SetStateAction} from 'react';
 
+import type {BaseMapProps} from '../BaseMap';
 import type {MarkerProps} from '../BaseMap/Marker';
 
 /** Type for the value provided by `BaseMapContext`. */
-export interface BaseMapContextValue {
+export interface BaseMapContextValue extends Pick<BaseMapProps, 'boundingBox'> {
+  /** Current position of the user device. */
+  currentPos?: GeolocationPosition;
+  /** Reference to the map. */
+  mapRef?: RefObject<LeafletMap | undefined>;
   /** Sets the map markers state. */
   setMarkers?: Dispatch<SetStateAction<ReadonlyArray<MarkerProps>>>;
 }

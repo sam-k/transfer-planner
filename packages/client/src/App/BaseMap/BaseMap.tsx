@@ -1,5 +1,4 @@
 import {Map as LeafletMap} from 'leaflet';
-import {inRange} from 'lodash-es';
 import React, {memo, useEffect, useMemo, useRef, useState} from 'react';
 import {
   MapContainer,
@@ -8,8 +7,8 @@ import {
   type TileLayerProps,
 } from 'react-leaflet';
 
-import {useAppContext} from '../../AppContext';
 import {API_SERVER_URL, ENV_VARS} from '../../constants';
+import {areCoordsInBounds} from '../../utils';
 import {BaseMapContextProvider} from '../BaseMapContext';
 import './BaseMap.css';
 import type {BaseMapProps} from './BaseMap.types';
@@ -18,13 +17,25 @@ import Sidebar from './Sidebar';
 
 /** Renders the base map for the application. */
 const BaseMap = (props: BaseMapProps) => {
-  const {tileApi, defaultCenter} = props;
-
-  const {currentPos, searchApi, boundingBox} = useAppContext();
+  const {tileApi, searchApi, defaultCenter, boundingBox} = props;
 
   const [markers, setMarkers] = useState<ReadonlyArray<MarkerProps>>([]);
 
   const mapRef = useRef<LeafletMap>();
+
+  // Current position of the user device.
+  const [currentPos, setCurrentPos] = useState<GeolocationPosition>();
+  useEffect(() => {
+    navigator.geolocation.watchPosition(
+      pos => {
+        setCurrentPos(pos);
+      },
+      err => {
+        console.error(err);
+      },
+      {enableHighAccuracy: true}
+    );
+  }, []);
 
   // Whether we should try to center the map at the current location.
   const shouldCenterAtCurrentPos = useRef(true);
@@ -36,16 +47,10 @@ const BaseMap = (props: BaseMapProps) => {
 
     if (
       boundingBox &&
-      (!inRange(
-        currentPos.coords.latitude,
-        boundingBox[0][0],
-        boundingBox[1][0]
-      ) ||
-        !inRange(
-          currentPos.coords.longitude,
-          boundingBox[0][1],
-          boundingBox[1][1]
-        ))
+      !areCoordsInBounds(
+        [currentPos.coords.latitude, currentPos.coords.longitude],
+        boundingBox
+      )
     ) {
       // Current position lies outside the bounding box.
       return;
@@ -92,7 +97,13 @@ const BaseMap = (props: BaseMapProps) => {
   }, [tileApi]);
 
   return (
-    <BaseMapContextProvider setMarkers={setMarkers}>
+    <BaseMapContextProvider
+      currentPos={currentPos}
+      boundingBox={boundingBox}
+      mapRef={mapRef}
+      setMarkers={setMarkers}
+    >
+      <Sidebar searchApi={searchApi} />
       <MapContainer
         className="map"
         center={defaultCenter}
@@ -108,18 +119,19 @@ const BaseMap = (props: BaseMapProps) => {
         }}
         keyboard={false}
       >
-        <Sidebar searchApi={searchApi} />
         <TileLayer bounds={boundingBox} {...tileLayerProps} />
 
-        <Marker
-          latitude={currentPos?.coords.latitude}
-          longitude={currentPos?.coords.longitude}
-          accuracyRadiusM={currentPos?.coords.accuracy}
-          classNames={{
-            accuracy: 'currentPos-accuracy',
-            icon: 'currentPos-icon',
-          }}
-        />
+        {currentPos && (
+          <Marker
+            latitude={currentPos.coords.latitude}
+            longitude={currentPos.coords.longitude}
+            accuracyRadiusM={currentPos.coords.accuracy}
+            classNames={{
+              accuracy: 'currentPos-accuracy',
+              icon: 'currentPos-icon',
+            }}
+          />
+        )}
         {markers.map((markerProps, i) => (
           <Marker key={i} {...markerProps} />
         ))}

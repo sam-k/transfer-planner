@@ -1,4 +1,6 @@
-import {debounce} from 'lodash-es';
+import {debounce, inRange} from 'lodash-es';
+
+import type {LatLngBounds, LatLngCoords} from './types';
 
 /** Parses a string as a float, and returns the value only if valid. */
 export const parseAndCheckFloat = (floatStr: unknown) => {
@@ -9,26 +11,25 @@ export const parseAndCheckFloat = (floatStr: unknown) => {
   return isNaN(floatVal) ? undefined : floatVal;
 };
 
-/**
- * Calculates the haversine distance between two coordinates.
- *
- * @param coordsDeg Latitude 1, longitude 1, latitude 2, longitude 2, all in
- * degrees
- * @returns Distance in km
- */
+/** Calculates the haversine distance between two coordinates, in kilometers. */
 export const getHaversineDistKm = (
-  ...coordsDeg: [number, number, number, number]
+  coords1: LatLngCoords,
+  coords2: LatLngCoords
 ) => {
-  const [lat1, lon1, lat2, lon2] = coordsDeg.map(
-    coord => (coord * Math.PI) / 180 // Convert to radians
-  );
+  const degToRad = (coord: number) => (coord * Math.PI) / 180;
+
+  const [lat1Rad, lon1Rad] = coords1.map(degToRad);
+  const [lat2Rad, lon2Rad] = coords2.map(degToRad);
+
   return (
     2 *
     6371 * // Earth's approximate average radius, in km
     Math.asin(
       Math.sqrt(
-        Math.sin((lat1 - lat2) / 2) ** 2 +
-          Math.cos(lat1) * Math.cos(lat2) * Math.sin((lon1 - lon2) / 2) ** 2
+        Math.sin((lat1Rad - lat2Rad) / 2) ** 2 +
+          Math.cos(lat1Rad) *
+            Math.cos(lat2Rad) *
+            Math.sin((lon1Rad - lon2Rad) / 2) ** 2
       )
     )
   );
@@ -42,27 +43,39 @@ export const getHaversineDistKm = (
  * seconds place
  */
 export const convertDdToDmsCoords = (
-  latDd: number,
-  lonDd: number,
+  coordsDd: LatLngCoords,
   secondsDecimalPlaces = 3
 ): string => {
-  const ddToDms = (dd: number): {deg: number; min: number; sec: number} => {
-    const deg = Math.trunc(dd);
-    const min = Math.trunc((dd - deg) * 60);
+  const [latDd, lonDd] = coordsDd;
+  const [latDms, lonDms] = coordsDd.map(coordDd => {
+    const absDd = Math.abs(coordDd);
+
+    const deg = Math.trunc(absDd);
+    const min = Math.trunc((absDd - deg) * 60);
     const sec =
-      Math.round(((dd - deg) * 60 - min) * 60 * 10 ** secondsDecimalPlaces) /
+      Math.round(((absDd - deg) * 60 - min) * 60 * 10 ** secondsDecimalPlaces) /
       10 ** secondsDecimalPlaces;
 
     return {deg, min, sec};
-  };
-
-  const latDms = ddToDms(Math.abs(latDd));
-  const lonDms = ddToDms(Math.abs(lonDd));
+  });
 
   return [
     `${latDms.deg}°${latDms.min}′${latDms.sec}″${latDd >= 0 ? 'N' : 'S'}`,
     `${lonDms.deg}°${lonDms.min}′${lonDms.sec}″${lonDd >= 0 ? 'E' : 'W'}`,
   ].join(', ');
+};
+
+/** Checks whether coordinates lie within the bounding box. */
+export const areCoordsInBounds = (
+  coords: LatLngCoords,
+  boundingBox: LatLngBounds
+) => {
+  const [lat, lon] = coords;
+  const [[latBound1, lonBound1], [latBound2, lonBound2]] = boundingBox;
+
+  return (
+    inRange(lat, latBound1, latBound2) && inRange(lon, lonBound1, lonBound2)
+  );
 };
 
 /** Creates an asynchronous debounced function. */

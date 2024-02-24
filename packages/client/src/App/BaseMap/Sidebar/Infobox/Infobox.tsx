@@ -5,10 +5,9 @@ import {
 } from '@mui/icons-material';
 import {LinearProgress, Typography} from '@mui/material';
 import React, {memo, useCallback, useEffect, useMemo, useState} from 'react';
-import {useMap} from 'react-leaflet';
 
 import {API_SERVER_URL, ENV_VARS} from '../../../../constants';
-import {convertDdToDmsCoords} from '../../../../utils';
+import {areCoordsInBounds, convertDdToDmsCoords} from '../../../../utils';
 import {useBaseMapContext} from '../../../BaseMapContext';
 import type {SearchResult} from '../SearchField';
 import type {LocationInfo} from '../Sidebar.types';
@@ -38,11 +37,13 @@ const InfoboxDetails = ({
 const Infobox = (props: InfoboxProps) => {
   const {searchApi, searchResult: selectedSearchResult} = props;
 
-  const mapRef = useMap();
-  const {setMarkers} = useBaseMapContext();
+  const {boundingBox, mapRef, setMarkers} = useBaseMapContext();
 
   // Whether the infobox contents are currently loading.
   const [isLoading, setIsLoading] = useState(false);
+
+  // Whether the selected location is out of bounds of the map.
+  const [isLocationOutOfBounds, setIsLocationOutOfBounds] = useState(false);
 
   /** Encoded fetch URL with the param `id`. */
   const encodedFetchLocationData = useMemo(() => {
@@ -135,8 +136,19 @@ const Infobox = (props: InfoboxProps) => {
     fetchLocationInfo(selectedSearchResult).then(location => {
       setSelectedLocationInfo(location);
 
-      mapRef.flyTo([location.latitude, location.longitude], /* zoom= */ 16);
-      console.log(location.label);
+      if (
+        boundingBox &&
+        !areCoordsInBounds([location.latitude, location.longitude], boundingBox)
+      ) {
+        setIsLocationOutOfBounds(true);
+        return;
+      }
+
+      setIsLocationOutOfBounds(false);
+      mapRef?.current?.flyTo(
+        [location.latitude, location.longitude],
+        /* zoom= */ 16
+      );
       setMarkers?.([
         {
           label: location.label,
@@ -169,6 +181,11 @@ const Infobox = (props: InfoboxProps) => {
               {selectedLocationInfo.description}
             </Typography>
           </div>
+          {isLocationOutOfBounds && (
+            <Typography className="infobox-errorText" color="error">
+              Location is out of bounds.
+            </Typography>
+          )}
           <div className="infobox-detailsContainer">
             <InfoboxDetails
               Icon={MapIcon}
@@ -176,10 +193,10 @@ const Infobox = (props: InfoboxProps) => {
             />
             <InfoboxDetails
               Icon={PublicIcon}
-              text={convertDdToDmsCoords(
+              text={convertDdToDmsCoords([
                 selectedLocationInfo.latitude,
-                selectedLocationInfo.longitude
-              )}
+                selectedLocationInfo.longitude,
+              ])}
             />
           </div>
         </>

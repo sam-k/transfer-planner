@@ -1,4 +1,4 @@
-import type {LatLngBoundsLiteral, LatLngTuple} from 'leaflet';
+import type {LatLngBounds, LatLngCoords} from '../types';
 
 /** Supported tile APIs. */
 export type TileApi = 'mapbox' | 'osm';
@@ -21,7 +21,7 @@ export interface AppProps {
    */
   searchApi?: SearchApi;
   /** Default center coordinates for the map. */
-  defaultCenter?: LatLngTuple;
+  defaultCenter?: LatLngCoords;
   /** Max bounds for the map. */
-  boundingBox?: LatLngBoundsLiteral;
+  boundingBox?: LatLngBounds;
 }

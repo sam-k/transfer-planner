@@ -10,9 +10,6 @@ import type {MarkerProps} from './Marker.types';
 const Marker = (props: MarkerProps) => {
   const {label, latitude, longitude, accuracyRadiusM, classNames} = props;
 
-  if (latitude === undefined || longitude === undefined) {
-    return null;
-  }
   return (
     <>
       {accuracyRadiusM && (
