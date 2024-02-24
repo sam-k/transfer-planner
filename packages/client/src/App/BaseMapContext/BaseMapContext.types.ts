@@ -1,9 +1,10 @@
 import type {Dispatch, ProviderProps, SetStateAction} from 'react';
-import {MarkerProps} from '../BaseMap/Marker';
 
-/** Type for the value provided by `AppContext`. */
+import type {MarkerProps} from '../BaseMap/Marker';
+
+/** Type for the value provided by `BaseMapContext`. */
 export interface BaseMapContextValue {
-  /** */
+  /** Sets the map markers state. */
   setMarkers?: Dispatch<SetStateAction<ReadonlyArray<MarkerProps>>>;
 }
 

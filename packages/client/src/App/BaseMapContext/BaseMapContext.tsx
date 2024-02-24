@@ -7,7 +7,7 @@ import type {
 
 const BaseMapContext = createContext<BaseMapContextValue>({});
 
-/** Renders a promvider for the `BaseMapContext`. */
+/** Renders a provider for the `BaseMapContext`. */
 export const BaseMapContextProvider = (props: BaseMapContextProviderProps) => {
   const {setMarkers, children} = props;
 

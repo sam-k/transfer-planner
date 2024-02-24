@@ -40,7 +40,7 @@ const Marker = (props: MarkerProps) => {
         interactive={false}
         keyboard={false}
       >
-        {true && (
+        {label && (
           <Tooltip
             className="marker-label"
             position={[latitude, longitude]}

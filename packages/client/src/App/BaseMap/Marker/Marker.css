@@ -11,13 +11,14 @@
 
 .marker-label {
   width: 10rem;
+  /* Remove default Leaflet tooltip styling. */
   background-color: unset;
   border: unset;
   box-shadow: unset;
 }
 
 .marker-label::before {
-  border: unset;
+  border: unset; /* Remove default Leaflet tooltip arrow */
 }
 
 .marker-label-text {
