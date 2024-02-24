@@ -5,7 +5,6 @@ import {
 } from '@mui/icons-material';
 import {LinearProgress, Typography} from '@mui/material';
 import React, {memo, useCallback, useEffect, useMemo, useState} from 'react';
-import {useMap} from 'react-leaflet';
 
 import {API_SERVER_URL, ENV_VARS} from '../../../../constants';
 import {convertDdToDmsCoords} from '../../../../utils';
@@ -38,8 +37,7 @@ const InfoboxDetails = ({
 const Infobox = (props: InfoboxProps) => {
   const {searchApi, searchResult: selectedSearchResult} = props;
 
-  const mapRef = useMap();
-  const {setMarkers} = useBaseMapContext();
+  const {mapRef, setMarkers} = useBaseMapContext();
 
   // Whether the infobox contents are currently loading.
   const [isLoading, setIsLoading] = useState(false);
@@ -135,8 +133,10 @@ const Infobox = (props: InfoboxProps) => {
     fetchLocationInfo(selectedSearchResult).then(location => {
       setSelectedLocationInfo(location);
 
-      mapRef.flyTo([location.latitude, location.longitude], /* zoom= */ 16);
-      console.log(location.label);
+      mapRef?.current?.flyTo(
+        [location.latitude, location.longitude],
+        /* zoom= */ 16
+      );
       setMarkers?.([
         {
           label: location.label,
@@ -176,10 +176,10 @@ const Infobox = (props: InfoboxProps) => {
             />
             <InfoboxDetails
               Icon={PublicIcon}
-              text={convertDdToDmsCoords(
+              text={convertDdToDmsCoords([
                 selectedLocationInfo.latitude,
-                selectedLocationInfo.longitude
-              )}
+                selectedLocationInfo.longitude,
+              ])}
             />
           </div>
         </>
