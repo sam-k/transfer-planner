@@ -5,9 +5,9 @@ import parse from 'autosuggest-highlight/parse';
 import {inRange} from 'lodash-es';
 import React, {memo, useEffect, useMemo, useRef, useState} from 'react';
 
-import {useAppContext} from '../../../AppContext';
-import {API_SERVER_URL, DEBOUNCE_MS, ENV_VARS} from '../../../constants';
-import {debounceAsync, getHaversineDistKm} from '../../../utils';
+import {useAppContext} from '../../../../AppContext';
+import {API_SERVER_URL, DEBOUNCE_MS, ENV_VARS} from '../../../../constants';
+import {debounceAsync, getHaversineDistKm} from '../../../../utils';
 import './SearchField.css';
 import type {
   HighlightedSearchResult,

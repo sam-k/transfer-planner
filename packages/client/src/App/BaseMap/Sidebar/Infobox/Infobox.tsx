@@ -5,9 +5,11 @@ import {
 } from '@mui/icons-material';
 import {LinearProgress, Typography} from '@mui/material';
 import React, {memo, useCallback, useEffect, useMemo, useState} from 'react';
+import {useMap} from 'react-leaflet';
 
-import {API_SERVER_URL, ENV_VARS} from '../../../constants';
-import {convertDdToDmsCoords} from '../../../utils';
+import {API_SERVER_URL, ENV_VARS} from '../../../../constants';
+import {convertDdToDmsCoords} from '../../../../utils';
+import {useBaseMapContext} from '../../../BaseMapContext';
 import type {SearchResult} from '../SearchField';
 import type {LocationInfo} from '../Sidebar.types';
 import './Infobox.css';
@@ -35,6 +37,9 @@ const InfoboxDetails = ({
 /** Renders information about a location. */
 const Infobox = (props: InfoboxProps) => {
   const {searchApi, searchResult: selectedSearchResult} = props;
+
+  const mapRef = useMap();
+  const {setMarkers} = useBaseMapContext();
 
   // Whether the infobox contents are currently loading.
   const [isLoading, setIsLoading] = useState(false);
@@ -129,6 +134,17 @@ const Infobox = (props: InfoboxProps) => {
     }
     fetchLocationInfo(selectedSearchResult).then(location => {
       setSelectedLocationInfo(location);
+
+      mapRef.flyTo([location.latitude, location.longitude], /* zoom= */ 16);
+      console.log(location.label);
+      setMarkers?.([
+        {
+          label: location.label,
+          latitude: location.latitude,
+          longitude: location.longitude,
+          classNames: {icon: 'selectedLocation-icon'},
+        },
+      ]);
     });
     // Do not refetch if fetch function changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps

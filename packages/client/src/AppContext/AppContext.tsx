@@ -9,11 +9,11 @@ const AppContext = createContext<AppContextValue>({});
 
 /** Renders a provider for the `AppContext`. */
 export const AppContextProvider = (props: AppContextProviderProps) => {
-  const {currentPos, boundingBox, children} = props;
+  const {currentPos, tileApi, searchApi, boundingBox, children} = props;
 
   const contextValue = useMemo<AppContextValue>(
-    () => ({currentPos, boundingBox}),
-    [currentPos, boundingBox]
+    () => ({currentPos, tileApi, searchApi, boundingBox}),
+    [currentPos, tileApi, searchApi, boundingBox]
   );
 
   return (
