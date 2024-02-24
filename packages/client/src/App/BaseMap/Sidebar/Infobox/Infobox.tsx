@@ -7,7 +7,7 @@ import {LinearProgress, Typography} from '@mui/material';
 import React, {memo, useCallback, useEffect, useMemo, useState} from 'react';
 
 import {API_SERVER_URL, ENV_VARS} from '../../../../constants';
-import {convertDdToDmsCoords} from '../../../../utils';
+import {areCoordsInBounds, convertDdToDmsCoords} from '../../../../utils';
 import {useBaseMapContext} from '../../../BaseMapContext';
 import type {SearchResult} from '../SearchField';
 import type {LocationInfo} from '../Sidebar.types';
@@ -37,10 +37,13 @@ const InfoboxDetails = ({
 const Infobox = (props: InfoboxProps) => {
   const {searchApi, searchResult: selectedSearchResult} = props;
 
-  const {mapRef, setMarkers} = useBaseMapContext();
+  const {boundingBox, mapRef, setMarkers} = useBaseMapContext();
 
   // Whether the infobox contents are currently loading.
   const [isLoading, setIsLoading] = useState(false);
+
+  // Whether the selected location is out of bounds of the map.
+  const [isLocationOutOfBounds, setIsLocationOutOfBounds] = useState(false);
 
   /** Encoded fetch URL with the param `id`. */
   const encodedFetchLocationData = useMemo(() => {
@@ -133,6 +136,15 @@ const Infobox = (props: InfoboxProps) => {
     fetchLocationInfo(selectedSearchResult).then(location => {
       setSelectedLocationInfo(location);
 
+      if (
+        boundingBox &&
+        !areCoordsInBounds([location.latitude, location.longitude], boundingBox)
+      ) {
+        setIsLocationOutOfBounds(true);
+        return;
+      }
+
+      setIsLocationOutOfBounds(false);
       mapRef?.current?.flyTo(
         [location.latitude, location.longitude],
         /* zoom= */ 16
@@ -169,6 +181,11 @@ const Infobox = (props: InfoboxProps) => {
               {selectedLocationInfo.description}
             </Typography>
           </div>
+          {isLocationOutOfBounds && (
+            <Typography className="infobox-errorText" color="error">
+              Location is out of bounds.
+            </Typography>
+          )}
           <div className="infobox-detailsContainer">
             <InfoboxDetails
               Icon={MapIcon}

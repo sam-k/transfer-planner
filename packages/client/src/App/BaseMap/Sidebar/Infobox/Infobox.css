@@ -24,6 +24,10 @@
   font-weight: bold;
 }
 
+.infobox-errorText {
+  text-align: center;
+}
+
 .infobox-detailsContainer {
   display: flex;
   flex-direction: column;
