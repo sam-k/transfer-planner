@@ -45,3 +45,8 @@
   width: calc(100% - 44px);
   word-wrap: break-word;
 }
+
+.selectedLocation-icon {
+  background-color: #9b241d;
+  border-color: #da5040;
+}

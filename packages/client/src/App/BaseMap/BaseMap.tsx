@@ -1,6 +1,6 @@
 import {Map as LeafletMap} from 'leaflet';
 import {inRange} from 'lodash-es';
-import React, {memo, useEffect, useMemo, useRef} from 'react';
+import React, {memo, useEffect, useMemo, useRef, useState} from 'react';
 import {
   MapContainer,
   TileLayer,
@@ -10,15 +10,19 @@ import {
 
 import {useAppContext} from '../../AppContext';
 import {API_SERVER_URL, ENV_VARS} from '../../constants';
+import {BaseMapContextProvider} from '../BaseMapContext';
 import './BaseMap.css';
 import type {BaseMapProps} from './BaseMap.types';
-import CurrentPosMarker from './CurrentPosMarker';
+import Marker, {type MarkerProps} from './Marker';
+import Sidebar from './Sidebar';
 
 /** Renders the base map for the application. */
 const BaseMap = (props: BaseMapProps) => {
   const {tileApi, defaultCenter} = props;
 
-  const {currentPos, boundingBox} = useAppContext();
+  const {currentPos, searchApi, boundingBox} = useAppContext();
+
+  const [markers, setMarkers] = useState<ReadonlyArray<MarkerProps>>([]);
 
   const mapRef = useRef<LeafletMap>();
 
@@ -88,25 +92,41 @@ const BaseMap = (props: BaseMapProps) => {
   }, [tileApi]);
 
   return (
-    <MapContainer
-      className="map"
-      center={defaultCenter}
-      maxBounds={boundingBox}
-      maxBoundsViscosity={1}
-      zoom={16}
-      zoomControl={false}
-      ref={(el: LeafletMap) => {
-        if (el instanceof LeafletMap && boundingBox) {
-          el.setMinZoom(el.getBoundsZoom(boundingBox, /* inside= */ true));
-        }
-        mapRef.current = el;
-      }}
-      keyboard={false}
-    >
-      <TileLayer bounds={boundingBox} {...tileLayerProps} />
-      <CurrentPosMarker />
-      <ZoomControl position="bottomright" />
-    </MapContainer>
+    <BaseMapContextProvider setMarkers={setMarkers}>
+      <MapContainer
+        className="map"
+        center={defaultCenter}
+        maxBounds={boundingBox}
+        maxBoundsViscosity={1}
+        zoom={16}
+        zoomControl={false}
+        ref={(el: LeafletMap) => {
+          if (el instanceof LeafletMap && boundingBox) {
+            el.setMinZoom(el.getBoundsZoom(boundingBox, /* inside= */ true));
+          }
+          mapRef.current = el;
+        }}
+        keyboard={false}
+      >
+        <Sidebar searchApi={searchApi} />
+        <TileLayer bounds={boundingBox} {...tileLayerProps} />
+
+        <Marker
+          latitude={currentPos?.coords.latitude}
+          longitude={currentPos?.coords.longitude}
+          accuracyRadiusM={currentPos?.coords.accuracy}
+          classNames={{
+            accuracy: 'currentPos-accuracy',
+            icon: 'currentPos-icon',
+          }}
+        />
+        {markers.map((markerProps, i) => (
+          <Marker key={i} {...markerProps} />
+        ))}
+
+        <ZoomControl position="bottomright" />
+      </MapContainer>
+    </BaseMapContextProvider>
   );
 };
 

@@ -1,7 +1,7 @@
 import {uniqWith} from 'lodash-es';
 
-import {parseAndCheckFloat} from '../../../utils';
-import type {SearchApi} from '../../App.types';
+import {parseAndCheckFloat} from '../../../../utils';
+import type {SearchApi} from '../../../App.types';
 import type {
   FsqAutocompleteResponse,
   NominatimSearchResponse,

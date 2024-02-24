@@ -4,11 +4,10 @@ import React, {memo, useEffect, useState} from 'react';
 import {AppContextProvider} from '../AppContext';
 import type {AppProps} from './App.types';
 import BaseMap from './BaseMap';
-import Sidebar from './Sidebar';
 
 /** Renders the main application. */
 const App = (props: AppProps) => {
-  const {tileApi, searchApi, defaultCenter, ...additionalProps} = props;
+  const {tileApi, defaultCenter, ...additionalProps} = props;
 
   // Current position of the user device.
   const [currentPos, setCurrentPos] = useState<GeolocationPosition>();
@@ -26,8 +25,10 @@ const App = (props: AppProps) => {
 
   return (
     <StyledEngineProvider injectFirst>
-      <AppContextProvider currentPos={currentPos} {...additionalProps}>
-        <Sidebar searchApi={searchApi} />
+      <AppContextProvider
+        currentPos={currentPos}
+        {...{tileApi, ...additionalProps}}
+      >
         <BaseMap tileApi={tileApi} defaultCenter={defaultCenter} />
       </AppContextProvider>
     </StyledEngineProvider>
