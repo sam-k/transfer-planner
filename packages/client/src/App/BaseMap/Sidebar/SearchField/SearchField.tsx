@@ -9,6 +9,7 @@ import type {LatLngCoords} from '../../../../types';
 import {
   areCoordsInBounds,
   debounceAsync,
+  filterAndJoin,
   getHaversineDistKm,
 } from '../../../../utils';
 import {useBaseMapContext} from '../../../BaseMapContext';
@@ -122,7 +123,7 @@ const SearchField = (props: SearchFieldProps) => {
         break;
     }
 
-    const uriParamsStr = uriParams.filter(Boolean).join('&');
+    const uriParamsStr = filterAndJoin(uriParams, /* sep= */ '&');
     const fullUrl = baseUrl + (uriParamsStr ? `?${uriParamsStr}` : '');
     return {
       encodedUrl: encodeURIComponent(fullUrl),
@@ -145,13 +146,14 @@ const SearchField = (props: SearchFieldProps) => {
           const responseJson = await (
             await fetch(
               `${API_SERVER_URL}/fetch?` +
-                [
-                  `encodedUrl=${encodedUrl}`,
-                  encodedOptions ? `encodedOptions=${encodedOptions}` : '',
-                  `query=${encodeURIComponent(query)}`,
-                ]
-                  .filter(Boolean)
-                  .join('&')
+                filterAndJoin(
+                  [
+                    `encodedUrl=${encodedUrl}`,
+                    encodedOptions ? `encodedOptions=${encodedOptions}` : '',
+                    `query=${encodeURIComponent(query)}`,
+                  ],
+                  /* sep= */ '&'
+                )
             )
           ).json();
 

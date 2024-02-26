@@ -1,6 +1,6 @@
 import {uniqWith} from 'lodash-es';
 
-import {parseAndCheckFloat} from '../../../../utils';
+import {filterAndJoin, parseAndCheckFloat} from '../../../../utils';
 import type {SearchApi} from '../../../App.types';
 import type {
   FsqAutocompleteResponse,
@@ -41,9 +41,13 @@ const transformFsqAutocompleteResponse = (
       const apiId = fsq_id || address_id;
 
       const address =
-        [[streetAddress, locality, region].filter(Boolean).join(', '), postcode]
-          .filter(Boolean)
-          .join(' ') || undefined;
+        filterAndJoin(
+          [
+            filterAndJoin([streetAddress, locality, region], /* sep= */ ', '),
+            postcode,
+          ],
+          /* sep= */ ' '
+        ) || undefined;
 
       return {
         id: apiId || self.crypto.randomUUID(),
@@ -108,27 +112,25 @@ const transformNominatimSearchResponse = (
       const resolvedLocality = city || town || village || municipality;
       const resolvedRegion = state || state_district || region;
 
-      const label = name || [house_number, road].filter(Boolean).join(' ');
-      const description = [
-        name && road,
-        resolvedNeighborhood,
-        resolvedLocality,
-        resolvedRegion,
-      ]
-        .filter(Boolean)
-        .join(', ');
-      const address = [
+      const label = name || filterAndJoin([house_number, road], /* sep= */ ' ');
+      const description = filterAndJoin(
+        [name && road, resolvedNeighborhood, resolvedLocality, resolvedRegion],
+        /* sep= */ ', '
+      );
+      const address = filterAndJoin(
         [
-          [house_number, road].filter(Boolean).join(' '),
-          resolvedLocality,
-          resolvedRegion,
-        ]
-          .filter(Boolean)
-          .join(', '),
-        postcode,
-      ]
-        .filter(Boolean)
-        .join(' ');
+          filterAndJoin(
+            [
+              filterAndJoin([house_number, road], /* sep= */ ' '),
+              resolvedLocality,
+              resolvedRegion,
+            ],
+            /* sep= */ ', '
+          ),
+          postcode,
+        ],
+        /* sep= */ ' '
+      );
 
       return {
         id: apiId || self.crypto.randomUUID(),
