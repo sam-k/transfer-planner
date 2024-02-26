@@ -3,6 +3,7 @@ import {DivIcon} from 'leaflet';
 import React, {memo} from 'react';
 import {Circle, Marker as LeafletMarker, Tooltip} from 'react-leaflet';
 
+import {filterAndJoin} from '../../../utils';
 import './Marker.css';
 import type {MarkerProps} from './Marker.types';
 
@@ -14,9 +15,10 @@ const Marker = (props: MarkerProps) => {
     <>
       {accuracyRadiusM && (
         <Circle
-          className={['marker-accuracyRadius', classNames?.accuracy]
-            .filter(Boolean)
-            .join(' ')}
+          className={filterAndJoin(
+            ['marker-accuracyRadius', classNames?.accuracy],
+            /* sep= */ ' '
+          )}
           center={[latitude, longitude]}
           radius={accuracyRadiusM} // In m
           interactive={false}
@@ -26,9 +28,10 @@ const Marker = (props: MarkerProps) => {
         position={[latitude, longitude]}
         icon={
           new DivIcon({
-            className: ['marker-icon', classNames?.icon]
-              .filter(Boolean)
-              .join(' '),
+            className: filterAndJoin(
+              ['marker-icon', classNames?.icon],
+              /* sep= */ ' '
+            ),
             iconSize: [15, 15], // In px
             // Center offset of 15px x 15px circle with 3.75px borders.
             iconAnchor: [11.25, 11.25], // In px

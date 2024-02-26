@@ -1,3 +1,4 @@
+import {filterAndJoin} from '../../../../utils';
 import type {FsqAddressDetailsResponse, LocationResult} from './Infobox.types';
 
 /**
@@ -18,9 +19,13 @@ export const transformFsqAddressDetailsResponse = (
   } = response;
 
   const address =
-    [[streetAddress, locality, region].filter(Boolean).join(', '), postcode]
-      .filter(Boolean)
-      .join(' ') || undefined;
+    filterAndJoin(
+      [
+        filterAndJoin([streetAddress, locality, region], /* sep= */ ', '),
+        postcode,
+      ],
+      /* sep= */ ' '
+    ) || undefined;
 
   return {
     address: address ?? '',

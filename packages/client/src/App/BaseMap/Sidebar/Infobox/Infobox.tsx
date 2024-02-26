@@ -1,13 +1,18 @@
 import {
+  Directions as DirectionsIcon,
   Map as MapIcon,
   Public as PublicIcon,
   type SvgIconComponent,
 } from '@mui/icons-material';
-import {LinearProgress, Typography} from '@mui/material';
+import {Button, LinearProgress, Typography} from '@mui/material';
 import React, {memo, useCallback, useEffect, useMemo, useState} from 'react';
 
 import {API_SERVER_URL, ENV_VARS} from '../../../../constants';
-import {areCoordsInBounds, convertDdToDmsCoords} from '../../../../utils';
+import {
+  areCoordsInBounds,
+  convertDdToDmsCoords,
+  filterAndJoin,
+} from '../../../../utils';
 import {useBaseMapContext} from '../../../BaseMapContext';
 import type {SearchResult} from '../SearchField';
 import type {LocationInfo} from '../Sidebar.types';
@@ -99,13 +104,14 @@ const Infobox = (props: InfoboxProps) => {
           const responseJson = await (
             await fetch(
               `${API_SERVER_URL}/fetch?` +
-                [
-                  `encodedUrl=${encodedUrl}`,
-                  encodedOptions ? `encodedOptions=${encodedOptions}` : '',
-                  `id=${encodeURIComponent(searchResult.apiId ?? '')}`,
-                ]
-                  .filter(Boolean)
-                  .join('&')
+                filterAndJoin(
+                  [
+                    `encodedUrl=${encodedUrl}`,
+                    encodedOptions ? `encodedOptions=${encodedOptions}` : '',
+                    `id=${encodeURIComponent(searchResult.apiId ?? '')}`,
+                  ],
+                  /* sep= */ '&'
+                )
             )
           ).json();
           locationInfo = {
@@ -181,11 +187,23 @@ const Infobox = (props: InfoboxProps) => {
               {selectedLocationInfo.description}
             </Typography>
           </div>
-          {isLocationOutOfBounds && (
-            <Typography className="infobox-errorText" color="error">
-              Location is out of bounds.
-            </Typography>
-          )}
+          <div className="infobox-actionsContainer">
+            {isLocationOutOfBounds ? (
+              <Typography className="infobox-errorText" color="error">
+                Location is out of bounds.
+              </Typography>
+            ) : (
+              <Button color="primary" className="infobox-actionButton">
+                <DirectionsIcon className="infobox-actionButton-icon" />
+                <Typography
+                  className="infobox-actionButton-text"
+                  variant="caption"
+                >
+                  Directions
+                </Typography>
+              </Button>
+            )}
+          </div>
           <div className="infobox-detailsContainer">
             <InfoboxDetails
               Icon={MapIcon}

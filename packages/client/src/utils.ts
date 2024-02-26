@@ -11,6 +11,10 @@ export const parseAndCheckFloat = (floatStr: unknown) => {
   return isNaN(floatVal) ? undefined : floatVal;
 };
 
+/** Filters an array for truthy values, then joins it by the given separator. */
+export const filterAndJoin = (arr: unknown[], sep: string) =>
+  arr.filter(Boolean).join(sep);
+
 /** Calculates the haversine distance between two coordinates, in kilometers. */
 export const getHaversineDistKm = (
   coords1: LatLngCoords,

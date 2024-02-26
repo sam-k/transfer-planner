@@ -28,6 +28,27 @@
   text-align: center;
 }
 
+.infobox-actionsContainer {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.infobox-actionButton {
+  display: flex;
+  flex-direction: column;
+  width: 6.75rem;
+}
+
+.infobox-actionButton-icon {
+  margin-top: 5px;
+  font-size: 2rem;
+}
+
+.infobox-actionButton-text {
+  text-transform: none;
+}
+
 .infobox-detailsContainer {
   display: flex;
   flex-direction: column;
