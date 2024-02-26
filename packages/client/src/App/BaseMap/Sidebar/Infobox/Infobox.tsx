@@ -42,7 +42,7 @@ const InfoboxDetails = ({
 const Infobox = (props: InfoboxProps) => {
   const {searchApi, searchResult: selectedSearchResult} = props;
 
-  const {boundingBox, mapRef, setMarkers} = useBaseMapContext();
+  const {boundingBox, mapRef, setMarker} = useBaseMapContext();
 
   // Whether the infobox contents are currently loading.
   const [isLoading, setIsLoading] = useState(false);
@@ -155,14 +155,12 @@ const Infobox = (props: InfoboxProps) => {
         [location.latitude, location.longitude],
         /* zoom= */ 16
       );
-      setMarkers?.([
-        {
-          label: location.label,
-          latitude: location.latitude,
-          longitude: location.longitude,
-          classNames: {icon: 'selectedLocation-icon'},
-        },
-      ]);
+      setMarker?.({
+        label: location.label,
+        latitude: location.latitude,
+        longitude: location.longitude,
+        classNames: {icon: 'selectedLocation-icon'},
+      });
     });
     // Do not refetch if fetch function changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps

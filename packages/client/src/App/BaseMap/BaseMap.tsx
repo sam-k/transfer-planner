@@ -19,7 +19,7 @@ import Sidebar from './Sidebar';
 const BaseMap = (props: BaseMapProps) => {
   const {tileApi, searchApi, defaultCenter, boundingBox} = props;
 
-  const [markers, setMarkers] = useState<ReadonlyArray<MarkerProps>>([]);
+  const [marker, setMarker] = useState<MarkerProps>();
 
   const mapRef = useRef<LeafletMap>();
 
@@ -101,7 +101,7 @@ const BaseMap = (props: BaseMapProps) => {
       currentPos={currentPos}
       boundingBox={boundingBox}
       mapRef={mapRef}
-      setMarkers={setMarkers}
+      setMarker={setMarker}
     >
       <Sidebar searchApi={searchApi} />
       <MapContainer
@@ -132,9 +132,7 @@ const BaseMap = (props: BaseMapProps) => {
             }}
           />
         )}
-        {markers.map((markerProps, i) => (
-          <Marker key={i} {...markerProps} />
-        ))}
+        {marker && <Marker {...marker} />}
 
         <ZoomControl position="bottomright" />
       </MapContainer>

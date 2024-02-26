@@ -10,8 +10,8 @@ export interface BaseMapContextValue extends Pick<BaseMapProps, 'boundingBox'> {
   currentPos?: GeolocationPosition;
   /** Reference to the map. */
   mapRef?: RefObject<LeafletMap | undefined>;
-  /** Sets the map markers state. */
-  setMarkers?: Dispatch<SetStateAction<ReadonlyArray<MarkerProps>>>;
+  /** Sets the map marker state. */
+  setMarker?: Dispatch<SetStateAction<MarkerProps | undefined>>;
 }
 
 /** Type for props for the `BaseMapContext` provider. */

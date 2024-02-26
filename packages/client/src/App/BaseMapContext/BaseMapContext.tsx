@@ -9,11 +9,11 @@ const BaseMapContext = createContext<BaseMapContextValue>({});
 
 /** Renders a provider for the `BaseMapContext`. */
 export const BaseMapContextProvider = (props: BaseMapContextProviderProps) => {
-  const {currentPos, boundingBox, mapRef, setMarkers, children} = props;
+  const {currentPos, boundingBox, mapRef, setMarker, children} = props;
 
   const contextValue = useMemo<BaseMapContextValue>(
-    () => ({currentPos, boundingBox, mapRef, setMarkers}),
-    [currentPos, boundingBox, mapRef, setMarkers]
+    () => ({currentPos, boundingBox, mapRef, setMarker}),
+    [currentPos, boundingBox, mapRef, setMarker]
   );
 
   return (
