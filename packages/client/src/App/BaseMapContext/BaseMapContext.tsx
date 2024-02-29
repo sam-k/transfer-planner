@@ -10,6 +10,8 @@ const BaseMapContext = createContext<BaseMapContextValue>({});
 /** Renders a provider for the `BaseMapContext`. */
 export const BaseMapContextProvider = (props: BaseMapContextProviderProps) => {
   const {
+    tileApi,
+    searchApi,
     currentPos,
     boundingBox,
     mapRef,
@@ -21,6 +23,8 @@ export const BaseMapContextProvider = (props: BaseMapContextProviderProps) => {
 
   const contextValue = useMemo<BaseMapContextValue>(
     () => ({
+      tileApi,
+      searchApi,
       currentPos,
       boundingBox,
       mapRef,
@@ -28,7 +32,16 @@ export const BaseMapContextProvider = (props: BaseMapContextProviderProps) => {
       setStartMarker,
       setEndMarker,
     }),
-    [currentPos, boundingBox, mapRef, setMarker, setStartMarker, setEndMarker]
+    [
+      tileApi,
+      searchApi,
+      currentPos,
+      boundingBox,
+      mapRef,
+      setMarker,
+      setStartMarker,
+      setEndMarker,
+    ]
   );
 
   return (

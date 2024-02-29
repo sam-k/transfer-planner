@@ -100,6 +100,8 @@ const BaseMap = (props: BaseMapProps) => {
 
   return (
     <BaseMapContextProvider
+      tileApi={tileApi}
+      searchApi={searchApi}
       currentPos={currentPos}
       boundingBox={boundingBox}
       mapRef={mapRef}
@@ -107,7 +109,7 @@ const BaseMap = (props: BaseMapProps) => {
       setStartMarker={setStartMarker}
       setEndMarker={setEndMarker}
     >
-      <Sidebar searchApi={searchApi} />
+      <Sidebar />
       <MapContainer
         className="map"
         center={defaultCenter}

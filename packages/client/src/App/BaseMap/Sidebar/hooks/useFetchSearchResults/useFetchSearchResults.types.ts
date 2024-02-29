@@ -1,10 +1,4 @@
-import type {LocationInfo} from '../Sidebar.types';
-
-/** Type for props for the location search field. */
-export interface SearchFieldProps {
-  /** */
-  onChange?: (newValue: HighlightedSearchResult | null) => void;
-}
+import type {LocationInfo} from '../../Sidebar.types';
 
 /** Location search result. */
 export type SearchResult = Pick<

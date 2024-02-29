@@ -1,8 +1,3 @@
-import type {AppProps} from '../../App.types';
-
-/** Type for props for rendering the sidebar. */
-export type SidebarProps = Pick<AppProps, 'searchApi'>;
-
 /** Information about a fetched location. */
 export interface LocationInfo {
   /** Label of this location, usually the place name or the street number. */

@@ -3,12 +3,9 @@ import React, {memo, useState} from 'react';
 import Infobox from './Infobox';
 import SearchField, {type HighlightedSearchResult} from './SearchField';
 import './Sidebar.css';
-import type {SidebarProps} from './Sidebar.types';
 
 /** Renders the sidebar for the application. */
-const Sidebar = (props: SidebarProps) => {
-  const {searchApi} = props;
-
+const Sidebar = () => {
   const [selectedSearchResult1, setSelectedSearchResult1] =
     useState<HighlightedSearchResult | null>(null);
   const [selectedSearchResult2, setSelectedSearchResult2] =
@@ -21,12 +18,11 @@ const Sidebar = (props: SidebarProps) => {
       ) : (
         <>
           <SearchField
-            searchApi={searchApi}
             onChange={newSearchResult => {
               setSelectedSearchResult1(newSearchResult);
             }}
           />
-          <Infobox searchApi={searchApi} searchResult={selectedSearchResult1} />
+          <Infobox searchResult={selectedSearchResult1} />
         </>
       )}
     </div>

@@ -5,7 +5,8 @@ import type {BaseMapProps} from '../BaseMap';
 import type {MarkerProps} from '../BaseMap/Marker';
 
 /** Type for the value provided by `BaseMapContext`. */
-export interface BaseMapContextValue extends Pick<BaseMapProps, 'boundingBox'> {
+export interface BaseMapContextValue
+  extends Pick<BaseMapProps, 'tileApi' | 'searchApi' | 'boundingBox'> {
   /** Current position of the user device. */
   currentPos?: GeolocationPosition;
   /** Reference to the map. */

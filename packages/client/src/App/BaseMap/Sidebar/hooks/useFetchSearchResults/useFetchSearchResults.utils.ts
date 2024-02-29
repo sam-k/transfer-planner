@@ -1,12 +1,12 @@
 import {uniqWith} from 'lodash-es';
 
-import {filterAndJoin, parseAndCheckFloat} from '../../../../utils';
-import type {SearchApi} from '../../../App.types';
+import {filterAndJoin, parseAndCheckFloat} from '../../../../../utils';
+import type {SearchApi} from '../../../../App.types';
 import type {
   FsqAutocompleteResponse,
   NominatimSearchResponse,
   SearchResult,
-} from './SearchField.types';
+} from './useFetchSearchResults.types';
 
 /**
  * Transforms an Autocomplete response from Fourquare into standardized search
