@@ -4,12 +4,10 @@ import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';
 import React, {memo, useEffect, useRef, useState} from 'react';
 
+import type {HighlightedSearchResult} from '../Sidebar.types';
 import {useFetchSearchResults} from '../hooks';
 import './SearchField.css';
-import type {
-  HighlightedSearchResult,
-  SearchFieldProps,
-} from './SearchField.types';
+import type {SearchFieldProps} from './SearchField.types';
 
 /** Renders a search field for looking up locations. */
 const SearchField = (props: SearchFieldProps) => {

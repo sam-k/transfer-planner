@@ -62,6 +62,7 @@ const useFetchLocationInfo = () => {
             searchResult.latitude !== undefined &&
             searchResult.longitude !== undefined
           ) {
+            // Some Foursquare search results already include coordinates.
             break;
           }
           const {encodedUrl, encodedOptions} = encodedFetchLocationData;
@@ -87,6 +88,7 @@ const useFetchLocationInfo = () => {
 
         case 'nominatim':
         default:
+          // Nominatim search results already include coordinates.
           break;
       }
 

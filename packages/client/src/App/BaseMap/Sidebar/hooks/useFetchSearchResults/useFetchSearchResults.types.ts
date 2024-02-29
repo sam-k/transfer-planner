@@ -1,24 +1,7 @@
-import type {LocationInfo} from '../../Sidebar.types';
+import type {HighlightedSearchResult} from '../../Sidebar.types';
 
 /** Location search result. */
-export type SearchResult = Pick<
-  LocationInfo,
-  'label' | 'description' | 'attribution'
-> &
-  Partial<Pick<LocationInfo, 'address' | 'latitude' | 'longitude'>> & {
-    /** Some unique identifier for this search result. */
-    id: string;
-    /** Identifier for this search result from the search API. */
-    apiId?: string;
-  };
-
-/**
- * Location search result, with information about which substrings to highlight.
- */
-export interface HighlightedSearchResult extends SearchResult {
-  /** Index ranges for which substrings were matched from the search query. */
-  matchedRanges: Array<[number, number]>;
-}
+export type SearchResult = Omit<HighlightedSearchResult, 'matchedRanges'>;
 
 /**
  * Response from the Foursquare Autocomplete API. Includes only those fields
