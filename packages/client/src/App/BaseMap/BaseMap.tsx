@@ -20,6 +20,8 @@ const BaseMap = (props: BaseMapProps) => {
   const {tileApi, searchApi, defaultCenter, boundingBox} = props;
 
   const [marker, setMarker] = useState<MarkerProps>();
+  const [startMarker, setStartMarker] = useState<MarkerProps>();
+  const [endMarker, setEndMarker] = useState<MarkerProps>();
 
   const mapRef = useRef<LeafletMap>();
 
@@ -102,6 +104,8 @@ const BaseMap = (props: BaseMapProps) => {
       boundingBox={boundingBox}
       mapRef={mapRef}
       setMarker={setMarker}
+      setStartMarker={setStartMarker}
+      setEndMarker={setEndMarker}
     >
       <Sidebar searchApi={searchApi} />
       <MapContainer
@@ -132,7 +136,14 @@ const BaseMap = (props: BaseMapProps) => {
             }}
           />
         )}
-        {marker && <Marker {...marker} />}
+        {startMarker || endMarker ? (
+          <>
+            {startMarker && <Marker {...startMarker} />}
+            {endMarker && <Marker {...endMarker} />}
+          </>
+        ) : (
+          marker && <Marker {...marker} />
+        )}
 
         <ZoomControl position="bottomright" />
       </MapContainer>

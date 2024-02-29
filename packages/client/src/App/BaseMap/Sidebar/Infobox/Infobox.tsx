@@ -42,7 +42,14 @@ const InfoboxDetails = ({
 const Infobox = (props: InfoboxProps) => {
   const {searchApi, searchResult: selectedSearchResult} = props;
 
-  const {boundingBox, mapRef, setMarker} = useBaseMapContext();
+  const {
+    currentPos,
+    boundingBox,
+    mapRef,
+    setMarker,
+    setStartMarker,
+    setEndMarker,
+  } = useBaseMapContext();
 
   // Whether the infobox contents are currently loading.
   const [isLoading, setIsLoading] = useState(false);
@@ -166,6 +173,33 @@ const Infobox = (props: InfoboxProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedSearchResult]);
 
+  /** */
+  const onDirectionsClick = useCallback(() => {
+    if (currentPos) {
+      setStartMarker?.({
+        latitude: currentPos.coords.latitude,
+        longitude: currentPos.coords.longitude,
+      });
+    }
+    if (selectedLocationInfo) {
+      setEndMarker?.({
+        label: selectedLocationInfo.label,
+        latitude: selectedLocationInfo.latitude,
+        longitude: selectedLocationInfo.longitude,
+      });
+    }
+
+    if (currentPos && selectedLocationInfo) {
+      mapRef?.current?.flyToBounds(
+        [
+          [currentPos.coords.latitude, currentPos.coords.longitude],
+          [selectedLocationInfo.latitude, selectedLocationInfo.longitude],
+        ],
+        {maxZoom: 16}
+      );
+    }
+  }, [currentPos, mapRef, setStartMarker, setEndMarker, selectedLocationInfo]);
+
   if (!selectedSearchResult) {
     return null;
   }
@@ -191,7 +225,11 @@ const Infobox = (props: InfoboxProps) => {
                 Location is out of bounds.
               </Typography>
             ) : (
-              <Button color="primary" className="infobox-actionButton">
+              <Button
+                className="infobox-actionButton"
+                color="primary"
+                onClick={onDirectionsClick}
+              >
                 <DirectionsIcon className="infobox-actionButton-icon" />
                 <Typography
                   className="infobox-actionButton-text"
