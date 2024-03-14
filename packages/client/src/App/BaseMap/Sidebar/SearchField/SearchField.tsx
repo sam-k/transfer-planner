@@ -2,7 +2,8 @@ import {Place as PlaceIcon} from '@mui/icons-material';
 import {Autocomplete, TextField, Typography} from '@mui/material';
 import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';
-import React, {memo, useEffect, useRef, useState} from 'react';
+import {mergeWith} from 'lodash-es';
+import React, {memo, useEffect, useMemo, useRef, useState} from 'react';
 
 import type {HighlightedSearchResult} from '../Sidebar.types';
 import {useFetchSearchResults} from '../hooks';
@@ -11,7 +12,7 @@ import type {SearchFieldProps} from './SearchField.types';
 
 /** Renders a search field for looking up locations. */
 const SearchField = (props: SearchFieldProps) => {
-  const {onChange} = props;
+  const {classNames, placeholderText, onChange} = props;
 
   const {isFetching, fetchSearchResults} = useFetchSearchResults();
 
@@ -60,22 +61,38 @@ const SearchField = (props: SearchFieldProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [textInput, selectedSearchResult]);
 
+  /** */
+  const resolvedClassNames = useMemo(
+    () =>
+      mergeWith(
+        {},
+        classNames ?? {},
+        {
+          inputRoot: 'searchField-inputRoot',
+          paper: 'searchField-resultsContainer',
+        },
+        (objVal, srcVal) =>
+          objVal &&
+          srcVal &&
+          typeof objVal === 'string' &&
+          typeof srcVal === 'string'
+            ? [objVal, srcVal].join(' ')
+            : undefined
+      ),
+    [classNames]
+  );
+
   return (
     <Autocomplete
-      classes={{
-        inputRoot: 'searchField-inputRoot',
-        paper: 'searchField-resultsContainer',
-      }}
+      classes={resolvedClassNames}
       // Text input field props.
-      renderInput={renderInputProps => {
-        return (
-          <TextField
-            {...renderInputProps}
-            placeholder="Search for a location"
-            fullWidth
-          />
-        );
-      }}
+      renderInput={renderInputProps => (
+        <TextField
+          {...renderInputProps}
+          placeholder={placeholderText ?? 'Search for a location'}
+          fullWidth
+        />
+      )}
       onInputChange={(_, newInput, reason) => {
         if (reason !== 'reset') {
           // Update ref upon user input only.
@@ -117,7 +134,7 @@ const SearchField = (props: SearchFieldProps) => {
                     className={
                       matchedPart.highlight
                         ? 'searchField-result-name-highlight'
-                        : ''
+                        : undefined
                     }
                   >
                     {matchedPart.text}

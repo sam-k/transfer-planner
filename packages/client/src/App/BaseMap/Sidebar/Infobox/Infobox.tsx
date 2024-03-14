@@ -34,16 +34,9 @@ const InfoboxDetails = ({
 
 /** Renders information about a location. */
 const Infobox = (props: InfoboxProps) => {
-  const {searchResult: selectedSearchResult} = props;
+  const {searchResult: selectedSearchResult, showDirectionsOnMap} = props;
 
-  const {
-    currentPos,
-    boundingBox,
-    mapRef,
-    setMarker,
-    setStartMarker,
-    setEndMarker,
-  } = useBaseMapContext();
+  const {currentPos, boundingBox, mapRef, setMarker} = useBaseMapContext();
 
   const {isFetching, fetchLocationInfo} = useFetchLocationInfo();
 
@@ -84,32 +77,19 @@ const Infobox = (props: InfoboxProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedSearchResult]);
 
-  /** */
   const onDirectionsClick = useCallback(() => {
-    if (currentPos) {
-      setStartMarker?.({
+    showDirectionsOnMap?.(
+      currentPos && {
+        label: '',
+        description: '',
+        address: '',
         latitude: currentPos.coords.latitude,
         longitude: currentPos.coords.longitude,
-      });
-    }
-    if (selectedLocationInfo) {
-      setEndMarker?.({
-        label: selectedLocationInfo.label,
-        latitude: selectedLocationInfo.latitude,
-        longitude: selectedLocationInfo.longitude,
-      });
-    }
-
-    if (currentPos && selectedLocationInfo) {
-      mapRef?.current?.flyToBounds(
-        [
-          [currentPos.coords.latitude, currentPos.coords.longitude],
-          [selectedLocationInfo.latitude, selectedLocationInfo.longitude],
-        ],
-        {maxZoom: 16}
-      );
-    }
-  }, [currentPos, mapRef, setStartMarker, setEndMarker, selectedLocationInfo]);
+        attribution: '',
+      },
+      selectedLocationInfo
+    );
+  }, [showDirectionsOnMap, currentPos, selectedLocationInfo]);
 
   if (!selectedSearchResult) {
     return null;
