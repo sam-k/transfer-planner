@@ -19,7 +19,12 @@ import Sidebar from './Sidebar';
 const BaseMap = (props: BaseMapProps) => {
   const {tileApi, searchApi, defaultCenter, boundingBox} = props;
 
-  const [markers, setMarkers] = useState<ReadonlyArray<MarkerProps>>([]);
+  // Information for rendering a generic location marker.
+  const [marker, setMarker] = useState<MarkerProps>();
+  // Information for rendering the start location marker.
+  const [startMarker, setStartMarker] = useState<MarkerProps>();
+  // Information for rendering the end location marker.
+  const [endMarker, setEndMarker] = useState<MarkerProps>();
 
   const mapRef = useRef<LeafletMap>();
 
@@ -98,12 +103,16 @@ const BaseMap = (props: BaseMapProps) => {
 
   return (
     <BaseMapContextProvider
+      tileApi={tileApi}
+      searchApi={searchApi}
       currentPos={currentPos}
       boundingBox={boundingBox}
       mapRef={mapRef}
-      setMarkers={setMarkers}
+      setMarker={setMarker}
+      setStartMarker={setStartMarker}
+      setEndMarker={setEndMarker}
     >
-      <Sidebar searchApi={searchApi} />
+      <Sidebar />
       <MapContainer
         className="map"
         center={defaultCenter}
@@ -132,9 +141,16 @@ const BaseMap = (props: BaseMapProps) => {
             }}
           />
         )}
-        {markers.map((markerProps, i) => (
-          <Marker key={i} {...markerProps} />
-        ))}
+        {startMarker || endMarker ? (
+          <>
+            {startMarker && <Marker {...startMarker} />}
+            {endMarker && (
+              <Marker classNames={{icon: 'endMarker-icon'}} {...endMarker} />
+            )}
+          </>
+        ) : (
+          marker && <Marker {...marker} />
+        )}
 
         <ZoomControl position="bottomright" />
       </MapContainer>

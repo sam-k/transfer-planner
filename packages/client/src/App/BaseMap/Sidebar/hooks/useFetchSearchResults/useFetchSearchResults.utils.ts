@@ -1,12 +1,20 @@
 import {uniqWith} from 'lodash-es';
 
-import {filterAndJoin, parseAndCheckFloat} from '../../../../utils';
-import type {SearchApi} from '../../../App.types';
+import {filterAndJoin, parseAndCheckFloat} from '../../../../../utils';
+import type {SearchApi} from '../../../../App.types';
 import type {
   FsqAutocompleteResponse,
   NominatimSearchResponse,
   SearchResult,
-} from './SearchField.types';
+} from './useFetchSearchResults.types';
+
+/** Pseudo-search result corresponding to the current location. */
+export const currentPosSearchResult: SearchResult = {
+  id: 'CURRENT_POS',
+  label: 'Current location',
+  description: '',
+  attribution: '',
+} as const;
 
 /**
  * Transforms an Autocomplete response from Fourquare into standardized search

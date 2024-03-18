@@ -1,0 +1,54 @@
+.directionsSearchBox-container {
+  display: flex;
+  border-radius: 16px;
+  box-shadow: 0 0 8px rgba(0 0 0 / 25%);
+}
+
+.directionsSearchBox-sideContainer {
+  display: flex;
+  flex-direction: column;
+  row-gap: 4px;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  background-color: white;
+  border: 1px solid rgba(0 0 0 / 23%);
+}
+
+.directionsSearchBox-iconsContainer {
+  border-radius: 16px 0 0 16px;
+}
+
+.directionsSearchBox-iconContainer {
+  display: flex;
+  align-items: center;
+  height: 24px;
+}
+
+.directionsSearchBox-moreIcon {
+  color: rgba(0 0 0 / 23%);
+}
+
+.directionsSearchBox-fieldsContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  border-radius: 0;
+}
+
+.directionsSearchBox-fieldsContainer-swapped {
+  flex-direction: column-reverse;
+}
+
+.directionsSearchBox-inputRoot {
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.directionsSearchBox-inputRoot:focus-within {
+  border-radius: 0;
+}
+
+.directionsSearchBox-swapButtonContainer {
+  border-radius: 0 16px 16px 0;
+}

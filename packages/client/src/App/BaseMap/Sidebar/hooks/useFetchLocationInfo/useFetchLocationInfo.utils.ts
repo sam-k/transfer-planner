@@ -1,5 +1,8 @@
-import {filterAndJoin} from '../../../../utils';
-import type {FsqAddressDetailsResponse, LocationResult} from './Infobox.types';
+import {filterAndJoin} from '../../../../../utils';
+import type {
+  FsqAddressDetailsResponse,
+  LocationResult,
+} from './useFetchLocationInfo.types';
 
 /**
  * Transforms an Address Details response from Fourquare into a standardized
