@@ -19,8 +19,11 @@ import Sidebar from './Sidebar';
 const BaseMap = (props: BaseMapProps) => {
   const {tileApi, searchApi, defaultCenter, boundingBox} = props;
 
+  //
   const [marker, setMarker] = useState<MarkerProps>();
+  //
   const [startMarker, setStartMarker] = useState<MarkerProps>();
+  //
   const [endMarker, setEndMarker] = useState<MarkerProps>();
 
   const mapRef = useRef<LeafletMap>();

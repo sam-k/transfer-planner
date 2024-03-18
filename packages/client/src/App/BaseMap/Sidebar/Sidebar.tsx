@@ -6,7 +6,7 @@ import Infobox from './Infobox';
 import SearchField, {type SearchFieldProps} from './SearchField';
 import './Sidebar.css';
 import type {HighlightedSearchResult, LocationInfo} from './Sidebar.types';
-import {currentPosSearchResult} from './hooks';
+import {currentPosSearchResult, useFetchLocationInfo} from './hooks';
 
 /** */
 const currentPosHighlightedSearchResult: HighlightedSearchResult = {
@@ -18,6 +18,8 @@ const currentPosHighlightedSearchResult: HighlightedSearchResult = {
 const Sidebar = () => {
   const {mapRef, setStartMarker, setEndMarker} = useBaseMapContext();
 
+  const {fetchLocationInfo} = useFetchLocationInfo();
+
   //
   const [areDirectionsShown, setAreDirectionsShown] = useState(false);
 
@@ -28,6 +30,13 @@ const Sidebar = () => {
   const [primarySearchResults, setPrimarySearchResults] = useState<
     ReadonlySet<HighlightedSearchResult>
   >(new Set());
+
+  //
+  const [selectedStartLocationInfo, setSelectedStartLocationInfo] =
+    useState<LocationInfo>();
+  //
+  const [selectedEndLocationInfo, setSelectedEndLocationInfo] =
+    useState<LocationInfo>();
 
   /** */
   const defaultSearchFieldValues = useMemo<SearchFieldProps['defaultValue']>(
@@ -70,6 +79,16 @@ const Sidebar = () => {
           ],
           {maxZoom: 16}
         );
+      } else if (startLocationInfo) {
+        mapRef?.current?.flyTo([
+          startLocationInfo.latitude,
+          startLocationInfo.longitude,
+        ]);
+      } else if (endLocationInfo) {
+        mapRef?.current?.flyTo([
+          endLocationInfo.latitude,
+          endLocationInfo.longitude,
+        ]);
       }
     },
     [mapRef, setStartMarker, setEndMarker]
@@ -87,9 +106,28 @@ const Sidebar = () => {
             },
             end: defaultSearchFieldValues,
           }}
-          onStartChange={() => {}}
-          onEndChange={() => {}}
-          onSwap={() => {}}
+          onStartChange={async searchResult => {
+            const startLocationInfo = searchResult
+              ? await fetchLocationInfo(searchResult)
+              : undefined;
+            showDirectionsOnMap(startLocationInfo, selectedEndLocationInfo);
+            setSelectedStartLocationInfo(startLocationInfo);
+          }}
+          onEndChange={async searchResult => {
+            const endLocationInfo = searchResult
+              ? await fetchLocationInfo(searchResult)
+              : undefined;
+            showDirectionsOnMap(selectedStartLocationInfo, endLocationInfo);
+            setSelectedEndLocationInfo(endLocationInfo);
+          }}
+          onSwap={() => {
+            showDirectionsOnMap(
+              selectedEndLocationInfo,
+              selectedStartLocationInfo
+            );
+            setSelectedStartLocationInfo(selectedEndLocationInfo);
+            setSelectedEndLocationInfo(selectedStartLocationInfo);
+          }}
         />
       ) : (
         <>
@@ -102,7 +140,11 @@ const Sidebar = () => {
           />
           <Infobox
             searchResult={primarySelectedSearchResult}
-            showDirectionsOnMap={showDirectionsOnMap}
+            showDirectionsOnMap={(startLocationInfo, endLocationInfo) => {
+              showDirectionsOnMap(startLocationInfo, endLocationInfo);
+              setSelectedStartLocationInfo(startLocationInfo);
+              setSelectedEndLocationInfo(endLocationInfo);
+            }}
           />
         </>
       )}
