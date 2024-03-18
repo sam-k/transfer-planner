@@ -1,4 +1,4 @@
-/** Location search result. */
+/** Location search result, with the matched query highlighted. */
 export type HighlightedSearchResult = Pick<
   LocationInfo,
   'label' | 'description' | 'attribution'

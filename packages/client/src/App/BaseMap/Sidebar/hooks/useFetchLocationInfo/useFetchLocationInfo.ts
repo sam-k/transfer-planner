@@ -4,8 +4,10 @@ import {API_SERVER_URL, ENV_VARS} from '../../../../../constants';
 import {filterAndJoin} from '../../../../../utils';
 import {useBaseMapContext} from '../../../../BaseMapContext';
 import type {LocationInfo} from '../../Sidebar.types';
-import type {SearchResult} from '../useFetchSearchResults';
-import {currentPosSearchResult} from '../useFetchSearchResults';
+import {
+  currentPosSearchResult,
+  type SearchResult,
+} from '../useFetchSearchResults';
 import {transformFsqAddressDetailsResponse} from './useFetchLocationInfo.utils';
 
 /** Provides tools for fetching location information from a search result. */
