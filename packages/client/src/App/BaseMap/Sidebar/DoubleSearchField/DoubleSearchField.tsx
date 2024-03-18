@@ -13,13 +13,13 @@ import SearchField from '../SearchField';
 import './DoubleSearchField.css';
 import type {DoubleSearchFieldProps} from './DoubleSearchField.types';
 
-/** */
+/** Placeholder texts for the start and end search fields. */
 const placeholderTexts = {
   start: 'Search for a starting point',
   end: 'Search for a destination',
 } as const;
 
-/** */
+/** Renders an icon in a standardized container. */
 const IconsContainer = memo(({children}: {children: ReactNode}) => (
   <div
     className={[
@@ -39,7 +39,7 @@ const IconsContainer = memo(({children}: {children: ReactNode}) => (
   </div>
 ));
 
-/** */
+/** Renders a directions search field. */
 const DoubleSearchField = (props: DoubleSearchFieldProps) => {
   const {
     defaultValues: {start: defaultStartValue, end: defaultEndValue} = {},
@@ -48,10 +48,10 @@ const DoubleSearchField = (props: DoubleSearchFieldProps) => {
     onSwap,
   } = props;
 
-  //
+  // Whether the start and end locations are swapped.
   const [isSwapped, setIsSwapped] = useState(false);
 
-  /** */
+  /** Handles clicking the button for swapping the start and end locations. */
   const onSwapButtonClick = useCallback(() => {
     setIsSwapped(prevIsSwapped => !prevIsSwapped);
     onSwap?.();

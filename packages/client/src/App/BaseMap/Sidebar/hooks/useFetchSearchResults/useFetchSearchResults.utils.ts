@@ -8,7 +8,7 @@ import type {
   SearchResult,
 } from './useFetchSearchResults.types';
 
-/** */
+/** Pseudo-search result corresponding to the current location. */
 export const currentPosSearchResult: SearchResult = {
   id: 'CURRENT_POS',
   label: 'Current location',

@@ -18,7 +18,7 @@ export interface LocationInfo {
   label: string;
   /** Description of this location, usually the remaining full address. */
   description: string;
-  /** */
+  /** Full address of this location. */
   address: string;
   /** Latitude of this location. */
   latitude: number;

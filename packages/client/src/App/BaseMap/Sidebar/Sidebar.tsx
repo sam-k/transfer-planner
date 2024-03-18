@@ -8,7 +8,7 @@ import './Sidebar.css';
 import type {HighlightedSearchResult, LocationInfo} from './Sidebar.types';
 import {currentPosSearchResult, useFetchLocationInfo} from './hooks';
 
-/** */
+/** Pseudo-highlighted search result corresponding to the current location. */
 const currentPosHighlightedSearchResult: HighlightedSearchResult = {
   ...currentPosSearchResult,
   matchedRanges: [[0, currentPosSearchResult.label.length]],
@@ -20,26 +20,26 @@ const Sidebar = () => {
 
   const {fetchLocationInfo} = useFetchLocationInfo();
 
-  //
+  // Whether directions are shown on the map.
   const [areDirectionsShown, setAreDirectionsShown] = useState(false);
 
-  //
+  // The primary selected search result.
   const [primarySelectedSearchResult, setPrimarySelectedSearchResult] =
     useState<HighlightedSearchResult | null>(null);
-  //
+  // The primary search results.
   const [primarySearchResults, setPrimarySearchResults] = useState<
     ReadonlySet<HighlightedSearchResult>
   >(new Set());
 
-  //
+  // Information about the currently selected start location.
   const [selectedStartLocationInfo, setSelectedStartLocationInfo] =
     useState<LocationInfo>();
-  //
+  // Information about the currently selected end location.
   const [selectedEndLocationInfo, setSelectedEndLocationInfo] =
     useState<LocationInfo>();
 
-  /** */
-  const defaultSearchFieldValues = useMemo<SearchFieldProps['defaultValue']>(
+  /** Default value for the search field. */
+  const defaultSearchFieldValue = useMemo<SearchFieldProps['defaultValue']>(
     () => ({
       textInput: primarySelectedSearchResult?.label,
       selectedSearchResult: primarySelectedSearchResult,
@@ -48,7 +48,7 @@ const Sidebar = () => {
     [primarySelectedSearchResult, primarySearchResults]
   );
 
-  /** */
+  /** Shows directions from start to end locations on the map. */
   const showDirectionsOnMap = useCallback(
     (
       startLocationInfo: LocationInfo | undefined,
@@ -104,7 +104,7 @@ const Sidebar = () => {
               selectedSearchResult: currentPosHighlightedSearchResult,
               searchResults: new Set([currentPosHighlightedSearchResult]),
             },
-            end: defaultSearchFieldValues,
+            end: defaultSearchFieldValue,
           }}
           onStartChange={async searchResult => {
             const startLocationInfo = searchResult
@@ -132,7 +132,7 @@ const Sidebar = () => {
       ) : (
         <>
           <SearchField
-            defaultValue={defaultSearchFieldValues}
+            defaultValue={defaultSearchFieldValue}
             onChange={(newSelectedSearchResult, newSearchResults) => {
               setPrimarySelectedSearchResult(newSelectedSearchResult);
               setPrimarySearchResults(newSearchResults);

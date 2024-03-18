@@ -78,7 +78,7 @@ const SearchField = (props: SearchFieldProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [textInput, selectedSearchResult]);
 
-  /** */
+  /** Resolves default and consumer-provided class names. */
   const resolvedClassNames = useMemo(
     () =>
       mergeWith(

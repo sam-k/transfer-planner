@@ -4,7 +4,7 @@ import type {HighlightedSearchResult, LocationInfo} from '../Sidebar.types';
 export interface InfoboxProps {
   /** The search result corresponding to this location. */
   searchResult: HighlightedSearchResult | null;
-  /** */
+  /** Shows directions on the map. */
   showDirectionsOnMap?: (
     startLocationInfo: LocationInfo | undefined,
     endLocationInfo: LocationInfo | undefined

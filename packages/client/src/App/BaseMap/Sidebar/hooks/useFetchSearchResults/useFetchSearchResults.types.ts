@@ -95,8 +95,8 @@ export type NominatimSearchResponse = Array<{
   [key: string]: unknown;
 }>;
 
-/** */
+/** Type for props for tools fetching search results. */
 export interface UseFetchSearchResultsProps {
-  /** */
+  /** Whether to allow searching for the current location. */
   allowSearchingCurrentPos?: boolean;
 }
