@@ -77,7 +77,7 @@ const Sidebar = () => {
             [startLocationInfo.latitude, startLocationInfo.longitude],
             [endLocationInfo.latitude, endLocationInfo.longitude],
           ],
-          {maxZoom: 16}
+          {maxZoom: 16, padding: [1, 1]}
         );
       } else if (startLocationInfo) {
         mapRef?.current?.flyTo([
@@ -127,6 +127,13 @@ const Sidebar = () => {
             );
             setSelectedStartLocationInfo(selectedEndLocationInfo);
             setSelectedEndLocationInfo(selectedStartLocationInfo);
+          }}
+          onClose={() => {
+            setAreDirectionsShown(false);
+            setSelectedStartLocationInfo(undefined);
+            setSelectedEndLocationInfo(undefined);
+            setStartMarker?.(undefined);
+            setEndMarker?.(undefined);
           }}
         />
       ) : (
