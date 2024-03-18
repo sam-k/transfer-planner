@@ -7,7 +7,12 @@
   fill: #2c7cf6;
 }
 
-.currentPos-icon.marker-icon {
+.marker-icon.currentPos-icon {
   background-color: #2c7cf6;
   border: 3.75px solid white;
+}
+
+.marker-icon.endMarker-icon {
+  background-color: #9b241d;
+  border-color: #da5040;
 }

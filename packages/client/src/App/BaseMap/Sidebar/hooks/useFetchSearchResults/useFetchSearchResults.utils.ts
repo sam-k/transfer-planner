@@ -8,6 +8,14 @@ import type {
   SearchResult,
 } from './useFetchSearchResults.types';
 
+/** */
+export const currentPosSearchResult: SearchResult = {
+  id: 'CURRENT_POS',
+  label: 'Current location',
+  description: '',
+  attribution: '',
+} as const;
+
 /**
  * Transforms an Autocomplete response from Fourquare into standardized search
  * results.

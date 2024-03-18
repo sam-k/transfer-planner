@@ -9,11 +9,19 @@ import {
   getHaversineDistKm,
 } from '../../../../../utils';
 import {useBaseMapContext} from '../../../../BaseMapContext';
-import type {SearchResult} from './useFetchSearchResults.types';
-import {transformSearchResponse} from './useFetchSearchResults.utils';
+import type {
+  SearchResult,
+  UseFetchSearchResultsProps,
+} from './useFetchSearchResults.types';
+import {
+  currentPosSearchResult,
+  transformSearchResponse,
+} from './useFetchSearchResults.utils';
 
 /** Provides tools for fetching search results from a query. */
-const useFetchSearchResults = () => {
+const useFetchSearchResults = (props: UseFetchSearchResultsProps) => {
+  const {allowSearchingCurrentPos} = props;
+
   const {searchApi, currentPos, boundingBox} = useBaseMapContext();
 
   // Whether we're currently fetching search results.
@@ -119,6 +127,14 @@ const useFetchSearchResults = () => {
     () =>
       debounceAsync(
         async (query: string): Promise<SearchResult[]> => {
+          if (
+            allowSearchingCurrentPos &&
+            query.toLocaleLowerCase() ===
+              currentPosSearchResult.label.toLocaleLowerCase()
+          ) {
+            return [currentPosSearchResult];
+          }
+
           const {encodedUrl, encodedOptions} = encodedFetchSearchData;
           const responseJson = await (
             await fetch(
@@ -146,7 +162,7 @@ const useFetchSearchResults = () => {
           },
         }
       ),
-    [searchApi, encodedFetchSearchData]
+    [searchApi, allowSearchingCurrentPos, encodedFetchSearchData]
   );
 
   return {isFetching, fetchSearchResults};

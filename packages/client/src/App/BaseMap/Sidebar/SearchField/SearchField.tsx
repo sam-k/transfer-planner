@@ -1,4 +1,7 @@
-import {Place as PlaceIcon} from '@mui/icons-material';
+import {
+  MyLocation as MyLocationIcon,
+  Place as PlaceIcon,
+} from '@mui/icons-material';
 import {Autocomplete, TextField, Typography} from '@mui/material';
 import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';
@@ -6,28 +9,42 @@ import {mergeWith} from 'lodash-es';
 import React, {memo, useEffect, useMemo, useRef, useState} from 'react';
 
 import type {HighlightedSearchResult} from '../Sidebar.types';
-import {useFetchSearchResults} from '../hooks';
+import {currentPosSearchResult, useFetchSearchResults} from '../hooks';
 import './SearchField.css';
 import type {SearchFieldProps} from './SearchField.types';
 
 /** Renders a search field for looking up locations. */
 const SearchField = (props: SearchFieldProps) => {
-  const {classNames, placeholderText, onChange} = props;
+  const {
+    classNames,
+    placeholderText,
+    defaultValue: {
+      textInput: defaultTextInput,
+      selectedSearchResult: defaultSelectedSearchResult,
+      searchResults: defaultSearchResults,
+    } = {},
+    onChange,
+    allowSearchingCurrentPos,
+  } = props;
 
-  const {isFetching, fetchSearchResults} = useFetchSearchResults();
+  const {isFetching, fetchSearchResults} = useFetchSearchResults({
+    allowSearchingCurrentPos,
+  });
 
   // Current text input in the search field.
-  const [textInput, setTextInput] = useState('');
+  const [textInput, setTextInput] = useState(defaultTextInput ?? '');
   // Currently selected search result.
   const [selectedSearchResult, setSelectedSearchResult] =
-    useState<HighlightedSearchResult | null>(null);
+    useState<HighlightedSearchResult | null>(
+      defaultSelectedSearchResult ?? null
+    );
   // All fetched search results.
   const [searchResults, setSearchResults] = useState<
     ReadonlySet<HighlightedSearchResult>
-  >(new Set());
+  >(defaultSearchResults ?? new Set());
 
   /** Whether the current text input is from a selected value. */
-  const isInputFromValue = useRef(false);
+  const isInputFromValue = useRef(Boolean(defaultSelectedSearchResult));
   // Update search results.
   useEffect(() => {
     if (isInputFromValue.current) {
@@ -109,7 +126,7 @@ const SearchField = (props: SearchFieldProps) => {
         } else {
           setSelectedSearchResult(null);
         }
-        onChange?.(newValue);
+        onChange?.(newValue, searchResults);
       }}
       autoComplete
       includeInputInList
@@ -124,7 +141,11 @@ const SearchField = (props: SearchFieldProps) => {
         <li {...optionProps}>
           <div className="searchField-result">
             <div className="searchField-result-iconContainer">
-              <PlaceIcon sx={{color: 'text.secondary'}} />
+              {selectedSearchResult?.label === currentPosSearchResult.label ? (
+                <MyLocationIcon sx={{color: 'text.secondary'}} />
+              ) : (
+                <PlaceIcon sx={{color: 'text.secondary'}} />
+              )}
             </div>
             <div className="searchField-result-name">
               {parse(option.label, option.matchedRanges).map(

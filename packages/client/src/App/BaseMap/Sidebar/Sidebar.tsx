@@ -1,23 +1,43 @@
-import React, {memo, useCallback, useState} from 'react';
+import React, {memo, useCallback, useMemo, useState} from 'react';
 
-import {filterAndJoin} from '../../../utils';
 import {useBaseMapContext} from '../../BaseMapContext';
 import DoubleSearchField from './DoubleSearchField';
 import Infobox from './Infobox';
-import SearchField from './SearchField';
+import SearchField, {type SearchFieldProps} from './SearchField';
 import './Sidebar.css';
 import type {HighlightedSearchResult, LocationInfo} from './Sidebar.types';
+import {currentPosSearchResult} from './hooks';
+
+/** */
+const currentPosHighlightedSearchResult: HighlightedSearchResult = {
+  ...currentPosSearchResult,
+  matchedRanges: [[0, currentPosSearchResult.label.length]],
+} as const;
 
 /** Renders the sidebar for the application. */
 const Sidebar = () => {
   const {mapRef, setStartMarker, setEndMarker} = useBaseMapContext();
 
+  //
   const [areDirectionsShown, setAreDirectionsShown] = useState(false);
 
-  const [startSearchResult, setStartSearchResult] =
+  //
+  const [primarySelectedSearchResult, setPrimarySelectedSearchResult] =
     useState<HighlightedSearchResult | null>(null);
-  const [endSearchResult, setEndSearchResult] =
-    useState<HighlightedSearchResult | null>(null);
+  //
+  const [primarySearchResults, setPrimarySearchResults] = useState<
+    ReadonlySet<HighlightedSearchResult>
+  >(new Set());
+
+  /** */
+  const defaultSearchFieldValues = useMemo<SearchFieldProps['defaultValue']>(
+    () => ({
+      textInput: primarySelectedSearchResult?.label,
+      selectedSearchResult: primarySelectedSearchResult,
+      searchResults: primarySearchResults,
+    }),
+    [primarySelectedSearchResult, primarySearchResults]
+  );
 
   /** */
   const showDirectionsOnMap = useCallback(
@@ -57,30 +77,31 @@ const Sidebar = () => {
 
   return (
     <div className="sidebar">
-      {true ? (
+      {areDirectionsShown ? (
         <DoubleSearchField
-          onStartChange={newSearchResult => {
-            setStartSearchResult(newSearchResult);
+          defaultValues={{
+            start: {
+              textInput: currentPosHighlightedSearchResult.label,
+              selectedSearchResult: currentPosHighlightedSearchResult,
+              searchResults: new Set([currentPosHighlightedSearchResult]),
+            },
+            end: defaultSearchFieldValues,
           }}
-          onEndChange={newSearchResult => {
-            setEndSearchResult(newSearchResult);
-          }}
-          onSwap={() => {
-            const start = startSearchResult;
-            const end = endSearchResult;
-            setStartSearchResult(end);
-            setEndSearchResult(start);
-          }}
+          onStartChange={() => {}}
+          onEndChange={() => {}}
+          onSwap={() => {}}
         />
       ) : (
         <>
           <SearchField
-            onChange={newSearchResult => {
-              setStartSearchResult(newSearchResult);
+            defaultValue={defaultSearchFieldValues}
+            onChange={(newSelectedSearchResult, newSearchResults) => {
+              setPrimarySelectedSearchResult(newSelectedSearchResult);
+              setPrimarySearchResults(newSearchResults);
             }}
           />
           <Infobox
-            searchResult={startSearchResult}
+            searchResult={primarySelectedSearchResult}
             showDirectionsOnMap={showDirectionsOnMap}
           />
         </>

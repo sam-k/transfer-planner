@@ -141,7 +141,9 @@ const BaseMap = (props: BaseMapProps) => {
         {startMarker || endMarker ? (
           <>
             {startMarker && <Marker {...startMarker} />}
-            {endMarker && <Marker {...endMarker} />}
+            {endMarker && (
+              <Marker classNames={{icon: 'endMarker-icon'}} {...endMarker} />
+            )}
           </>
         ) : (
           marker && <Marker {...marker} />

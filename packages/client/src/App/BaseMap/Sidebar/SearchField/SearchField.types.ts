@@ -9,5 +9,19 @@ export interface SearchFieldProps {
   /** */
   placeholderText?: string;
   /** */
-  onChange?: (newValue: HighlightedSearchResult | null) => void;
+  defaultValue?: {
+    /** */
+    textInput?: string;
+    /** */
+    selectedSearchResult?: HighlightedSearchResult | null;
+    /** */
+    searchResults?: ReadonlySet<HighlightedSearchResult>;
+  };
+  /** */
+  onChange?: (
+    newValue: HighlightedSearchResult | null,
+    searchResults: ReadonlySet<HighlightedSearchResult>
+  ) => void;
+  /** */
+  allowSearchingCurrentPos?: boolean;
 }

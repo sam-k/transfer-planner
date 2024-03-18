@@ -5,11 +5,12 @@ import {filterAndJoin} from '../../../../../utils';
 import {useBaseMapContext} from '../../../../BaseMapContext';
 import type {LocationInfo} from '../../Sidebar.types';
 import type {SearchResult} from '../useFetchSearchResults';
+import {currentPosSearchResult} from '../useFetchSearchResults';
 import {transformFsqAddressDetailsResponse} from './useFetchLocationInfo.utils';
 
 /** Provides tools for fetching location information from a search result. */
 const useFetchLocationInfo = () => {
-  const {searchApi} = useBaseMapContext();
+  const {searchApi, currentPos} = useBaseMapContext();
 
   // Whether we're currently fetching a location.
   const [isFetching, setIsFetching] = useState(false);
@@ -45,6 +46,16 @@ const useFetchLocationInfo = () => {
   const fetchLocationInfo = useCallback(
     async (searchResult: SearchResult): Promise<LocationInfo> => {
       setIsFetching(true);
+
+      if (currentPos && searchResult.id === currentPosSearchResult.id) {
+        setIsFetching(false);
+        return {
+          ...searchResult,
+          address: '',
+          latitude: currentPos?.coords.latitude,
+          longitude: currentPos?.coords.longitude,
+        };
+      }
 
       let locationInfo: LocationInfo = {
         label: searchResult.label,
@@ -95,7 +106,7 @@ const useFetchLocationInfo = () => {
       setIsFetching(false);
       return locationInfo;
     },
-    [searchApi, encodedFetchLocationData]
+    [searchApi, currentPos, encodedFetchLocationData]
   );
 
   return {isFetching, fetchLocationInfo};

@@ -94,3 +94,9 @@ export type NominatimSearchResponse = Array<{
 
   [key: string]: unknown;
 }>;
+
+/** */
+export interface UseFetchSearchResultsProps {
+  /** */
+  allowSearchingCurrentPos?: boolean;
+}

@@ -5,22 +5,22 @@ import {
   TripOrigin as TripOriginIcon,
 } from '@mui/icons-material';
 import {IconButton} from '@mui/material';
-import React, {
-  memo,
-  useCallback,
-  useMemo,
-  useState,
-  type ReactNode,
-} from 'react';
-
 import {isArray} from 'lodash-es';
+import React, {memo, useCallback, useState, type ReactNode} from 'react';
+
 import {filterAndJoin} from '../../../../utils';
 import SearchField from '../SearchField';
 import './DoubleSearchField.css';
 import type {DoubleSearchFieldProps} from './DoubleSearchField.types';
 
 /** */
-const IconsContainer = ({children}: {children: ReactNode}) => (
+const placeholderTexts = {
+  start: 'Search for a starting point',
+  end: 'Search for a destination',
+} as const;
+
+/** */
+const IconsContainer = memo(({children}: {children: ReactNode}) => (
   <div
     className={[
       'doubleSearchField-sideContainer',
@@ -37,23 +37,19 @@ const IconsContainer = ({children}: {children: ReactNode}) => (
       <div className="doubleSearchField-iconContainer">{children}</div>
     )}
   </div>
-);
+));
 
 /** */
 const DoubleSearchField = (props: DoubleSearchFieldProps) => {
-  const {onStartChange, onEndChange, onSwap} = props;
+  const {
+    defaultValues: {start: defaultStartValue, end: defaultEndValue} = {},
+    onStartChange,
+    onEndChange,
+    onSwap,
+  } = props;
 
   //
   const [isSwapped, setIsSwapped] = useState(false);
-
-  /** */
-  const placeholderTexts = useMemo(
-    () => ({
-      start: 'Search for a starting point',
-      end: 'Search for a destination',
-    }),
-    []
-  );
 
   /** */
   const onSwapButtonClick = useCallback(() => {
@@ -73,7 +69,7 @@ const DoubleSearchField = (props: DoubleSearchFieldProps) => {
         className={filterAndJoin(
           [
             'doubleSearchField-fieldsContainer',
-            isSwapped ? 'doubleSearchField-fieldsContainer-swapped' : '',
+            isSwapped ? 'doubleSearchField-fieldsContainer-swapped' : undefined,
           ],
           /* sep= */ ' '
         )}
@@ -83,14 +79,18 @@ const DoubleSearchField = (props: DoubleSearchFieldProps) => {
           placeholderText={
             isSwapped ? placeholderTexts.end : placeholderTexts.start
           }
+          defaultValue={defaultStartValue}
           onChange={isSwapped ? onEndChange : onStartChange}
+          allowSearchingCurrentPos
         />
         <SearchField
           classNames={{inputRoot: 'doubleSearchField-inputRoot'}}
           placeholderText={
             isSwapped ? placeholderTexts.start : placeholderTexts.end
           }
+          defaultValue={defaultEndValue}
           onChange={isSwapped ? onStartChange : onEndChange}
+          allowSearchingCurrentPos
         />
       </div>
 
