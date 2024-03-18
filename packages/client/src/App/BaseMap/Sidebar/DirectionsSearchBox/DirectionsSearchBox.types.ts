@@ -2,7 +2,7 @@ import type {SearchFieldProps} from '../SearchField';
 
 /** Type for props for rendering a directions search box. */
 export interface DirectionsSearchBoxProps {
-  /** Default values for the directions search field. */
+  /** Default values for the directions search box. */
   defaultValues?: {
     /** Default value for the start search field. */
     start?: SearchFieldProps['defaultValue'];
