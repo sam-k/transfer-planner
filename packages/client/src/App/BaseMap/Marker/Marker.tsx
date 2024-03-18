@@ -21,7 +21,6 @@ const Marker = (props: MarkerProps) => {
           )}
           center={[latitude, longitude]}
           radius={accuracyRadiusM} // In m
-          interactive={false}
         />
       )}
       <LeafletMarker
@@ -37,7 +36,6 @@ const Marker = (props: MarkerProps) => {
             iconAnchor: [11.25, 11.25], // In px
           })
         }
-        interactive={false}
         keyboard={false}
       >
         {label && (

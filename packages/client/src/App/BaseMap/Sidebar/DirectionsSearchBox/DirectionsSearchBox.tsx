@@ -1,10 +1,11 @@
 import {
+  Close as CloseIcon,
   MoreVert as MoreVertIcon,
   Place as PlaceIcon,
   SwapVert as SwapVertIcon,
   TripOrigin as TripOriginIcon,
 } from '@mui/icons-material';
-import {IconButton} from '@mui/material';
+import {Button, IconButton} from '@mui/material';
 import {isArray} from 'lodash-es';
 import React, {memo, useCallback, useState, type ReactNode} from 'react';
 
@@ -23,18 +24,18 @@ const placeholderTexts = {
 const IconsContainer = memo(({children}: {children: ReactNode}) => (
   <div
     className={[
-      'directionsSearchBox-sideContainer',
-      'directionsSearchBox-iconsContainer',
+      'directionsSearchFields-sideContainer',
+      'directionsSearchFields-iconsContainer',
     ].join(' ')}
   >
     {isArray(children) ? (
       children.map((el, i) => (
-        <div key={i} className="directionsSearchBox-iconContainer">
+        <div key={i} className="directionsSearchFields-iconContainer">
           {el}
         </div>
       ))
     ) : (
-      <div className="directionsSearchBox-iconContainer">{children}</div>
+      <div className="directionsSearchFields-iconContainer">{children}</div>
     )}
   </div>
 ));
@@ -46,6 +47,7 @@ const DirectionsSearchBox = (props: DirectionsSearchBoxProps) => {
     onStartChange,
     onEndChange,
     onSwap,
+    onClose,
   } = props;
 
   // Whether the start and end locations are swapped.
@@ -59,53 +61,68 @@ const DirectionsSearchBox = (props: DirectionsSearchBoxProps) => {
 
   return (
     <div className="directionsSearchBox-container">
-      <IconsContainer>
-        <TripOriginIcon fontSize="small" sx={{color: 'text.secondary'}} />
-        <MoreVertIcon className="directionsSearchBox-moreIcon" />
-        <PlaceIcon sx={{color: 'error.main'}} />
-      </IconsContainer>
+      <div className="directionsSearchFields-container">
+        <IconsContainer>
+          <TripOriginIcon fontSize="small" sx={{color: 'text.secondary'}} />
+          <MoreVertIcon className="directionsSearchFields-moreIcon" />
+          <PlaceIcon sx={{color: 'error.main'}} />
+        </IconsContainer>
 
-      <div
-        className={filterAndJoin(
-          [
-            'directionsSearchBox-fieldsContainer',
-            isSwapped
-              ? 'directionsSearchBox-fieldsContainer-swapped'
-              : undefined,
-          ],
-          /* sep= */ ' '
-        )}
-      >
-        <SearchField
-          classNames={{inputRoot: 'directionsSearchBox-inputRoot'}}
-          placeholderText={
-            isSwapped ? placeholderTexts.end : placeholderTexts.start
-          }
-          defaultValue={defaultStartValue}
-          onChange={isSwapped ? onEndChange : onStartChange}
-          allowSearchingCurrentPos
-        />
-        <SearchField
-          classNames={{inputRoot: 'directionsSearchBox-inputRoot'}}
-          placeholderText={
-            isSwapped ? placeholderTexts.start : placeholderTexts.end
-          }
-          defaultValue={defaultEndValue}
-          onChange={isSwapped ? onStartChange : onEndChange}
-          allowSearchingCurrentPos
-        />
-      </div>
+        <div
+          className={filterAndJoin(
+            [
+              'directionsSearchFields-fieldsContainer',
+              isSwapped
+                ? 'directionsSearchFields-fieldsContainer-swapped'
+                : undefined,
+            ],
+            /* sep= */ ' '
+          )}
+        >
+          <SearchField
+            classNames={{inputRoot: 'directionsSearchFields-inputRoot'}}
+            placeholderText={
+              isSwapped ? placeholderTexts.end : placeholderTexts.start
+            }
+            defaultValue={defaultStartValue}
+            onChange={isSwapped ? onEndChange : onStartChange}
+            allowSearchingCurrentPos
+          />
+          <SearchField
+            classNames={{inputRoot: 'directionsSearchFields-inputRoot'}}
+            placeholderText={
+              isSwapped ? placeholderTexts.start : placeholderTexts.end
+            }
+            defaultValue={defaultEndValue}
+            onChange={isSwapped ? onStartChange : onEndChange}
+            allowSearchingCurrentPos
+          />
+        </div>
 
-      <div
-        className={[
-          'directionsSearchBox-sideContainer',
-          'directionsSearchBox-swapButtonContainer',
-        ].join(' ')}
-      >
-        <IconButton onClick={onSwapButtonClick}>
-          <SwapVertIcon sx={{color: 'text.secondary'}} />
-        </IconButton>
+        <div
+          className={[
+            'directionsSearchFields-sideContainer',
+            'directionsSearchFields-swapButtonContainer',
+          ].join(' ')}
+        >
+          <IconButton
+            onClick={() => {
+              onSwapButtonClick();
+            }}
+          >
+            <SwapVertIcon sx={{color: 'text.secondary'}} />
+          </IconButton>
+        </div>
       </div>
+      <Button
+        className="directionsSearchBox-closeButton"
+        variant="contained"
+        onClick={() => {
+          onClose?.();
+        }}
+      >
+        <CloseIcon fontSize="small" sx={{color: 'text.secondary'}} />
+      </Button>
     </div>
   );
 };

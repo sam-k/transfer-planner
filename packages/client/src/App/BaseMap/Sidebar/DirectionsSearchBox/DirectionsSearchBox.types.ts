@@ -15,4 +15,6 @@ export interface DirectionsSearchBoxProps {
   onEndChange?: SearchFieldProps['onChange'];
   /** Handles swapping the selected start and end search results. */
   onSwap?: () => void;
+  /** Handles closing the directions search box. */
+  onClose?: () => void;
 }

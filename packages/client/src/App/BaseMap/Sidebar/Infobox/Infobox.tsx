@@ -48,6 +48,7 @@ const Infobox = (props: InfoboxProps) => {
     useState<LocationInfo>();
   useEffect(() => {
     if (!selectedSearchResult) {
+      setMarker?.(undefined);
       return;
     }
     fetchLocationInfo(selectedSearchResult).then(location => {
