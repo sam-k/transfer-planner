@@ -10,8 +10,8 @@ import React, {memo, useCallback, useState, type ReactNode} from 'react';
 
 import {filterAndJoin} from '../../../../utils';
 import SearchField from '../SearchField';
-import './DoubleSearchField.css';
-import type {DoubleSearchFieldProps} from './DoubleSearchField.types';
+import './DirectionsSearchBox.css';
+import type {DirectionsSearchBoxProps} from './DirectionsSearchBox.types';
 
 /** Placeholder texts for the start and end search fields. */
 const placeholderTexts = {
@@ -23,24 +23,24 @@ const placeholderTexts = {
 const IconsContainer = memo(({children}: {children: ReactNode}) => (
   <div
     className={[
-      'doubleSearchField-sideContainer',
-      'doubleSearchField-iconsContainer',
+      'directionsSearchBox-sideContainer',
+      'directionsSearchBox-iconsContainer',
     ].join(' ')}
   >
     {isArray(children) ? (
       children.map((el, i) => (
-        <div key={i} className="doubleSearchField-iconContainer">
+        <div key={i} className="directionsSearchBox-iconContainer">
           {el}
         </div>
       ))
     ) : (
-      <div className="doubleSearchField-iconContainer">{children}</div>
+      <div className="directionsSearchBox-iconContainer">{children}</div>
     )}
   </div>
 ));
 
-/** Renders a directions search field. */
-const DoubleSearchField = (props: DoubleSearchFieldProps) => {
+/** Renders a directions search box. */
+const DirectionsSearchBox = (props: DirectionsSearchBoxProps) => {
   const {
     defaultValues: {start: defaultStartValue, end: defaultEndValue} = {},
     onStartChange,
@@ -58,24 +58,26 @@ const DoubleSearchField = (props: DoubleSearchFieldProps) => {
   }, [onSwap]);
 
   return (
-    <div className="doubleSearchField-container">
+    <div className="directionsSearchBox-container">
       <IconsContainer>
         <TripOriginIcon fontSize="small" sx={{color: 'text.secondary'}} />
-        <MoreVertIcon className="doubleSearchField-moreIcon" />
+        <MoreVertIcon className="directionsSearchBox-moreIcon" />
         <PlaceIcon sx={{color: 'error.main'}} />
       </IconsContainer>
 
       <div
         className={filterAndJoin(
           [
-            'doubleSearchField-fieldsContainer',
-            isSwapped ? 'doubleSearchField-fieldsContainer-swapped' : undefined,
+            'directionsSearchBox-fieldsContainer',
+            isSwapped
+              ? 'directionsSearchBox-fieldsContainer-swapped'
+              : undefined,
           ],
           /* sep= */ ' '
         )}
       >
         <SearchField
-          classNames={{inputRoot: 'doubleSearchField-inputRoot'}}
+          classNames={{inputRoot: 'directionsSearchBox-inputRoot'}}
           placeholderText={
             isSwapped ? placeholderTexts.end : placeholderTexts.start
           }
@@ -84,7 +86,7 @@ const DoubleSearchField = (props: DoubleSearchFieldProps) => {
           allowSearchingCurrentPos
         />
         <SearchField
-          classNames={{inputRoot: 'doubleSearchField-inputRoot'}}
+          classNames={{inputRoot: 'directionsSearchBox-inputRoot'}}
           placeholderText={
             isSwapped ? placeholderTexts.start : placeholderTexts.end
           }
@@ -96,8 +98,8 @@ const DoubleSearchField = (props: DoubleSearchFieldProps) => {
 
       <div
         className={[
-          'doubleSearchField-sideContainer',
-          'doubleSearchField-swapButtonContainer',
+          'directionsSearchBox-sideContainer',
+          'directionsSearchBox-swapButtonContainer',
         ].join(' ')}
       >
         <IconButton onClick={onSwapButtonClick}>
@@ -108,4 +110,4 @@ const DoubleSearchField = (props: DoubleSearchFieldProps) => {
   );
 };
 
-export default memo(DoubleSearchField);
+export default memo(DirectionsSearchBox);

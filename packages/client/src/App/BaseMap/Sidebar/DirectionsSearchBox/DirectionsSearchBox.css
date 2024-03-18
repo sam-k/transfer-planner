@@ -1,10 +1,10 @@
-.doubleSearchField-container {
+.directionsSearchBox-container {
   display: flex;
   border-radius: 16px;
   box-shadow: 0 0 8px rgba(0 0 0 / 25%);
 }
 
-.doubleSearchField-sideContainer {
+.directionsSearchBox-sideContainer {
   display: flex;
   flex-direction: column;
   row-gap: 4px;
@@ -15,40 +15,40 @@
   border: 1px solid rgba(0 0 0 / 23%);
 }
 
-.doubleSearchField-iconsContainer {
+.directionsSearchBox-iconsContainer {
   border-radius: 16px 0 0 16px;
 }
 
-.doubleSearchField-iconContainer {
+.directionsSearchBox-iconContainer {
   display: flex;
   align-items: center;
   height: 24px;
 }
 
-.doubleSearchField-moreIcon {
+.directionsSearchBox-moreIcon {
   color: rgba(0 0 0 / 23%);
 }
 
-.doubleSearchField-fieldsContainer {
+.directionsSearchBox-fieldsContainer {
   display: flex;
   flex-direction: column;
   width: 100%;
   border-radius: 0;
 }
 
-.doubleSearchField-fieldsContainer-swapped {
+.directionsSearchBox-fieldsContainer-swapped {
   flex-direction: column-reverse;
 }
 
-.doubleSearchField-inputRoot {
+.directionsSearchBox-inputRoot {
   box-shadow: none;
   border-radius: 0;
 }
 
-.doubleSearchField-inputRoot:focus-within {
+.directionsSearchBox-inputRoot:focus-within {
   border-radius: 0;
 }
 
-.doubleSearchField-swapButtonContainer {
+.directionsSearchBox-swapButtonContainer {
   border-radius: 0 16px 16px 0;
 }

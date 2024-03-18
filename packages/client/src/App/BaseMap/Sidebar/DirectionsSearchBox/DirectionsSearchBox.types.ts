@@ -1,7 +1,7 @@
 import type {SearchFieldProps} from '../SearchField';
 
-/** Type for props for rendering a directions search field. */
-export interface DoubleSearchFieldProps {
+/** Type for props for rendering a directions search box. */
+export interface DirectionsSearchBoxProps {
   /** Default values for the directions search field. */
   defaultValues?: {
     /** Default value for the start search field. */

@@ -1,7 +1,7 @@
 import React, {memo, useCallback, useMemo, useState} from 'react';
 
 import {useBaseMapContext} from '../../BaseMapContext';
-import DoubleSearchField from './DoubleSearchField';
+import DirectionsSearchBox from './DirectionsSearchBox';
 import Infobox from './Infobox';
 import SearchField, {type SearchFieldProps} from './SearchField';
 import './Sidebar.css';
@@ -97,7 +97,7 @@ const Sidebar = () => {
   return (
     <div className="sidebar">
       {areDirectionsShown ? (
-        <DoubleSearchField
+        <DirectionsSearchBox
           defaultValues={{
             start: {
               textInput: currentPosHighlightedSearchResult.label,
