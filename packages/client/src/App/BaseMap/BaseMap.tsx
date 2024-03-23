@@ -1,3 +1,4 @@
+import {ENV_VARS, SERVER_PORT} from '@internal/constants';
 import {Map as LeafletMap} from 'leaflet';
 import React, {memo, useEffect, useMemo, useRef, useState} from 'react';
 import {
@@ -7,7 +8,6 @@ import {
   type TileLayerProps,
 } from 'react-leaflet';
 
-import {API_SERVER_URL, ENV_VARS} from '../../constants';
 import {areCoordsInBounds} from '../../utils';
 import {BaseMapContextProvider} from '../BaseMapContext';
 import './BaseMap.css';
@@ -75,11 +75,11 @@ const BaseMap = (props: BaseMapProps) => {
         // TODO: Add Mapbox logo attribution.
         return {
           url:
-            `${API_SERVER_URL}/fetch?` +
+            `http://localhost:${SERVER_PORT}/fetch?` +
             [
               `encodedUrl=${encodeURIComponent(
                 'https://api.mapbox.com/styles/v1/mapbox/light-v11/tiles/{z}/{x}/{y}?' +
-                  `access_token=${ENV_VARS.mapboxApiKey}`
+                  `access_token=\${${ENV_VARS.mapboxApiKey}}`
               )}`,
               'z={z}',
               'x={x}',

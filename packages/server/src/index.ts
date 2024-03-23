@@ -1,3 +1,4 @@
+import {REPO_DIR, SERVER_PORT} from '@internal/constants';
 import chalk from 'chalk';
 import cors from 'cors';
 import {configDotenv} from 'dotenv';
@@ -6,12 +7,11 @@ import minimist from 'minimist';
 import {join as joinPath} from 'path';
 
 import {fetchWithQuery, type FetchWithQueryParams} from './api';
-import {DEFAULT_PORT, REPO_DIR} from './utils';
 
 configDotenv({path: joinPath(REPO_DIR, '.env')});
 
 const args = minimist(process.argv.slice(2));
-const port = parseInt(args.port, /* radix= */ 10) || DEFAULT_PORT;
+const port = parseInt(args.port, /* radix= */ 10) || SERVER_PORT;
 
 const app = express();
 app.use(cors());
