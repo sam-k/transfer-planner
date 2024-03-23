@@ -1,0 +1,27 @@
+{
+  "private": true,
+  "name": "@internal/constants",
+  "version": "1.0.0",
+  "license": "ISC",
+  "author": "Sam Kim",
+  "type": "module",
+  "packageManager": "pnpm@8.15.5",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "postinstall": "pnpm run build",
+    "build": "node ./scripts/build.js && eslint --fix dist"
+  },
+  "dependencies": {
+    "lodash-es": "^4.17.21"
+  },
+  "engines": {
+    "node": ">=17.0.0"
+  },
+  "engineStrict": true
+}

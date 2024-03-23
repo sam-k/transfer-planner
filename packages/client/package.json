@@ -1,17 +1,19 @@
 {
   "private": true,
-  "name": "@transfer-planner/client",
+  "name": "@internal/client",
   "version": "1.0.0",
   "license": "ISC",
   "author": "Sam Kim",
   "type": "module",
-  "packageManager": "pnpm@8.15.1",
+  "packageManager": "pnpm@8.15.5",
   "scripts": {
+    "postinstall": "pnpm run build",
     "build": "vite build"
   },
   "dependencies": {
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
+    "@internal/constants": "workspace:*",
     "@mui/icons-material": "^5.15.7",
     "@mui/material": "^5.15.7",
     "autosuggest-highlight": "^3.3.4",

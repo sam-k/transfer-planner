@@ -1,6 +1,6 @@
+import {ENV_VARS, SERVER_PORT} from '@internal/constants';
 import {useCallback, useMemo, useState} from 'react';
 
-import {API_SERVER_URL, ENV_VARS} from '../../../../../constants';
 import {filterAndJoin} from '../../../../../utils';
 import {useBaseMapContext} from '../../../../BaseMapContext';
 import type {LocationInfo} from '../../Sidebar.types';
@@ -27,7 +27,7 @@ const useFetchLocationInfo = () => {
         url = 'https://api.foursquare.com/v3/address/{id}';
         options = {
           headers: {
-            Authorization: ENV_VARS.fsqApiKey,
+            Authorization: `\${${ENV_VARS.fsqApiKey}}`,
           },
         };
         break;
@@ -81,7 +81,7 @@ const useFetchLocationInfo = () => {
           const {encodedUrl, encodedOptions} = encodedFetchLocationData;
           const responseJson = await (
             await fetch(
-              `${API_SERVER_URL}/fetch?` +
+              `http://localhost:${SERVER_PORT}/fetch?` +
                 filterAndJoin(
                   [
                     `encodedUrl=${encodedUrl}`,

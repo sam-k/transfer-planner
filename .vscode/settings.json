@@ -13,7 +13,8 @@
     "json",
     "jsonc",
     "typescript",
-    "typescriptreact"
+    "typescriptreact",
+    "yaml"
   ],
   "files.insertFinalNewline": true,
   "json.format.enable": false,
@@ -50,6 +51,9 @@
     "editor.defaultFormatter": "dbaeumer.vscode-eslint"
   },
   "[typescriptreact]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
+  "[yaml]": {
     "editor.defaultFormatter": "dbaeumer.vscode-eslint"
   }
 }

@@ -7,7 +7,7 @@ const config = {
   },
   overrides: [
     {
-      files: ['scripts/**/*.js', 'vite.config.ts'],
+      files: ['**/vite.config.*', '**/scripts/**/*'],
       rules: {
         'no-process-exit': 'off',
         'node/no-unpublished-import': 'off',
@@ -61,6 +61,11 @@ const config = {
       files: ['**/*.md'],
       extends: ['plugin:markdownlint/recommended'],
       parser: 'eslint-plugin-markdownlint/parser',
+    },
+    {
+      files: ['**/*.yaml'],
+      extends: ['plugin:yml/standard'],
+      parser: 'yaml-eslint-parser',
     },
   ],
 };

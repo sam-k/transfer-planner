@@ -1,7 +1,7 @@
+.env
 data/
 **/dist/
 **/node_modules/
-.env
 **/.DS_Store
 **/*.d.ts
 **/*.jar

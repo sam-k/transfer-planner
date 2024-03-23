@@ -1,6 +1,6 @@
+import {ENV_VARS, SERVER_PORT} from '@internal/constants';
 import {useMemo, useState} from 'react';
 
-import {API_SERVER_URL, DEBOUNCE_MS, ENV_VARS} from '../../../../../constants';
 import type {LatLngCoords} from '../../../../../types';
 import {
   areCoordsInBounds,
@@ -17,6 +17,9 @@ import {
   currentPosSearchResult,
   transformSearchResponse,
 } from './useFetchSearchResults.utils';
+
+/** Time to wait when debouncing a request, in milliseconds. */
+const DEBOUNCE_MS = 1500;
 
 /** Provides tools for fetching search results from a query. */
 const useFetchSearchResults = (props: UseFetchSearchResultsProps) => {
@@ -138,7 +141,7 @@ const useFetchSearchResults = (props: UseFetchSearchResultsProps) => {
           const {encodedUrl, encodedOptions} = encodedFetchSearchData;
           const responseJson = await (
             await fetch(
-              `${API_SERVER_URL}/fetch?` +
+              `http://localhost:${SERVER_PORT}/fetch?` +
                 filterAndJoin(
                   [
                     `encodedUrl=${encodedUrl}`,
