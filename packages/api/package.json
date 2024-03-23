@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "@internal/server",
+  "name": "@internal/api",
   "version": "1.0.0",
   "license": "ISC",
   "author": "Sam Kim",

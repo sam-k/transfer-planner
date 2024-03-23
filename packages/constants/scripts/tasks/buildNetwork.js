@@ -8,9 +8,9 @@ export default () => {
       comment: 'Port to use for the client.',
     },
     {
-      name: 'SERVER_PORT',
+      name: 'API_PORT',
       value: 3000,
-      comment: 'Port to use for the server.',
+      comment: 'Port to use for the API server.',
     },
     {
       name: 'OTP_PORT',

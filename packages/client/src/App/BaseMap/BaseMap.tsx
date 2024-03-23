@@ -1,4 +1,4 @@
-import {ENV_VARS, SERVER_PORT} from '@internal/constants';
+import {API_PORT, ENV_VARS} from '@internal/constants';
 import {Map as LeafletMap} from 'leaflet';
 import React, {memo, useEffect, useMemo, useRef, useState} from 'react';
 import {
@@ -75,7 +75,7 @@ const BaseMap = (props: BaseMapProps) => {
         // TODO: Add Mapbox logo attribution.
         return {
           url:
-            `http://localhost:${SERVER_PORT}/fetch?` +
+            `http://localhost:${API_PORT}/fetch?` +
             [
               `encodedUrl=${encodeURIComponent(
                 'https://api.mapbox.com/styles/v1/mapbox/light-v11/tiles/{z}/{x}/{y}?' +
