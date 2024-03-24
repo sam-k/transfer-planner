@@ -8,7 +8,8 @@
   "packageManager": "pnpm@8.15.5",
   "scripts": {
     "postinstall": "pnpm run build",
-    "build": "vite build"
+    "build": "vite build",
+    "start": "vite"
   },
   "dependencies": {
     "@emotion/react": "^11.11.3",
