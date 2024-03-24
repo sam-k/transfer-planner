@@ -15,9 +15,11 @@
   },
   "scripts": {
     "postinstall": "pnpm run build",
-    "build": "node --loader=ts-node/esm ./scripts/build.ts && eslint --fix dist"
+    "build": "node --loader=ts-node/esm ./scripts/build.ts"
   },
-  "dependencies": {
+  "devDependencies": {
+    "@internal/script-utils": "workspace:*",
+    "glob": "^10.3.10",
     "lodash-es": "^4.17.21"
   },
   "engines": {

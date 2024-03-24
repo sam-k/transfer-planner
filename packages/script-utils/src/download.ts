@@ -23,9 +23,9 @@ export const downloadFromUrl = ({
   url: string;
   /** Absolute file path to which to write the downloaded data. */
   outAbsolutePath: string;
-  options: RequestOptions;
+  options?: RequestOptions;
   /** All redirects visited so far. */
-  redirectHistory: Set<string>;
+  redirectHistory?: Set<string>;
 }): Promise<void> =>
   new Promise((resolve, reject) => {
     const pipeFn = (res: IncomingMessage) => {

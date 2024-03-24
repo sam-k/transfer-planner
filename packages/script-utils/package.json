@@ -15,7 +15,7 @@
   },
   "scripts": {
     "postinstall": "pnpm run build",
-    "build": "tsc"
+    "build": "node --loader=ts-node/esm ./scripts/build.ts"
   },
   "dependencies": {
     "chalk": "^5.3.0",

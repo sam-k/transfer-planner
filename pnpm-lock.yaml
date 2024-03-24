@@ -177,7 +177,13 @@ importers:
         version: 5.2.0(@types/node@20.8.2)
 
   packages/constants:
-    dependencies:
+    devDependencies:
+      '@internal/script-utils':
+        specifier: workspace:*
+        version: link:../script-utils
+      glob:
+        specifier: ^10.3.10
+        version: 10.3.10
       lodash-es:
         specifier: ^4.17.21
         version: 4.17.21

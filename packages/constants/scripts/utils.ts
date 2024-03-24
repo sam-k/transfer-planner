@@ -1,4 +1,4 @@
-import {createWriteStream, existsSync, unlinkSync, writeFile} from 'fs';
+import {createWriteStream, writeFile} from 'fs';
 import {dirname, join as joinPath} from 'path';
 import {fileURLToPath} from 'url';
 
@@ -8,8 +8,11 @@ export const REPO_DIR = joinPath(
   '../../..'
 );
 
+/** Path of the current package. */
+export const PKG_DIR = joinPath(REPO_DIR, 'packages/constants');
+
 /** Path of the generated distribution directory. */
-export const DIST_DIR = joinPath(REPO_DIR, 'packages/constants/dist');
+export const DIST_DIR = joinPath(PKG_DIR, 'dist');
 
 /**
  * Writes content and its declaration to a file.
@@ -22,11 +25,7 @@ export const writeContentWithDecl = (
   declContent: string
 ) => {
   const writeData = (name: string, data: string) => {
-    const filePath = joinPath(DIST_DIR, name);
-    if (existsSync(filePath)) {
-      unlinkSync(filePath);
-    }
-    writeFile(filePath, data, err => {
+    writeFile(joinPath(DIST_DIR, name), data, err => {
       if (err) {
         throw err;
       }

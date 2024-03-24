@@ -20,11 +20,11 @@ export const spawnCmd = ({
 }: {
   name: string;
   cmd: string;
-  args: string[];
+  args?: string[];
   /** Collects stdout if true; prints to console if false. */
-  collectStdout: boolean;
+  collectStdout?: boolean;
   /** Collects stderr if true; prints to console if false. */
-  collectStderr: boolean;
+  collectStderr?: boolean;
 }): Promise<{stdout: string; stderr: string}> =>
   new Promise((resolve, reject) => {
     const proc = spawn(cmd, args);
