@@ -14,16 +14,14 @@ export const DIST_DIR = joinPath(REPO_DIR, 'packages/constants/dist');
 /**
  * Writes content and its declaration to a file.
  *
- * @param {string} baseName Base name of the file, without extension
- * @param {string} content Content
- * @param {string} declContent Declaration content
+ * @param baseName Base name of the file, without extension
  */
-export const writeContentWithDecl = (baseName, content, declContent) => {
-  /**
-   * @param {string} name
-   * @param {string} data
-   */
-  const writeData = (name, data) => {
+export const writeContentWithDecl = (
+  baseName: string,
+  content: string,
+  declContent: string
+) => {
+  const writeData = (name: string, data: string) => {
     const filePath = joinPath(DIST_DIR, name);
     if (existsSync(filePath)) {
       unlinkSync(filePath);
@@ -47,19 +45,18 @@ export const writeContentWithDecl = (baseName, content, declContent) => {
 };
 
 /**
- * @typedef {Object} PrimitiveInfo Information about a primitive value.
- * @property {string} name Variable name
- * @property {string | number | boolean} value Variable value
- * @property {string=} comment Comment for the variable, if any
- */
-
-/**
  * Writes primitives and their declaration to a file.
  *
  * @param {string} baseName Base name of the file, without extension
- * @param {PrimitiveInfo[]} primitives
  */
-export const writePrimitivesWithDecl = (baseName, primitives) => {
+export const writePrimitivesWithDecl = (
+  baseName: string,
+  primitives: Array<{
+    name: string;
+    value: string | number | boolean;
+    comment?: string;
+  }>
+) => {
   writeContentWithDecl(
     baseName,
     primitives

@@ -1,12 +1,14 @@
-import {existsSync, unlinkSync} from 'fs';
+import {existsSync, mkdirSync, unlinkSync} from 'fs';
 import {join as joinPath} from 'path';
 
-import buildDir from './tasks/buildDir.js';
-import buildEnv from './tasks/buildEnv.js';
-import buildNetwork from './tasks/buildNetwork.js';
-import {DIST_DIR} from './utils.js';
+import {buildDir, buildEnv, buildNetwork} from './tasks';
+import {DIST_DIR} from './utils';
 
 const main = () => {
+  if (!existsSync(DIST_DIR)) {
+    mkdirSync(DIST_DIR);
+  }
+
   const indexPath = joinPath(DIST_DIR, 'index.js');
   if (existsSync(indexPath)) {
     unlinkSync(indexPath);

@@ -1,4 +1,4 @@
-import {REPO_DIR, writePrimitivesWithDecl} from '../utils.js';
+import {REPO_DIR, writePrimitivesWithDecl} from '../utils';
 
 export default () => {
   writePrimitivesWithDecl('dir', [

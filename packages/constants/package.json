@@ -15,7 +15,7 @@
   },
   "scripts": {
     "postinstall": "pnpm run build",
-    "build": "node ./scripts/build.js && eslint --fix dist"
+    "build": "node --loader=ts-node/esm ./scripts/build.ts && eslint --fix dist"
   },
   "dependencies": {
     "lodash-es": "^4.17.21"

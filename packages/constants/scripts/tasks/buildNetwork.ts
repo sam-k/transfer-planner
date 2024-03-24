@@ -1,4 +1,4 @@
-import {writePrimitivesWithDecl} from '../utils.js';
+import {writePrimitivesWithDecl} from '../utils';
 
 export default () => {
   writePrimitivesWithDecl('network', [

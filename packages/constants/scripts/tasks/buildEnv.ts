@@ -2,7 +2,7 @@ import {existsSync, readFileSync} from 'fs';
 import {camelCase} from 'lodash-es';
 import {join as joinPath} from 'path';
 
-import {REPO_DIR, writeContentWithDecl} from '../utils.js';
+import {REPO_DIR, writeContentWithDecl} from '../utils';
 
 export default () => {
   const dotEnvPath = joinPath(REPO_DIR, '.env');

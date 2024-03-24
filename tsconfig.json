@@ -18,7 +18,8 @@
   "ts-node": {
     "esm": true,
     "experimentalResolver": true,
-    "experimentalSpecifierResolution": "node"
+    "experimentalSpecifierResolution": "node",
+    "transpileOnly": true
   },
   "include": ["**/src/"]
 }
