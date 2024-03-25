@@ -1,5 +1,6 @@
-import {buildOtp} from './tasks/index.js';
-import {getArgs, handleError, printUsage} from './utils/index.js';
+import {getArgs, handleError, printUsage} from '@internal/script-utils';
+
+import {buildOtp} from './tasks';
 
 const main = async () => {
   const argv = getArgs();

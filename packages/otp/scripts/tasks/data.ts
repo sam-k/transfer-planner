@@ -1,38 +1,32 @@
-import chalk from 'chalk';
-import {existsSync, readFileSync} from 'fs';
-import {join as joinPath} from 'path';
-
-import {CONFIG_DIR, DATA_DIR} from '../constants/index.js';
+import {REPO_DIR} from '@internal/constants';
 import {
   DownloadError,
   downloadFromUrl,
   printInfo,
   printWarn,
-} from '../utils/index.js';
+} from '@internal/script-utils';
+import {existsSync, mkdirSync, readFileSync} from 'fs';
+import {join as joinPath} from 'path';
+
+import type {DataSources} from '../../config/schemas/dataSources.schema';
+import {CONFIG_DIR, DATA_DIR, configureDotEnv} from '../utils';
 
 /** Path of the config specifying all data sources. */
 const DATA_SOURCES_CONFIG_PATH = joinPath(CONFIG_DIR, 'dataSources.json');
 
-/** Regex for matching secrets within data source URLs. */
-const SECRET_REGEX = /\${(.+)}/;
-
-/**
- * Gets the full name of a data source.
- *
- * @param {string} id
- * @param {string=} description
- */
-const getDataName = (id, description) =>
+/** Gets the full name of a data source. */
+const getDataName = (id: string, description?: string) =>
   id + (description ? ` (${description})` : '');
 
 /**
  * Downloads data specified by geographical region IDs.
  *
- * @param {string[]} regionIds Region IDs, or all such IDs if unspecified
+ * @param regionIds Region IDs, or all such IDs if unspecified
  */
-export const downloadDataForRegions = async regionIds => {
-  /** @type {import('../../config/schemas/index.js').DataSources} */
-  const dataSourcesConfig = JSON.parse(
+export const downloadDataForRegions = async (regionIds: string[]) => {
+  configureDotEnv();
+
+  const dataSourcesConfig: DataSources = JSON.parse(
     readFileSync(DATA_SOURCES_CONFIG_PATH).toString()
   );
   if (regionIds.length) {
@@ -42,29 +36,31 @@ export const downloadDataForRegions = async regionIds => {
     );
   }
 
-  for (const region of dataSourcesConfig.regions) {
-    const existingSources = region.sources.filter(
-      source =>
-        source.fileName && existsSync(joinPath(DATA_DIR, source.fileName))
-    );
-    if (existingSources.length) {
-      printWarn(
-        `Deleting existing data for: ${getDataName(
-          chalk.bold(region.id),
-          region.description
-        )}...`,
-        ...existingSources.map(
-          source => `- ${getDataName(source.id, source.description)}`
-        )
+  if (!existsSync(DATA_DIR)) {
+    printInfo('Creating data directory...');
+    mkdirSync(DATA_DIR);
+  } else {
+    for (const region of dataSourcesConfig.regions) {
+      const existingSources = region.sources.filter(
+        source =>
+          source.fileName && existsSync(joinPath(DATA_DIR, source.fileName))
       );
+      if (existingSources.length) {
+        printWarn(
+          `Deleting existing data for: ${getDataName(
+            region.id,
+            region.description
+          )}...`,
+          ...existingSources.map(
+            source => `- ${getDataName(source.id, source.description)}`
+          )
+        );
+      }
     }
   }
   for (const region of dataSourcesConfig.regions) {
     printInfo(
-      `Fetching data for: ${getDataName(
-        chalk.bold(region.id),
-        region.description
-      )}...`,
+      `Fetching data for: ${getDataName(region.id, region.description)}...`,
       ...region.sources.map(
         source => `- ${getDataName(source.id, source.description)}`
       )
@@ -89,14 +85,11 @@ export const downloadDataForRegions = async regionIds => {
         }
 
         let dataUrl = source.url;
-        const [match, secretId] = dataUrl.match(SECRET_REGEX) ?? [];
+        const [match, secretId] = dataUrl.match(/\${(.+)}/) ?? [];
         if (match) {
           const secret = process.env[secretId];
           if (!secret) {
-            throw new DownloadError(
-              unifiedId,
-              `Secret ${chalk.bold(secretId)} not found.`
-            );
+            throw new DownloadError(unifiedId, `Secret ${secretId} not found.`);
           }
           dataUrl = dataUrl.replace(`\${${secretId}}`, secret);
         }

@@ -19,6 +19,7 @@
   },
   "devDependencies": {
     "@internal/script-utils": "workspace:*",
+    "@types/lodash-es": "^4.17.12",
     "glob": "^10.3.10",
     "lodash-es": "^4.17.21"
   },

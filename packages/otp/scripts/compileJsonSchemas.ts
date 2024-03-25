@@ -1,8 +1,8 @@
+import {getArgs, handleError, printUsage} from '@internal/script-utils';
 import {join as joinPath} from 'path';
 
-import {CONFIG_DIR} from './constants/paths.js';
-import {compileAllSchemasInDir} from './tasks/index.js';
-import {getArgs, handleError, printUsage} from './utils/index.js';
+import {compileAllSchemasInDir} from './tasks';
+import {CONFIG_DIR} from './utils';
 
 /** Directory for JSON schemas. */
 export const SCHEMA_DIRS = [joinPath(CONFIG_DIR, 'schemas')];

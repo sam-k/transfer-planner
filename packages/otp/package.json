@@ -1,0 +1,33 @@
+{
+  "private": true,
+  "name": "@internal/otp",
+  "version": "1.0.0",
+  "license": "ISC",
+  "author": "Sam Kim",
+  "type": "module",
+  "packageManager": "pnpm@8.15.5",
+  "scripts": {
+    "build": "pnpm run compile-json-schemas",
+    "compile-json-schemas": "node --loader=ts-node/esm ./scripts/compileJsonSchemas.ts",
+    "build-otp": "node --loader=ts-node/esm ./scripts/buildOtp.ts",
+    "install-data": "node --loader=ts-node/esm --require dotenv/config ./scripts/installData.ts",
+    "postinstall": "pnpm run build",
+    "start": "node --loader=ts-node/esm ./scripts/runOtp.ts"
+  },
+  "devDependencies": {
+    "@internal/constants": "workspace:*",
+    "@internal/script-utils": "workspace:*",
+    "@octokit/request": "^8.1.6",
+    "@octokit/request-error": "^5.0.1",
+    "@octokit/types": "^12.4.0",
+    "@types/lodash-es": "^4.17.12",
+    "dotenv": "^16.4.1",
+    "glob": "^10.3.10",
+    "json-schema-to-typescript": "^13.1.2",
+    "lodash-es": "^4.17.21"
+  },
+  "engines": {
+    "node": ">=17.0.0"
+  },
+  "engineStrict": true
+}

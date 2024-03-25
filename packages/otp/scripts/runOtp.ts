@@ -1,5 +1,6 @@
-import {runOtp} from './tasks/index.js';
-import {getArgs, handleError, printUsage} from './utils/index.js';
+import {getArgs, handleError, printUsage} from '@internal/script-utils';
+
+import {runOtp} from './tasks';
 
 const main = async () => {
   const argv = getArgs();

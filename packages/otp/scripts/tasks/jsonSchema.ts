@@ -1,4 +1,4 @@
-import chalk from 'chalk';
+import {getRelativePath, printInfo, printWarn} from '@internal/script-utils';
 import {
   createWriteStream,
   existsSync,
@@ -7,35 +7,27 @@ import {
   writeFile,
 } from 'fs';
 import {globSync} from 'glob';
-import {compile} from 'json-schema-to-typescript';
+import {compile, type JSONSchema} from 'json-schema-to-typescript';
 import {
-  basename,
+  basename as basenamePath,
   format as formatPath,
   join as joinPath,
   parse as parsePath,
 } from 'path';
 
-import {
-  deepOmit,
-  getRelativePath,
-  printInfo,
-  printWarn,
-} from '../utils/index.js';
+import {deepOmit, PKG_DIR} from '../utils';
 
-/**
- * Compiles all JSON schemas in a directory.
- *
- * @param {string} dirPath
- */
-export const compileAllSchemasInDir = async dirPath => {
+/** Compiles all JSON schemas in a directory. */
+export const compileAllSchemasInDir = async (dirPath: string) => {
   const indexPath = joinPath(dirPath, 'index.d.ts');
   const schemaPaths = globSync(joinPath(dirPath, '*.schema.json')).sort();
 
   if (existsSync(indexPath)) {
     printWarn(
-      `Deleting existing index file in ${chalk.bold(
-        getRelativePath(dirPath)
-      )}...`
+      `Deleting existing index file in ${getRelativePath({
+        path: dirPath,
+        parentPath: PKG_DIR,
+      })}...`
     );
     unlinkSync(indexPath);
   }
@@ -43,20 +35,26 @@ export const compileAllSchemasInDir = async dirPath => {
   const existingSchemaPaths = schemaPaths.filter(existsSync);
   if (existingSchemaPaths.length) {
     printWarn(
-      `Deleting existing JSON schemas in ${chalk.bold(
-        getRelativePath(dirPath)
-      )}...`,
+      `Deleting existing compiled JSON schemas in ${getRelativePath({
+        path: dirPath,
+        parentPath: PKG_DIR,
+      })} for...`,
       ...existingSchemaPaths.map(
-        schemaPath => `- ${getRelativePath(schemaPath, dirPath)}`
+        schemaPath =>
+          `- ${getRelativePath({path: schemaPath, parentPath: dirPath})}`
       )
     );
     // No need to delete explicitly, as `fs.writeFile` will replace files that
     // already exist.
   }
   printInfo(
-    `Compiling all JSON schemas in ${chalk.bold(getRelativePath(dirPath))}...`,
+    `Compiling all JSON schemas in ${getRelativePath({
+      path: dirPath,
+      parentPath: PKG_DIR,
+    })}...`,
     ...schemaPaths.map(
-      schemaPath => `- ${getRelativePath(schemaPath, dirPath)}`
+      schemaPath =>
+        `- ${getRelativePath({path: schemaPath, parentPath: dirPath})}`
     )
   );
 
@@ -67,7 +65,7 @@ export const compileAllSchemasInDir = async dirPath => {
         JSON.parse(readFileSync(schemaPath).toString()),
         // json-schema-to-typescript cannot handle schema composition.
         ['allOf', 'anyOf', 'oneOf']
-      );
+      ) as JSONSchema;
       const declarationPath = formatPath({
         ...parsePath(schemaPath),
         base: '',
@@ -75,14 +73,16 @@ export const compileAllSchemasInDir = async dirPath => {
       });
       const compiled = await compile(
         schemaJson,
-        basename(schemaPath, /* suffix= */ '.schema.json')
+        basenamePath(schemaPath, /* suffix= */ '.schema.json')
       );
       writeFile(declarationPath, compiled, err => {
         if (err) {
           throw err;
         }
       });
-      indexFs.write(`export type * from './${basename(declarationPath)}';\n`);
+      indexFs.write(
+        `export type * from './${basenamePath(declarationPath)}';\n`
+      );
     })
   );
 };

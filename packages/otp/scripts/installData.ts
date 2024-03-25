@@ -1,5 +1,6 @@
-import {downloadDataForRegions} from './tasks/index.js';
-import {getArgs, handleError, printUsage} from './utils/index.js';
+import {getArgs, handleError, printUsage} from '@internal/script-utils';
+
+import {downloadDataForRegions} from './tasks';
 
 const main = async () => {
   const argv = getArgs();
