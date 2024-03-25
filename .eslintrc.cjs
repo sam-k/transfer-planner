@@ -7,7 +7,11 @@ const config = {
   },
   overrides: [
     {
-      files: ['**/vite.config.*', '**/scripts/**/*'],
+      files: [
+        'packages/script-utils/src/**/*',
+        '**/vite.config.*',
+        '**/scripts/**/*',
+      ],
       rules: {
         'no-process-exit': 'off',
         'node/no-unpublished-import': 'off',

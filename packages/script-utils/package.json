@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "@internal/constants",
+  "name": "@internal/script-utils",
   "version": "1.0.0",
   "license": "ISC",
   "author": "Sam Kim",
@@ -17,11 +17,12 @@
     "postinstall": "pnpm run build",
     "build": "node --loader=ts-node/esm ./scripts/build.ts"
   },
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "minimist": "^1.2.8"
+  },
   "devDependencies": {
-    "@internal/script-utils": "workspace:*",
-    "@types/lodash-es": "^4.17.12",
-    "glob": "^10.3.10",
-    "lodash-es": "^4.17.21"
+    "@types/minimist": "^1.2.5"
   },
   "engines": {
     "node": ">=17.0.0"

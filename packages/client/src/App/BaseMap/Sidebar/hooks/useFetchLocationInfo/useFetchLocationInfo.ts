@@ -1,4 +1,4 @@
-import {ENV_VARS, SERVER_PORT} from '@internal/constants';
+import {API_PORT, ENV_VARS} from '@internal/constants';
 import {useCallback, useMemo, useState} from 'react';
 
 import {filterAndJoin} from '../../../../../utils';
@@ -81,7 +81,7 @@ const useFetchLocationInfo = () => {
           const {encodedUrl, encodedOptions} = encodedFetchLocationData;
           const responseJson = await (
             await fetch(
-              `http://localhost:${SERVER_PORT}/fetch?` +
+              `http://localhost:${API_PORT}/fetch?` +
                 filterAndJoin(
                   [
                     `encodedUrl=${encodedUrl}`,
