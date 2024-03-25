@@ -11,7 +11,7 @@ export const CONFIG_DIR = joinPath(PKG_DIR, 'config');
 /** Directory for fetched data and OpenTripPlanner graphs. */
 export const DATA_DIR = joinPath(PKG_DIR, 'data');
 /** Directory for OpenTripPlanner runtime. */
-export const OTP_DIR = joinPath(PKG_DIR, 'otp');
+export const BIN_DIR = joinPath(PKG_DIR, 'bin');
 
 /** Configures `dotenv` for this repository. */
 export const configureDotEnv = () => {

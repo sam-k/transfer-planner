@@ -11,10 +11,10 @@ import {existsSync, mkdirSync, unlinkSync} from 'fs';
 import {globSync} from 'glob';
 import {join as joinPath} from 'path';
 
-import {DATA_DIR, OTP_DIR} from '../utils';
+import {BIN_DIR, DATA_DIR} from '../utils';
 
 /** Glob path for OpenTripPlanner releases. */
-const OTP_JAR_GLOB_PATH = joinPath(OTP_DIR, 'otp-*.jar');
+const OTP_JAR_GLOB_PATH = joinPath(BIN_DIR, 'otp-*.jar');
 /** Regex for OpenTripPlanner release names. */
 const OTP_JAR_REGEX = /otp-(.*)-shaded\.jar$/;
 /** Path for OpenTripPlanner street graph. */
@@ -37,9 +37,9 @@ const extractOtpVersion = (filename: string) =>
  * existing releases.
  */
 export const downloadOtp = async () => {
-  if (!existsSync(OTP_DIR)) {
-    printInfo('Creating otp directory...');
-    mkdirSync(OTP_DIR);
+  if (!existsSync(BIN_DIR)) {
+    printInfo('Creating bin directory...');
+    mkdirSync(BIN_DIR);
   }
 
   const jarPaths = getOtpJarPaths();
@@ -81,7 +81,7 @@ export const downloadOtp = async () => {
     await downloadFromUrl({
       name: 'otp',
       url: asset.browser_download_url,
-      outAbsolutePath: joinPath(OTP_DIR, asset.name),
+      outAbsolutePath: joinPath(BIN_DIR, asset.name),
       options: {
         headers: {
           'user-agent': 'transfer-planner',

@@ -10,7 +10,7 @@
     "build": "pnpm run compile-json-schemas",
     "compile-json-schemas": "node --loader=ts-node/esm ./scripts/compileJsonSchemas.ts",
     "build-otp": "node --loader=ts-node/esm ./scripts/buildOtp.ts",
-    "install-data": "node --loader=ts-node/esm --require dotenv/config ./scripts/installData.ts",
+    "install-data": "node --loader=ts-node/esm ./scripts/installData.ts",
     "postinstall": "pnpm run build",
     "start": "node --loader=ts-node/esm ./scripts/runOtp.ts"
   },

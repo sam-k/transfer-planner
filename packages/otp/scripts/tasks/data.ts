@@ -1,4 +1,3 @@
-import {REPO_DIR} from '@internal/constants';
 import {
   DownloadError,
   downloadFromUrl,
