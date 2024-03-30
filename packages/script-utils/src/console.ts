@@ -1,4 +1,4 @@
-import {spawn} from 'child_process';
+import {spawn, type ChildProcess, type SpawnOptions} from 'child_process';
 import minimist from 'minimist';
 
 import {ProcessError} from './errors';
@@ -15,51 +15,59 @@ export const spawnCmd = ({
   name,
   cmd,
   args = [],
-  collectStdout = false,
-  collectStderr = false,
+  options = {},
+  silent = false,
 }: {
   name: string;
   cmd: string;
   args?: string[];
-  /** Collects stdout if true; prints to console if false. */
-  collectStdout?: boolean;
-  /** Collects stderr if true; prints to console if false. */
-  collectStderr?: boolean;
-}): Promise<{stdout: string; stderr: string}> =>
-  new Promise((resolve, reject) => {
-    const proc = spawn(cmd, args);
-    let stdout = '';
-    let stderr = '';
+  options?: SpawnOptions;
+  /** Whether to suppress stdout/stderr output. */
+  silent?: boolean;
+}): {proc: ChildProcess; resolved: Promise<void>} => {
+  const proc = spawn(cmd, args, options);
 
-    proc.stdout.on('data', data => {
-      const dataStr = data.toString();
-      if (collectStdout) {
-        stdout += (stdout ? '\n' : '') + dataStr;
-      } else {
-        console.log(dataStr);
-      }
-    });
-    proc.stderr.on('data', data => {
-      const dataStr = data.toString();
-      if (collectStderr) {
-        stderr += (stderr ? '\n' : '') + dataStr;
-      } else {
-        console.error(dataStr);
-      }
-    });
+  return {
+    proc,
+    resolved: new Promise((resolve, reject) => {
+      let stdout = '';
+      let stderr = '';
 
-    proc.on('close', code => {
-      if (code !== 0 && code !== null) {
-        reject(new ProcessError(name, code, proc.spawnargs));
-        return;
-      }
-      resolve({stdout, stderr});
-    });
-    proc.on('error', err => {
-      if (err) {
+      proc.stdout?.on('data', data => {
+        stdout += data.toString();
+        if (!silent) {
+          console.log(data.toString());
+        }
+      });
+      proc.stderr?.on('data', data => {
+        stderr += data.toString();
+        if (!silent) {
+          console.error(data.toString());
+        }
+      });
+
+      proc.on('close', code => {
+        switch (code) {
+          case 0: // Success
+          case 130: // SIGINT
+          case 143: // SIGTERM
+          case null:
+            resolve();
+            return;
+          default:
+            reject(
+              new ProcessError(name, code, proc.spawnargs, stderr || stdout)
+            );
+            return;
+        }
+      });
+      proc.on('error', err => {
+        if (!err) {
+          resolve();
+          return;
+        }
         reject(err);
-        return;
-      }
-      resolve({stdout, stderr});
-    });
-  });
+      });
+    }),
+  };
+};

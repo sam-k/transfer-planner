@@ -10,8 +10,16 @@ export const PKG_DIR = joinPath(REPO_DIR, 'packages/otp');
 export const CONFIG_DIR = joinPath(PKG_DIR, 'config');
 /** Directory for fetched data and OpenTripPlanner graphs. */
 export const DATA_DIR = joinPath(PKG_DIR, 'data');
+/** Directory for empty data and OpenTripPlanner graphs. */
+export const EMPTY_DATA_DIR = joinPath(PKG_DIR, 'emptyData');
 /** Directory for OpenTripPlanner runtime. */
 export const BIN_DIR = joinPath(PKG_DIR, 'bin');
+
+/** Directory for JSON schemas. */
+export const SCHEMA_DIR = joinPath(CONFIG_DIR, 'schemas');
+
+/** Path of generated OpenTripPlanner types. */
+export const OTP_SCHEMA_TYPES_PATH = joinPath(PKG_DIR, 'dist/types.d.ts');
 
 /** Configures `dotenv` for this repository. */
 export const configureDotEnv = () => {

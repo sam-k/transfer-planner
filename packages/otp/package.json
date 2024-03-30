@@ -6,15 +6,23 @@
   "author": "Sam Kim",
   "type": "module",
   "packageManager": "pnpm@8.15.5",
+  "types": "./dist/types.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/types.d.ts"
+    }
+  },
   "scripts": {
-    "build": "pnpm run compile-json-schemas",
-    "compile-json-schemas": "node --loader=ts-node/esm ./scripts/compileJsonSchemas.ts",
+    "build": "node --loader=ts-node/esm ./scripts/build.ts",
     "build-otp": "node --loader=ts-node/esm ./scripts/buildOtp.ts",
+    "compile-json-schemas": "node --loader=ts-node/esm ./scripts/compileJsonSchemas.ts",
+    "generate-otp-schema": "node --loader=ts-node/esm ./scripts/generateOtpSchema.ts",
     "install-data": "node --loader=ts-node/esm ./scripts/installData.ts",
     "postinstall": "pnpm run build",
     "start": "node --loader=ts-node/esm ./scripts/runOtp.ts"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^5.0.2",
     "@internal/constants": "workspace:*",
     "@internal/script-utils": "workspace:*",
     "@octokit/request": "^8.1.6",

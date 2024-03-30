@@ -32,7 +32,7 @@ const main = async () => {
     name: 'constants',
     cmd: 'eslint',
     args: ['--fix', 'dist'],
-  });
+  }).resolved;
 };
 
 main();

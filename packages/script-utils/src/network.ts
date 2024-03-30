@@ -94,3 +94,38 @@ export const downloadFromUrl = ({
       resolve();
     });
   });
+
+/** Checks whether a local port is in use. */
+export const isPortBusy = async ({
+  port,
+  timeoutMs = 1000,
+  maxTries = 10,
+}: {
+  port: number;
+  /** Timeout between tries, in milliseconds. */
+  timeoutMs?: number;
+  /** Max number of tries. */
+  maxTries?: number;
+}) => {
+  let numTries = 0;
+
+  const tryFetch = () =>
+    new Promise<boolean>(resolve => {
+      setTimeout(async () => {
+        if (numTries >= maxTries) {
+          resolve(false);
+          return;
+        }
+        try {
+          await fetch(`http://localhost:${port}`);
+          // If fetch succeeds, the port is up.
+          resolve(true);
+        } catch (err) {
+          // Retry if fetch fails.
+          numTries++;
+          resolve(await tryFetch());
+        }
+      }, /* ms= */ timeoutMs);
+    });
+  return await tryFetch();
+};

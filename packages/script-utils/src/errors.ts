@@ -29,22 +29,23 @@ export class ProcessError extends SupportedError {
   /** Arguments used to execute this command. */
   args: string[] = [];
 
-  constructor(name: string, code: number, args: string[]) {
-    const escapeRegex = /[\t\n\r "#$%&'()*;<=>?\\[`|~]/;
-    super(
-      name,
-      /* reason= */ args
-        .map(arg =>
-          escapeRegex.test(arg) ? `'${arg.replaceAll("'", "\\'")}'` : arg
-        )
-        .join(' ')
-    );
+  constructor(name: string, code: number, args: string[], stderr: string) {
+    super(name, /* reason= */ stderr);
     this.code = code;
+    this.args = args;
   }
 
   toString() {
+    const escapeRegex = /[\t\n\r "#$%&'()*;<=>?\\[`|~]/;
+
     return super.toString(
-      `Process for ${chalk.bold(this.name)} failed with exit code ${this.code}`
+      `Process for ${chalk.bold(this.name)} failed with exit code ${
+        this.code
+      }, while running command ${this.args
+        .map(arg =>
+          escapeRegex.test(arg) ? `'${arg.replaceAll("'", "\\'")}'` : arg
+        )
+        .join(' ')}`
     );
   }
 }
@@ -57,6 +58,17 @@ export class DownloadError extends SupportedError {
 
   toString() {
     return super.toString(`Download failed for ${chalk.bold(this.name)}`);
+  }
+}
+
+/** Error thrown by any task. */
+export class DefaultError extends SupportedError {
+  constructor(name: string, reason: string) {
+    super(name, reason);
+  }
+
+  toString() {
+    return super.toString();
   }
 }
 
