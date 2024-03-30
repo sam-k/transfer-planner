@@ -6,7 +6,7 @@ import {OTP_PORT} from '@internal/constants';
 const config: CodegenConfig = {
   schema: `http://localhost:${OTP_PORT}/otp/routers/default/index/graphql`,
   generates: {
-    './dist/types.d.ts': {
+    './dist/graphql.ts': {
       plugins: ['typescript'],
     },
   },

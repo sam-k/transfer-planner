@@ -17,12 +17,14 @@ const main = async () => {
   }
 
   try {
-    await runOtp({
-      downloadJar: argv.u || argv.update,
-      buildGraphs: argv.b || argv.build,
-      jvmMemory: argv.m || argv.jvmMemory,
-      port: argv.p || argv.port,
-    });
+    await (
+      await runOtp({
+        downloadJar: argv.u || argv.update,
+        buildGraphs: argv.b || argv.build,
+        jvmMemory: argv.m || argv.jvmMemory,
+        port: argv.p || argv.port,
+      })
+    ).resolved;
   } catch (err) {
     handleError(err);
   }

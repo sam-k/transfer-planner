@@ -6,10 +6,12 @@
   "author": "Sam Kim",
   "type": "module",
   "packageManager": "pnpm@8.15.5",
-  "types": "./dist/types.d.ts",
+  "types": "./dist/graphql.ts",
   "exports": {
     ".": {
-      "types": "./dist/types.d.ts"
+      "import": "./dist/graphql.ts",
+      "require": "./dist/graphql.ts",
+      "types": "./dist/graphql.ts"
     }
   },
   "scripts": {

@@ -16,13 +16,7 @@ import {existsSync, mkdirSync, unlinkSync} from 'fs';
 import {globSync} from 'glob';
 import {join as joinPath} from 'path';
 
-import {
-  BIN_DIR,
-  DATA_DIR,
-  EMPTY_DATA_DIR,
-  OTP_SCHEMA_TYPES_PATH,
-  PKG_DIR,
-} from '../utils';
+import {BIN_DIR, DATA_DIR, DIST_DIR, EMPTY_DATA_DIR, PKG_DIR} from '../utils';
 
 /** Glob path for OpenTripPlanner releases. */
 const OTP_JAR_GLOB_PATH = joinPath(BIN_DIR, 'otp-*.jar');
@@ -278,16 +272,21 @@ export const runOtp = async ({
   });
 };
 
-/** Generates GraphQL schema types for OpenTripPlanner. */
+/** Generates GraphQL types and helpers for OpenTripPlanner. */
 export const generateOtpSchema = async () => {
-  const runCodegen = async () => {
-    if (existsSync(joinPath(OTP_SCHEMA_TYPES_PATH))) {
-      printWarn(
-        'Deleting existing generated OpenTripPlanner GraphQL schema...'
-      );
-      // No need to delete explicitly, as `graphql-codegen` will replace files
-      // that already exist.
+  const distDirContentPaths = globSync(joinPath(DIST_DIR, '*.{js,ts}'));
+
+  if (!existsSync(DIST_DIR)) {
+    printInfo('Creating dist directory...');
+    mkdirSync(DIST_DIR);
+  } else if (distDirContentPaths.length) {
+    printWarn('Deleting contents of existing dist directory...');
+    for (const contentPath of distDirContentPaths) {
+      unlinkSync(contentPath);
     }
+  }
+
+  const runCodegen = async () => {
     printInfo('Generating OpenTripPlanner GraphQL schema...');
     await spawnCmd({name: 'otp', cmd: 'graphql-codegen'}).resolved;
   };
