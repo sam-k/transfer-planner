@@ -7,19 +7,23 @@ import {getRelativePath} from './path';
 
 /** Lints all files in a directory. */
 export const lintFilesInDir = async ({
-  dirName,
-  pkgDir,
+  dirPath,
+  pkgDirPath,
   exts,
 }: {
-  /** Name of the directory whose files to lint, relative to `pkgDir`. */
-  dirName: string;
+  /** Directory whose files to lint. */
+  dirPath: string;
   /** Directory of the applicable package. */
-  pkgDir: string;
+  pkgDirPath: string;
   /** Extensions to target for linting. */
   exts?: string[];
 }) => {
+  const dirRelativePath = getRelativePath({
+    path: dirPath,
+    parentPath: pkgDirPath,
+  });
   const dirContentPaths = globSync(
-    joinPath(pkgDir, dirName, '**/*' + (exts ? `.${exts.join(',')}` : ''))
+    joinPath(dirPath, '**/*' + (exts ? `.${exts.join(',')}` : ''))
   );
 
   const numFiles = dirContentPaths.length;
@@ -27,11 +31,12 @@ export const lintFilesInDir = async ({
     printInfo(
       `Linting ${numFiles} file${numFiles > 1 ? 's' : ''}...`,
       ...dirContentPaths.map(
-        filePath => `- ${getRelativePath({path: filePath, parentPath: pkgDir})}`
+        filePath =>
+          `- ${getRelativePath({path: filePath, parentPath: pkgDirPath})}`
       )
     );
   } else {
-    printWarn('No files to lint.');
+    printWarn(`No files to lint in ${dirRelativePath}.`);
   }
 
   await spawnCmd({

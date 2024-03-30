@@ -323,7 +323,7 @@ export const generateOtpSchema = async () => {
   }
 
   await lintFilesInDir({
-    dirName: 'dist',
-    pkgDir: PKG_DIR,
+    dirPath: DIST_DIR,
+    pkgDirPath: PKG_DIR,
   });
 };

@@ -35,8 +35,8 @@ const main = async () => {
     buildNetwork();
 
     await lintFilesInDir({
-      dirName: 'dist',
-      pkgDir: PKG_DIR,
+      dirPath: DIST_DIR,
+      pkgDirPath: PKG_DIR,
     });
   } catch (err) {
     handleError(err);
