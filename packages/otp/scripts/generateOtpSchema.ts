@@ -1,17 +1,16 @@
 import {getArgs, handleError, printUsage} from '@internal/script-utils';
 
-import {compileJsonSchemasInDir} from './tasks';
-import {SCHEMA_DIR} from './utils';
+import {generateOtpSchema} from './tasks';
 
 const main = async () => {
   const argv = getArgs();
   if (argv.h || argv.help) {
-    printUsage(['compile-json-schemas']);
+    printUsage(['generate-otp-schema']);
     return;
   }
 
   try {
-    await compileJsonSchemasInDir(SCHEMA_DIR);
+    await generateOtpSchema();
   } catch (err) {
     handleError(err);
   }

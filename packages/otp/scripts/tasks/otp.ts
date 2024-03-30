@@ -1,6 +1,12 @@
+import {OTP_PORT} from '@internal/constants';
 import {
+  DefaultError,
   DownloadError,
   downloadFromUrl,
+  getRelativePath,
+  handleError,
+  isPortBusy,
+  lintFilesInDir,
   printInfo,
   printWarn,
   spawnCmd,
@@ -11,16 +17,16 @@ import {existsSync, mkdirSync, unlinkSync} from 'fs';
 import {globSync} from 'glob';
 import {join as joinPath} from 'path';
 
-import {BIN_DIR, DATA_DIR} from '../utils';
+import {BIN_DIR, DATA_DIR, DIST_DIR, EMPTY_DATA_DIR, PKG_DIR} from '../utils';
 
 /** Glob path for OpenTripPlanner releases. */
 const OTP_JAR_GLOB_PATH = joinPath(BIN_DIR, 'otp-*.jar');
 /** Regex for OpenTripPlanner release names. */
 const OTP_JAR_REGEX = /otp-(.*)-shaded\.jar$/;
 /** Path for OpenTripPlanner street graph. */
-const OTP_STREET_GRAPH_PATH = joinPath(DATA_DIR, 'streetGraph.obj');
+const OTP_STREET_GRAPH_FILENAME = 'streetGraph.obj';
 /** Path for OpenTripPlanner transit graph. */
-const OTP_TRANSIT_GRAPH_PATH = joinPath(DATA_DIR, 'graph.obj');
+const OTP_TRANSIT_GRAPH_FILENAME = 'graph.obj';
 
 /** Default maximum allocated memory for the JVM for running OpenTripPlanner. */
 const DEFAULT_OTP_JVM_MEMORY = 'Xmx8G';
@@ -107,17 +113,28 @@ export const downloadOtp = async () => {
 
 /** Builds an OpenTripPlanner transit graph. */
 export const buildOtp = async ({
+  dataDir = DATA_DIR,
   downloadJar = false,
   buildStreetGraph = false,
   jvmMemory = DEFAULT_OTP_JVM_MEMORY,
+  silent = false,
 }: {
+  /** Directory for data and transit graphs. */
+  dataDir?: string;
   /** Whether to download the latest release. */
   downloadJar?: boolean;
   /** Whether to build a new street graph. */
   buildStreetGraph?: boolean;
   /** Maximum allocated memory for the JVM. */
   jvmMemory?: string;
+  /** Whether to suppress console output. */
+  silent?: boolean;
 }) => {
+  const dataDirRelativePath = getRelativePath({
+    path: dataDir,
+    parentPath: PKG_DIR,
+  });
+
   let jarPath = getOtpJarPaths()[0];
   if (downloadJar || !jarPath) {
     if (downloadJar) {
@@ -129,58 +146,85 @@ export const buildOtp = async ({
     jarPath = getOtpJarPaths()[0];
   }
 
-  const streetGraphFound = existsSync(OTP_STREET_GRAPH_PATH);
+  const streetGraphFound = existsSync(
+    joinPath(dataDir, OTP_STREET_GRAPH_FILENAME)
+  );
   if (buildStreetGraph || !streetGraphFound) {
     if (buildStreetGraph) {
       if (streetGraphFound) {
-        printWarn('Deleting existing OpenTripPlanner street graph...');
+        printWarn(
+          `Deleting existing OpenTripPlanner street graph in ${dataDirRelativePath}...`
+        );
         // No need to delete explicitly, as OTP will replace graphs that already
         // exist.
       }
-      printInfo('Building new OpenTripPlanner street graph...');
+      printInfo(
+        `Building new OpenTripPlanner street graph in ${dataDirRelativePath}...`
+      );
     } else {
-      printWarn('OpenTripPlanner street graph missing. Building...');
+      printWarn(
+        `OpenTripPlanner street graph missing in ${dataDirRelativePath}. Building...`
+      );
     }
     await spawnCmd({
       name: 'otp',
       cmd: 'java',
-      args: [`-${jvmMemory}`, '-jar', jarPath, '--buildStreet', './data'],
-    });
+      args: [`-${jvmMemory}`, '-jar', jarPath, '--buildStreet', dataDir],
+      silent,
+    }).resolved;
   }
 
-  if (existsSync(OTP_TRANSIT_GRAPH_PATH)) {
-    printWarn('Deleting existing OpenTripPlanner transit graph...');
+  if (existsSync(joinPath(dataDir, OTP_TRANSIT_GRAPH_FILENAME))) {
+    printWarn(
+      `Deleting existing OpenTripPlanner transit graph in ${dataDirRelativePath}...`
+    );
     // No need to delete explicitly, as OTP will replace graphs that already
     // exist.
   }
-  printInfo('Building OpenTripPlanner transit graph...');
+  printInfo(
+    `Building OpenTripPlanner transit graph in ${dataDirRelativePath}...`
+  );
   await spawnCmd({
     name: 'otp',
     cmd: 'java',
-    args: [
-      `-${jvmMemory}`,
-      '-jar',
-      jarPath,
-      '--loadStreet',
-      '--save',
-      './data',
-    ],
-  });
+    args: [`-${jvmMemory}`, '-jar', jarPath, '--loadStreet', '--save', dataDir],
+    silent,
+  }).resolved;
 };
 
-/** Runs an OpenTripPlanner instance. */
+/**
+ * Runs an OpenTripPlanner instance.
+ *
+ * Instead of waiting for the process to resolve, this returns the spawned child
+ * process and a promise for its completion status. In a successful server
+ * startup, the process will hang indefinitely.
+ */
 export const runOtp = async ({
+  dataDir = DATA_DIR,
   downloadJar = false,
   buildGraphs = false,
   jvmMemory = DEFAULT_OTP_JVM_MEMORY,
+  port = OTP_PORT,
+  silent = false,
 }: {
+  /** Directory for data and transit graphs. */
+  dataDir?: string;
   /** Whether to download the latest release. */
   downloadJar?: boolean;
   /** Whether to build new street and transit graphs. */
   buildGraphs?: boolean;
   /** Maximum allocated memory for the JVM. */
   jvmMemory?: string;
+  /** Port for the server. */
+  port?: number;
+  /** Whether to suppress console output. */
+  silent?: boolean;
 }) => {
+  const dataDirRelativePath = getRelativePath({
+    path: dataDir,
+    parentPath: PKG_DIR,
+  });
+
   const jarPath = getOtpJarPaths()[0];
   if (downloadJar || !jarPath) {
     if (downloadJar) {
@@ -191,23 +235,95 @@ export const runOtp = async ({
     await downloadOtp();
   }
 
-  const transitGraphFound = existsSync(OTP_TRANSIT_GRAPH_PATH);
+  const transitGraphFound = existsSync(
+    joinPath(dataDir, OTP_TRANSIT_GRAPH_FILENAME)
+  );
   if (buildGraphs || !transitGraphFound) {
     if (buildGraphs) {
-      printInfo('Building new OpenTripPlanner transit graph.');
+      printInfo(
+        `Building new OpenTripPlanner transit graph in ${dataDirRelativePath}.`
+      );
     } else {
-      printWarn('OpenTripPlanner transit graph missing.');
+      printWarn(
+        `OpenTripPlanner transit graph missing in ${dataDirRelativePath}.`
+      );
     }
     await buildOtp({
+      dataDir,
       buildStreetGraph: true,
       jvmMemory,
+      silent,
     });
   }
 
   printInfo('Running OpenTripPlanner instance...');
-  await spawnCmd({
+  return spawnCmd({
     name: 'otp',
     cmd: 'java',
-    args: [`-${jvmMemory}`, '-jar', jarPath, '--load', './data'],
+    args: [
+      `-${jvmMemory}`,
+      '-jar',
+      jarPath,
+      '--port',
+      `${port}`,
+      '--load',
+      dataDir,
+    ],
+    silent,
+  });
+};
+
+/** Generates GraphQL types and helpers for OpenTripPlanner. */
+export const generateOtpSchema = async () => {
+  const distDirContentPaths = globSync(joinPath(DIST_DIR, '*.{js,ts}'));
+
+  if (!existsSync(DIST_DIR)) {
+    printInfo('Creating dist directory...');
+    mkdirSync(DIST_DIR);
+  } else if (distDirContentPaths.length) {
+    printWarn('Deleting contents of existing dist directory...');
+    for (const contentPath of distDirContentPaths) {
+      unlinkSync(contentPath);
+    }
+  }
+
+  const runCodegen = async () => {
+    printInfo('Generating OpenTripPlanner GraphQL schema...');
+    await spawnCmd({name: 'otp', cmd: 'graphql-codegen'}).resolved;
+  };
+
+  if (await isPortBusy({port: OTP_PORT, timeoutMs: 0, maxTries: 1})) {
+    // Generate immediately if OTP is already running.
+    printInfo(
+      'OpenTripPlanner server is already running. Using existing instance...'
+    );
+    await runCodegen();
+  } else {
+    const {proc: runOtpProc, resolved: runOtpResolved} = await runOtp({
+      dataDir: EMPTY_DATA_DIR,
+      silent: true,
+    });
+    runOtpResolved.catch(err => {
+      handleError(err);
+    });
+
+    if (!(await isPortBusy({port: OTP_PORT}))) {
+      runOtpProc.kill();
+      runOtpProc.on('close', () => {
+        throw new DefaultError(
+          'otp',
+          `OpenTripPlanner server failed to start on port ${OTP_PORT}.`
+        );
+      });
+      return;
+    }
+
+    await runCodegen();
+    runOtpProc.kill();
+  }
+
+  await lintFilesInDir({
+    dirPath: DIST_DIR,
+    pkgDirPath: PKG_DIR,
   });
 };

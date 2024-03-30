@@ -10,17 +10,21 @@ const main = async () => {
       '-h, --help': 'Display usage information',
       '-m, --jvmMemory':
         'Maximum allocated memory for the JVM (default: Xmx8G)',
+      '-p, --port': 'Port for the server',
       '-u, --update': 'Update OpenTripPlanner to the latest release',
     });
     return;
   }
 
   try {
-    await runOtp({
-      downloadJar: argv.u || argv.update,
-      buildGraphs: argv.b || argv.build,
-      jvmMemory: argv.m || argv.jvmMemory,
-    });
+    await (
+      await runOtp({
+        downloadJar: argv.u || argv.update,
+        buildGraphs: argv.b || argv.build,
+        jvmMemory: argv.m || argv.jvmMemory,
+        port: argv.p || argv.port,
+      })
+    ).resolved;
   } catch (err) {
     handleError(err);
   }

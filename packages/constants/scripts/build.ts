@@ -1,10 +1,15 @@
-import {printInfo, printWarn, spawnCmd} from '@internal/script-utils';
+import {
+  handleError,
+  lintFilesInDir,
+  printInfo,
+  printWarn,
+} from '@internal/script-utils';
 import {existsSync, mkdirSync, unlinkSync} from 'fs';
 import {globSync} from 'glob';
 import {join as joinPath} from 'path';
 
 import {buildDir, buildEnv, buildNetwork} from './tasks';
-import {DIST_DIR} from './utils';
+import {DIST_DIR, PKG_DIR} from './utils';
 
 /** Prepares a fresh `dist` directory. */
 const prepareDistDir = () => {
@@ -22,17 +27,20 @@ const prepareDistDir = () => {
 };
 
 const main = async () => {
-  prepareDistDir();
+  try {
+    prepareDistDir();
 
-  buildDir();
-  buildEnv();
-  buildNetwork();
+    buildDir();
+    buildEnv();
+    buildNetwork();
 
-  await spawnCmd({
-    name: 'constants',
-    cmd: 'eslint',
-    args: ['--fix', 'dist'],
-  });
+    await lintFilesInDir({
+      dirPath: DIST_DIR,
+      pkgDirPath: PKG_DIR,
+    });
+  } catch (err) {
+    handleError(err);
+  }
 };
 
 main();

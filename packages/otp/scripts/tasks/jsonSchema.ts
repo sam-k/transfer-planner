@@ -18,7 +18,7 @@ import {
 import {deepOmit, PKG_DIR} from '../utils';
 
 /** Compiles all JSON schemas in a directory. */
-export const compileAllSchemasInDir = async (dirPath: string) => {
+export const compileJsonSchemasInDir = async (dirPath: string) => {
   const indexPath = joinPath(dirPath, 'index.d.ts');
   const schemaPaths = globSync(joinPath(dirPath, '*.schema.json')).sort();
 
