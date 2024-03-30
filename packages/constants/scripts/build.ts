@@ -1,15 +1,15 @@
 import {
   handleError,
+  lintFilesInDir,
   printInfo,
   printWarn,
-  spawnCmd,
 } from '@internal/script-utils';
 import {existsSync, mkdirSync, unlinkSync} from 'fs';
 import {globSync} from 'glob';
 import {join as joinPath} from 'path';
 
 import {buildDir, buildEnv, buildNetwork} from './tasks';
-import {DIST_DIR} from './utils';
+import {DIST_DIR, PKG_DIR} from './utils';
 
 /** Prepares a fresh `dist` directory. */
 const prepareDistDir = () => {
@@ -34,11 +34,10 @@ const main = async () => {
     buildEnv();
     buildNetwork();
 
-    await spawnCmd({
-      name: 'constants',
-      cmd: 'eslint',
-      args: ['--fix', 'dist'],
-    }).resolved;
+    await lintFilesInDir({
+      dirName: 'dist',
+      pkgDir: PKG_DIR,
+    });
   } catch (err) {
     handleError(err);
   }

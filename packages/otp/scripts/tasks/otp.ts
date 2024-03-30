@@ -6,6 +6,7 @@ import {
   getRelativePath,
   handleError,
   isPortBusy,
+  lintFilesInDir,
   printInfo,
   printWarn,
   spawnCmd,
@@ -293,28 +294,36 @@ export const generateOtpSchema = async () => {
 
   if (await isPortBusy({port: OTP_PORT, timeoutMs: 0, maxTries: 1})) {
     // Generate immediately if OTP is already running.
+    printInfo(
+      'OpenTripPlanner server is already running. Using existing instance...'
+    );
     await runCodegen();
-    return;
-  }
-
-  const {proc: runOtpProc, resolved: runOtpResolved} = await runOtp({
-    dataDir: EMPTY_DATA_DIR,
-    silent: true,
-  });
-  runOtpResolved.catch(err => {
-    handleError(err);
-  });
-
-  if (await isPortBusy({port: OTP_PORT})) {
-    await runCodegen();
-    runOtpProc.kill();
   } else {
-    runOtpProc.kill();
-    runOtpProc.on('close', () => {
-      throw new DefaultError(
-        'otp',
-        `OpenTripPlanner server failed to start on port ${OTP_PORT}.`
-      );
+    const {proc: runOtpProc, resolved: runOtpResolved} = await runOtp({
+      dataDir: EMPTY_DATA_DIR,
+      silent: true,
     });
+    runOtpResolved.catch(err => {
+      handleError(err);
+    });
+
+    if (!(await isPortBusy({port: OTP_PORT}))) {
+      runOtpProc.kill();
+      runOtpProc.on('close', () => {
+        throw new DefaultError(
+          'otp',
+          `OpenTripPlanner server failed to start on port ${OTP_PORT}.`
+        );
+      });
+      return;
+    }
+
+    await runCodegen();
+    runOtpProc.kill();
   }
+
+  await lintFilesInDir({
+    dirName: 'dist',
+    pkgDir: PKG_DIR,
+  });
 };
