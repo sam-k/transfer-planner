@@ -292,20 +292,20 @@ export const generateOtpSchema = async () => {
     return;
   }
 
-  const {proc: runProc, resolved: runResolved} = await runOtp({
+  const {proc: runOtpProc, resolved: runOtpResolved} = await runOtp({
     dataDir: EMPTY_DATA_DIR,
     silent: true,
   });
-  runResolved.catch(err => {
+  runOtpResolved.catch(err => {
     handleError(err);
   });
 
   if (await isPortBusy({port: OTP_PORT})) {
     await runCodegen();
-    runProc.kill();
+    runOtpProc.kill();
   } else {
-    runProc.kill();
-    runProc.on('close', () => {
+    runOtpProc.kill();
+    runOtpProc.on('close', () => {
       throw new DefaultError(
         'otp',
         `OpenTripPlanner server failed to start on port ${OTP_PORT}.`
