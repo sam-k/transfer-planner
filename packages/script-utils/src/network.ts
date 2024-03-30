@@ -107,25 +107,17 @@ export const isPortBusy = async ({
   /** Max number of tries. */
   maxTries?: number;
 }) => {
-  let numTries = 0;
-
-  const tryFetch = () =>
-    new Promise<boolean>(resolve => {
-      setTimeout(async () => {
-        if (numTries >= maxTries) {
-          resolve(false);
-          return;
-        }
-        try {
-          await fetch(`http://localhost:${port}`);
-          // If fetch succeeds, the port is up.
-          resolve(true);
-        } catch (err) {
-          // Retry if fetch fails.
-          numTries++;
-          resolve(await tryFetch());
-        }
-      }, /* ms= */ timeoutMs);
-    });
-  return await tryFetch();
+  for (let i = 0; i < maxTries; i++) {
+    try {
+      await fetch(`http://localhost:${port}`);
+      // If fetch succeeds, the port is up.
+      return true;
+    } catch (err) {
+      // Wait and retry if fetch fails.
+      await new Promise(resolve => {
+        setTimeout(resolve, /* ms= */ timeoutMs);
+      });
+    }
+  }
+  return false;
 };
