@@ -1,4 +1,9 @@
-import {printInfo, printWarn, spawnCmd} from '@internal/script-utils';
+import {
+  handleError,
+  printInfo,
+  printWarn,
+  spawnCmd,
+} from '@internal/script-utils';
 import {existsSync, mkdirSync, unlinkSync} from 'fs';
 import {globSync} from 'glob';
 import {join as joinPath} from 'path';
@@ -22,17 +27,21 @@ const prepareDistDir = () => {
 };
 
 const main = async () => {
-  prepareDistDir();
+  try {
+    prepareDistDir();
 
-  buildDir();
-  buildEnv();
-  buildNetwork();
+    buildDir();
+    buildEnv();
+    buildNetwork();
 
-  await spawnCmd({
-    name: 'constants',
-    cmd: 'eslint',
-    args: ['--fix', 'dist'],
-  }).resolved;
+    await spawnCmd({
+      name: 'constants',
+      cmd: 'eslint',
+      args: ['--fix', 'dist'],
+    }).resolved;
+  } catch (err) {
+    handleError(err);
+  }
 };
 
 main();

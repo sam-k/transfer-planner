@@ -197,7 +197,13 @@ export const buildOtp = async ({
   }).resolved;
 };
 
-/** Runs an OpenTripPlanner instance. */
+/**
+ * Runs an OpenTripPlanner instance.
+ *
+ * Instead of waiting for the process to resolve, this returns the spawned child
+ * process and a promise for its completion status. In a successful server
+ * startup, the process will hang indefinitely.
+ */
 export const runOtp = async ({
   dataDir = DATA_DIR,
   downloadJar = false,
@@ -287,7 +293,7 @@ export const generateOtpSchema = async () => {
   };
 
   if (await isPortBusy({port: OTP_PORT, timeoutMs: 0, maxTries: 1})) {
-    // Compile immediately if OTP is already running.
+    // Generate immediately if OTP is already running.
     await runCodegen();
     return;
   }
