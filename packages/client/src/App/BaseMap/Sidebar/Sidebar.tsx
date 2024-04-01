@@ -1,4 +1,4 @@
-import React, {memo, useCallback, useMemo, useState} from 'react';
+import React, {memo, useCallback, useEffect, useMemo, useState} from 'react';
 
 import {useBaseMapContext} from '../../BaseMapContext';
 import DirectionsSearchBox from './DirectionsSearchBox';
@@ -6,7 +6,11 @@ import Infobox from './Infobox';
 import SearchField, {type SearchFieldProps} from './SearchField';
 import './Sidebar.css';
 import type {HighlightedSearchResult, LocationInfo} from './Sidebar.types';
-import {currentPosSearchResult, useFetchLocationInfo} from './hooks';
+import {
+  currentPosSearchResult,
+  useFetchDirections,
+  useFetchLocationInfo,
+} from './hooks';
 
 /** Pseudo-highlighted search result corresponding to the current location. */
 const currentPosHighlightedSearchResult: HighlightedSearchResult = {
@@ -16,9 +20,7 @@ const currentPosHighlightedSearchResult: HighlightedSearchResult = {
 
 /** Renders the sidebar for the application. */
 const Sidebar = () => {
-  const {mapRef, setStartMarker, setEndMarker} = useBaseMapContext();
-
-  const {fetchLocationInfo} = useFetchLocationInfo();
+  const {mapRef, setDirectionsMarkers} = useBaseMapContext();
 
   // Whether directions are shown on the map.
   const [areDirectionsShown, setAreDirectionsShown] = useState(false);
@@ -31,12 +33,19 @@ const Sidebar = () => {
     ReadonlySet<HighlightedSearchResult>
   >(new Set());
 
-  // Information about the currently selected start location.
-  const [selectedStartLocationInfo, setSelectedStartLocationInfo] =
-    useState<LocationInfo>();
-  // Information about the currently selected end location.
-  const [selectedEndLocationInfo, setSelectedEndLocationInfo] =
-    useState<LocationInfo>();
+  // Information about the currently selected start and end locations.
+  const [selectedLocationInfos, setSelectedLocationInfos] = useState<{
+    start?: LocationInfo;
+    end?: LocationInfo;
+  }>({});
+
+  const {fetchLocationInfo} = useFetchLocationInfo();
+
+  // Transit result from start to end locations.
+  const {queryData: directionsData} = useFetchDirections({
+    fromLocation: selectedLocationInfos.start,
+    toLocation: selectedLocationInfos.end,
+  });
 
   /** Default value for the search field. */
   const defaultSearchFieldValue = useMemo<SearchFieldProps['defaultValue']>(
@@ -48,51 +57,62 @@ const Sidebar = () => {
     [primarySelectedSearchResult, primarySearchResults]
   );
 
-  /** Shows directions from start to end locations on the map. */
-  const showDirectionsOnMap = useCallback(
-    (
-      startLocationInfo: LocationInfo | undefined,
-      endLocationInfo: LocationInfo | undefined
-    ) => {
-      setAreDirectionsShown(true);
-
-      if (startLocationInfo) {
-        setStartMarker?.({
-          label: startLocationInfo.label,
-          latitude: startLocationInfo.latitude,
-          longitude: startLocationInfo.longitude,
-        });
-      }
-      if (endLocationInfo) {
-        setEndMarker?.({
-          label: endLocationInfo.label,
-          latitude: endLocationInfo.latitude,
-          longitude: endLocationInfo.longitude,
-        });
+  /** Flies to a location, or the bounding box of two locations, on the map. */
+  const flyToLocation = useCallback(
+    (location1?: LocationInfo, location2?: LocationInfo) => {
+      if (!mapRef?.current) {
+        return;
       }
 
-      if (startLocationInfo && endLocationInfo) {
-        mapRef?.current?.flyToBounds(
-          [
-            [startLocationInfo.latitude, startLocationInfo.longitude],
-            [endLocationInfo.latitude, endLocationInfo.longitude],
-          ],
-          {maxZoom: 16, padding: [1, 1]}
-        );
-      } else if (startLocationInfo) {
-        mapRef?.current?.flyTo([
-          startLocationInfo.latitude,
-          startLocationInfo.longitude,
+      if (location1 && location2) {
+        mapRef.current.flyToBounds([
+          [location1.latitude, location1.longitude],
+          [location2.latitude, location2.longitude],
         ]);
-      } else if (endLocationInfo) {
-        mapRef?.current?.flyTo([
-          endLocationInfo.latitude,
-          endLocationInfo.longitude,
-        ]);
+        return;
+      }
+
+      const location = location1 ?? location2;
+      if (location) {
+        mapRef.current.flyTo([location.latitude, location.longitude]);
       }
     },
-    [mapRef, setStartMarker, setEndMarker]
+    [mapRef]
   );
+
+  // Shows directions from start to end locations on the map.
+  useEffect(() => {
+    if (
+      !areDirectionsShown ||
+      !selectedLocationInfos.start ||
+      !selectedLocationInfos.end
+    ) {
+      setDirectionsMarkers?.(undefined);
+      return;
+    }
+
+    setDirectionsMarkers?.({
+      start: selectedLocationInfos.start,
+      end: selectedLocationInfos.end,
+    });
+
+    flyToLocation(selectedLocationInfos.start, selectedLocationInfos.end);
+
+    // TODO: Render directions.
+    console.log(
+      `DIRECTIONS: ${JSON.stringify(
+        directionsData,
+        /* replacer= */ null,
+        /* space= */ 2
+      )}`
+    );
+  }, [
+    setDirectionsMarkers,
+    areDirectionsShown,
+    selectedLocationInfos,
+    flyToLocation,
+    directionsData,
+  ]);
 
   return (
     <div className="sidebar">
@@ -107,33 +127,33 @@ const Sidebar = () => {
             end: defaultSearchFieldValue,
           }}
           onStartChange={async searchResult => {
-            const startLocationInfo = searchResult
+            const newStartLocationInfo = searchResult
               ? await fetchLocationInfo(searchResult)
               : undefined;
-            showDirectionsOnMap(startLocationInfo, selectedEndLocationInfo);
-            setSelectedStartLocationInfo(startLocationInfo);
+            setSelectedLocationInfos(prevState => ({
+              ...prevState,
+              start: newStartLocationInfo,
+            }));
           }}
           onEndChange={async searchResult => {
-            const endLocationInfo = searchResult
+            const newEndLocationInfo = searchResult
               ? await fetchLocationInfo(searchResult)
               : undefined;
-            showDirectionsOnMap(selectedStartLocationInfo, endLocationInfo);
-            setSelectedEndLocationInfo(endLocationInfo);
+            setSelectedLocationInfos(prevState => ({
+              ...prevState,
+              end: newEndLocationInfo,
+            }));
           }}
           onSwap={() => {
-            showDirectionsOnMap(
-              selectedEndLocationInfo,
-              selectedStartLocationInfo
-            );
-            setSelectedStartLocationInfo(selectedEndLocationInfo);
-            setSelectedEndLocationInfo(selectedStartLocationInfo);
+            setSelectedLocationInfos(prevState => ({
+              start: prevState.end,
+              end: prevState.start,
+            }));
           }}
           onClose={() => {
             setAreDirectionsShown(false);
-            setSelectedStartLocationInfo(undefined);
-            setSelectedEndLocationInfo(undefined);
-            setStartMarker?.(undefined);
-            setEndMarker?.(undefined);
+            setSelectedLocationInfos({});
+            setDirectionsMarkers?.(undefined);
           }}
         />
       ) : (
@@ -148,9 +168,11 @@ const Sidebar = () => {
           <Infobox
             searchResult={primarySelectedSearchResult}
             showDirectionsOnMap={(startLocationInfo, endLocationInfo) => {
-              showDirectionsOnMap(startLocationInfo, endLocationInfo);
-              setSelectedStartLocationInfo(startLocationInfo);
-              setSelectedEndLocationInfo(endLocationInfo);
+              setAreDirectionsShown(true);
+              setSelectedLocationInfos({
+                start: startLocationInfo,
+                end: endLocationInfo,
+              });
             }}
           />
         </>

@@ -6,6 +6,10 @@
   "author": "Sam Kim",
   "type": "module",
   "packageManager": "pnpm@8.15.5",
+  "scripts": {
+    "build": "pnpm --recursive run build",
+    "start": "pnpm --recursive --no-sort run start"
+  },
   "devDependencies": {
     "@html-eslint/eslint-plugin": "^0.22.0",
     "@html-eslint/parser": "^0.22.0",
