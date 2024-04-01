@@ -15,12 +15,16 @@
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
     "@internal/constants": "workspace:*",
+    "@internal/otp": "workspace:*",
     "@mui/icons-material": "^5.15.7",
     "@mui/material": "^5.15.7",
     "autosuggest-highlight": "^3.3.4",
+    "graphql": "^16.8.1",
+    "graphql-tag": "^2.12.6",
     "leaflet": "^1.9.4",
     "lodash-es": "^4.17.21",
-    "react-leaflet": "^4.2.1"
+    "react-leaflet": "^4.2.1",
+    "urql": "^4.0.6"
   },
   "devDependencies": {
     "@types/autosuggest-highlight": "^3.2.3",
