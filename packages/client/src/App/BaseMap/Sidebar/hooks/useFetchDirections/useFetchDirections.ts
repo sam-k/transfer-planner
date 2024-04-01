@@ -1,9 +1,8 @@
-import type {QueryType, QueryTypePlanArgs} from '@internal/otp';
+import type {QueryTypePlanArgs} from '@internal/otp';
 import {useMemo} from 'react';
-import {useQuery} from 'urql';
 
-import {normalizeOtpQueryResult} from '../utils';
-import PLAN_QUERY from './directionsQuery';
+import {useOtpQuery} from '../utils';
+import {PLAN_QUERY_DOCUMENT, PLAN_QUERY_NAME} from './directionsQuery';
 import type {UseFetchDirectionsProps} from './useFetchDirections.types';
 
 /** Fetches transit directions between two locations. */
@@ -33,16 +32,12 @@ const useFetchDirections = (props: UseFetchDirectionsProps) => {
     };
   }, [fromLocation, toLocation, isQueryValid]);
 
-  const [result, executeQuery] = useQuery<QueryType, QueryTypePlanArgs>({
-    query: PLAN_QUERY,
-    pause: !isQueryValid,
-    variables: queryVars,
+  return useOtpQuery({
+    name: PLAN_QUERY_NAME,
+    query: PLAN_QUERY_DOCUMENT,
+    vars: queryVars,
+    isQueryValid,
   });
-
-  return {
-    queryData: normalizeOtpQueryResult(result, /* queryType= */ 'plan'),
-    executeQuery,
-  };
 };
 
 export default useFetchDirections;

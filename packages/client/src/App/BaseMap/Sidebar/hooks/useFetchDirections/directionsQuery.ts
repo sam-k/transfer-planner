@@ -1,11 +1,19 @@
+import type {QueryTypePlanArgs} from '@internal/otp';
 import gql from 'graphql-tag';
-import type {TypedDocumentNode} from 'urql';
+
+import type {OtpQueryDocument, OtpQueryName} from '../utils';
+
+/** Name of the OTP `plan` query. */
+export const PLAN_QUERY_NAME = 'plan' satisfies OtpQueryName;
 
 /**
  * Abridged from
  * https://docs.opentripplanner.org/api/dev-2.x/graphql-gtfs/queries/plan.
  */
-const PLAN_QUERY: TypedDocumentNode = gql`
+export const PLAN_QUERY_DOCUMENT: OtpQueryDocument<
+  typeof PLAN_QUERY_NAME,
+  QueryTypePlanArgs
+> = gql`
   query (
     $date: String
     $time: String
@@ -143,5 +151,3 @@ const PLAN_QUERY: TypedDocumentNode = gql`
     }
   }
 `;
-
-export default PLAN_QUERY;
