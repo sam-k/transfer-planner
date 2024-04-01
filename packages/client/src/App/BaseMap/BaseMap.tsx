@@ -11,7 +11,7 @@ import {
 import {areCoordsInBounds} from '../../utils';
 import {BaseMapContextProvider} from '../BaseMapContext';
 import './BaseMap.css';
-import type {BaseMapProps} from './BaseMap.types';
+import type {BaseMapProps, DirectionsMarkerProps} from './BaseMap.types';
 import Marker, {type MarkerProps} from './Marker';
 import Sidebar from './Sidebar';
 
@@ -21,10 +21,9 @@ const BaseMap = (props: BaseMapProps) => {
 
   // Information for rendering a generic location marker.
   const [marker, setMarker] = useState<MarkerProps>();
-  // Information for rendering the start location marker.
-  const [startMarker, setStartMarker] = useState<MarkerProps>();
-  // Information for rendering the end location marker.
-  const [endMarker, setEndMarker] = useState<MarkerProps>();
+  // Information for rendering the start and end location markers.
+  const [directionsMarkers, setDirectionsMarkers] =
+    useState<DirectionsMarkerProps>();
 
   const mapRef = useRef<LeafletMap>();
 
@@ -109,8 +108,7 @@ const BaseMap = (props: BaseMapProps) => {
       boundingBox={boundingBox}
       mapRef={mapRef}
       setMarker={setMarker}
-      setStartMarker={setStartMarker}
-      setEndMarker={setEndMarker}
+      setDirectionsMarkers={setDirectionsMarkers}
     >
       <Sidebar />
       <MapContainer
@@ -141,12 +139,13 @@ const BaseMap = (props: BaseMapProps) => {
             }}
           />
         )}
-        {startMarker || endMarker ? (
+        {directionsMarkers ? (
           <>
-            {startMarker && <Marker {...startMarker} />}
-            {endMarker && (
-              <Marker classNames={{icon: 'endMarker-icon'}} {...endMarker} />
-            )}
+            <Marker {...directionsMarkers.start} />
+            <Marker
+              classNames={{icon: 'endMarker-icon'}}
+              {...directionsMarkers.end}
+            />
           </>
         ) : (
           marker && <Marker {...marker} />

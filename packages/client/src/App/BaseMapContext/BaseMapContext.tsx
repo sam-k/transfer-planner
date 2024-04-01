@@ -16,8 +16,7 @@ export const BaseMapContextProvider = (props: BaseMapContextProviderProps) => {
     boundingBox,
     mapRef,
     setMarker,
-    setStartMarker,
-    setEndMarker,
+    setDirectionsMarkers,
     children,
   } = props;
 
@@ -29,8 +28,7 @@ export const BaseMapContextProvider = (props: BaseMapContextProviderProps) => {
       boundingBox,
       mapRef,
       setMarker,
-      setStartMarker,
-      setEndMarker,
+      setDirectionsMarkers,
     }),
     [
       tileApi,
@@ -39,8 +37,7 @@ export const BaseMapContextProvider = (props: BaseMapContextProviderProps) => {
       boundingBox,
       mapRef,
       setMarker,
-      setStartMarker,
-      setEndMarker,
+      setDirectionsMarkers,
     ]
   );
 
