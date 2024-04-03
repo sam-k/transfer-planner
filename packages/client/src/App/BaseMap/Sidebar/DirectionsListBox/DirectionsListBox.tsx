@@ -4,7 +4,7 @@ import {Box, Typography} from '@mui/material';
 import {format as formatTimeTz} from 'date-fns-tz';
 import React, {Fragment, memo, useCallback, useMemo} from 'react';
 
-import {filterAndJoin} from '../../../../utils';
+import {capColorSaturation, filterAndJoin} from '../../../../utils';
 import LoadingBar from '../LoadingBar';
 import './DirectionsListBox.css';
 import type {DirectionsListBoxProps} from './DirectionsListBox.types';
@@ -50,7 +50,7 @@ const DirectionLeg = memo((props: Leg) => {
           transitLeg
             ? {
                 backgroundColor: trip?.route?.color
-                  ? `#${trip.route.color}`
+                  ? capColorSaturation(trip.route.color)
                   : undefined,
                 outline: trip?.route?.color ? undefined : 'black solid 1px',
                 outlineOffset: '-1px',
@@ -63,7 +63,7 @@ const DirectionLeg = memo((props: Leg) => {
           variant="caption"
           color={
             transitLeg
-              ? `#${trip?.route?.textColor ?? '000'}`
+              ? capColorSaturation(trip?.route?.textColor ?? '000')
               : 'text.secondary'
           }
         >
