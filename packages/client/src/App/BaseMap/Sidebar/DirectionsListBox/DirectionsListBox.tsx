@@ -80,17 +80,23 @@ const DirectionItinerary = memo(
     const {startTime, endTime, duration, legs, classNames} = props;
 
     const startTimeStr = useMemo(
-      // TODO: Determine timezone.
-      () => formatTimeTz(new Date(startTime), TIME_FORMAT, {timeZone: ''}),
+      () =>
+        startTime != null
+          ? // TODO: Determine timezone.
+            formatTimeTz(new Date(startTime), TIME_FORMAT, {timeZone: ''})
+          : '',
       [startTime]
     );
     const endTimeStr = useMemo(
-      // TODO: Determine timezone.
-      () => formatTimeTz(new Date(endTime), TIME_FORMAT, {timeZone: ''}),
+      () =>
+        endTime != null
+          ? // TODO: Determine timezone.
+            formatTimeTz(new Date(endTime), TIME_FORMAT, {timeZone: ''})
+          : '',
       [endTime]
     );
     const durationStr = useMemo(
-      () => formatShortDuration(duration),
+      () => (duration != null ? formatShortDuration(duration) : ''),
       [duration]
     );
 
