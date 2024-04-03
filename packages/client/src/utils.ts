@@ -1,3 +1,4 @@
+import Color from 'color';
 import {debounce, inRange} from 'lodash-es';
 
 import type {LatLngBounds, LatLngCoords} from './types';
@@ -80,6 +81,24 @@ export const areCoordsInBounds = (
   return (
     inRange(lat, latBound1, latBound2) && inRange(lon, lonBound1, lonBound2)
   );
+};
+
+/** Caps a color's saturation. */
+export const capColorSaturation = (
+  /** RGB color in hex. (e.g., #FF0000) */
+  rgbColorStr: string,
+  /** Cap for the saturation as a percentage. (e.g., 90%) */
+  saturationCap = 90
+): string => {
+  const hslColor = Color(
+    rgbColorStr.charAt(0) === '#' ? rgbColorStr : `#${rgbColorStr}`
+  ).hsl();
+
+  return Color.hsl(
+    hslColor.hue(),
+    Math.min(hslColor.saturationl(), saturationCap),
+    hslColor.lightness()
+  ).hex();
 };
 
 /** Creates an asynchronous debounced function. */

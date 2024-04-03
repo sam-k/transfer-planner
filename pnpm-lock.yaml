@@ -114,8 +114,11 @@ importers:
       autosuggest-highlight:
         specifier: ^3.3.4
         version: 3.3.4
+      color:
+        specifier: ^4.2.3
+        version: 4.2.3
       date-fns:
-        specifier: '2'
+        specifier: ^2.30.0
         version: 2.30.0
       date-fns-tz:
         specifier: ^2.0.1
@@ -148,6 +151,9 @@ importers:
       '@types/autosuggest-highlight':
         specifier: ^3.2.3
         version: 3.2.3
+      '@types/color':
+        specifier: ^3.0.6
+        version: 3.0.6
       '@types/leaflet':
         specifier: ^1.9.8
         version: 1.9.8
@@ -2498,6 +2504,22 @@ packages:
       '@types/node': 20.8.2
     dev: true
 
+  /@types/color-convert@2.0.3:
+    resolution: {integrity: sha512-2Q6wzrNiuEvYxVQqhh7sXM2mhIhvZR/Paq4FdsQkOMgWsCIkKvSGj8Le1/XalulrmgOzPMqNa0ix+ePY4hTrfg==}
+    dependencies:
+      '@types/color-name': 1.1.3
+    dev: true
+
+  /@types/color-name@1.1.3:
+    resolution: {integrity: sha512-87W6MJCKZYDhLAx/J1ikW8niMvmGRyY+rpUxWpL1cO7F8Uu5CHuQoFv+R0/L5pgNdW4jTyda42kv60uwVIPjLw==}
+    dev: true
+
+  /@types/color@3.0.6:
+    resolution: {integrity: sha512-NMiNcZFRUAiUUCCf7zkAelY8eV3aKqfbzyFQlXpPIEeoNDbsEHGpb854V3gzTsGKYj830I5zPuOwU/TP5/cW6A==}
+    dependencies:
+      '@types/color-convert': 2.0.3
+    dev: true
+
   /@types/connect@3.4.38:
     resolution: {integrity: sha512-K6uROf1LD88uDQqJCktA4yzL1YYAK6NgfsI0v/mTgyPKWsX1CnJ0XPSDhViejru1GcRkLWb8RlzFYJRqGUbaug==}
     dependencies:
@@ -3444,6 +3466,21 @@ packages:
 
   /color-name@1.1.4:
     resolution: {integrity: sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==}
+
+  /color-string@1.9.1:
+    resolution: {integrity: sha512-shrVawQFojnZv6xM40anx4CkoDP+fZsw/ZerEMsW/pyzsRbElpsL/DBVW7q3ExxwusdNXI3lXpuhEZkzs8p5Eg==}
+    dependencies:
+      color-name: 1.1.4
+      simple-swizzle: 0.2.2
+    dev: false
+
+  /color@4.2.3:
+    resolution: {integrity: sha512-1rXeuUUiGGrykh+CeBdu5Ie7OJwinCgQY0bc7GCRxy5xVHy+moaqkpL/jqQq0MtQOeYcrqEz4abc5f0KtU7W4A==}
+    engines: {node: '>=12.5.0'}
+    dependencies:
+      color-convert: 2.0.1
+      color-string: 1.9.1
+    dev: false
 
   /colord@2.9.3:
     resolution: {integrity: sha512-jeC1axXpnb0/2nn/Y1LPuLdgXBLH7aDcHu4KEKfqw3CUhX7ZpfBSlPKyqXE6btIgEzfWtrX3/tyBCaCvXvMkOw==}
@@ -4900,6 +4937,10 @@ packages:
 
   /is-arrayish@0.2.1:
     resolution: {integrity: sha512-zz06S8t0ozoDXMG+ube26zeCTNXcKIPJZJi8hBrF4idCLms4CG9QtK7qBl1boi5ODzFpjswb5JPmHCbMpjaYzg==}
+
+  /is-arrayish@0.3.2:
+    resolution: {integrity: sha512-eVRqCvVlZbuw3GrM63ovNSNAeA1K16kaR/LRY/92w0zxQ5/1YzwblUX652i4Xs9RwAGjW9d9y6X88t8OaAJfWQ==}
+    dev: false
 
   /is-core-module@2.13.1:
     resolution: {integrity: sha512-hHrIjvZsftOsvKSn2TRYl63zvxsgE0K+0mYMoH6gD4omR5IWB2KynivBQczo3+wF1cCkjzvptnI9Q0sPU66ilw==}
@@ -6368,6 +6409,12 @@ packages:
   /signedsource@1.0.0:
     resolution: {integrity: sha512-6+eerH9fEnNmi/hyM1DXcRK3pWdoMQtlkQ+ns0ntzunjKqp5i3sKCc80ym8Fib3iaYhdJUOPdhlJWj1tvge2Ww==}
     dev: true
+
+  /simple-swizzle@0.2.2:
+    resolution: {integrity: sha512-JA//kQgZtbuY83m+xT+tXJkmJncGMTFT+C+g2h2R9uxkYIrE2yy9sgmcLhCnw57/WSD+Eh3J97FPEDFnbXnDUg==}
+    dependencies:
+      is-arrayish: 0.3.2
+    dev: false
 
   /slash@3.0.0:
     resolution: {integrity: sha512-g9Q1haeby36OSStwb4ntCGGGaKsaVSjQ68fBxoQcutl5fS1vuY18H3wSt3jFyFtrkx+Kz0V1G85A4MyAdDMi2Q==}
