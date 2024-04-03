@@ -1,6 +1,8 @@
+import type {Itinerary} from '@internal/otp';
 import React, {memo, useCallback, useEffect, useMemo, useState} from 'react';
 
 import {useBaseMapContext} from '../../BaseMapContext';
+import DirectionsListBox from './DirectionsListBox';
 import DirectionsSearchBox from './DirectionsSearchBox';
 import Infobox from './Infobox';
 import SearchField, {type SearchFieldProps} from './SearchField';
@@ -117,45 +119,54 @@ const Sidebar = () => {
   return (
     <div className="sidebar">
       {areDirectionsShown ? (
-        <DirectionsSearchBox
-          defaultValues={{
-            start: {
-              textInput: currentPosHighlightedSearchResult.label,
-              selectedSearchResult: currentPosHighlightedSearchResult,
-              searchResults: new Set([currentPosHighlightedSearchResult]),
-            },
-            end: defaultSearchFieldValue,
-          }}
-          onStartChange={async searchResult => {
-            const newStartLocationInfo = searchResult
-              ? await fetchLocationInfo(searchResult)
-              : undefined;
-            setSelectedLocationInfos(prevState => ({
-              ...prevState,
-              start: newStartLocationInfo,
-            }));
-          }}
-          onEndChange={async searchResult => {
-            const newEndLocationInfo = searchResult
-              ? await fetchLocationInfo(searchResult)
-              : undefined;
-            setSelectedLocationInfos(prevState => ({
-              ...prevState,
-              end: newEndLocationInfo,
-            }));
-          }}
-          onSwap={() => {
-            setSelectedLocationInfos(prevState => ({
-              start: prevState.end,
-              end: prevState.start,
-            }));
-          }}
-          onClose={() => {
-            setAreDirectionsShown(false);
-            setSelectedLocationInfos({});
-            setDirectionsMarkers?.(undefined);
-          }}
-        />
+        <>
+          <DirectionsSearchBox
+            defaultValues={{
+              start: {
+                textInput: currentPosHighlightedSearchResult.label,
+                selectedSearchResult: currentPosHighlightedSearchResult,
+                searchResults: new Set([currentPosHighlightedSearchResult]),
+              },
+              end: defaultSearchFieldValue,
+            }}
+            onStartChange={async searchResult => {
+              const newStartLocationInfo = searchResult
+                ? await fetchLocationInfo(searchResult)
+                : undefined;
+              setSelectedLocationInfos(prevState => ({
+                ...prevState,
+                start: newStartLocationInfo,
+              }));
+            }}
+            onEndChange={async searchResult => {
+              const newEndLocationInfo = searchResult
+                ? await fetchLocationInfo(searchResult)
+                : undefined;
+              setSelectedLocationInfos(prevState => ({
+                ...prevState,
+                end: newEndLocationInfo,
+              }));
+            }}
+            onSwap={() => {
+              setSelectedLocationInfos(prevState => ({
+                start: prevState.end,
+                end: prevState.start,
+              }));
+            }}
+            onClose={() => {
+              setAreDirectionsShown(false);
+              setSelectedLocationInfos({});
+              setDirectionsMarkers?.(undefined);
+            }}
+          />
+          {directionsData && (
+            <DirectionsListBox
+              itineraries={directionsData.itineraries.filter(
+                (itin): itin is Itinerary => Boolean(itin)
+              )}
+            />
+          )}
+        </>
       ) : (
         <>
           <SearchField

@@ -19,6 +19,8 @@
     "@mui/icons-material": "^5.15.7",
     "@mui/material": "^5.15.7",
     "autosuggest-highlight": "^3.3.4",
+    "date-fns": "^2.30.0",
+    "date-fns-tz": "^2.0.1",
     "graphql": "^16.8.1",
     "graphql-tag": "^2.12.6",
     "leaflet": "^1.9.4",
