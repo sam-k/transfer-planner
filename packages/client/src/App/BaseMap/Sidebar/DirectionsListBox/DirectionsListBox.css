@@ -9,6 +9,10 @@
   box-shadow: 0 0 8px rgba(0 0 0 / 25%);
 }
 
+.directionsListBox-noResults {
+  text-align: center;
+}
+
 .directionLi-timeRow {
   display: flex;
   align-items: center;

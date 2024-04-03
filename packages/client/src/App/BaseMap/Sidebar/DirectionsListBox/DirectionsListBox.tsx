@@ -128,9 +128,16 @@ const DirectionsListBox = (props: DirectionsListBoxProps) => {
 
   return (
     <div className="directionsListBox">
-      {itineraries.map((itin, i) => (
-        <DirectionItinerary key={i} {...itin} />
-      ))}
+      {itineraries.length ? (
+        itineraries.map((itin, i) => <DirectionItinerary key={i} {...itin} />)
+      ) : (
+        <Typography
+          className="directionsListBox-noResults"
+          color="text.secondary"
+        >
+          No directions found
+        </Typography>
+      )}
     </div>
   );
 };
