@@ -16,6 +16,12 @@ import {
 } from '@mui/icons-material';
 import {formatDuration, intervalToDuration, type Locale} from 'date-fns';
 
+/**
+ * Distance to be considered a very short trip and thus should be excluded from
+ * the itinerary view, in meters.
+ */
+export const VERY_SHORT_DIST_M = 500;
+
 /** Time short format. */
 export const TIME_FORMAT = 'h:mm a';
 

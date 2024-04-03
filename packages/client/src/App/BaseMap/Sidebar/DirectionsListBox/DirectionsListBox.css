@@ -1,54 +1,70 @@
 .directionsListBox {
   display: flex;
   flex-direction: column;
-  row-gap: 1rem;
-  padding: 1rem;
   background-color: white;
   border: 1px solid rgba(0 0 0 / 23%);
   border-radius: 16px;
   box-shadow: 0 0 8px rgba(0 0 0 / 25%);
 }
 
+.directionsListBox > * {
+  padding: 1rem;
+}
+
 .directionsListBox-noResults {
   text-align: center;
 }
 
-.directionLi-timeRow {
+.itinerary {
+  display: flex;
+  flex-direction: column;
+  row-gap: 0.375rem;
+}
+
+.itinerary-moreNext {
+  border-bottom: 1px solid rgba(0 0 0 / 23%);
+}
+
+.itinerary-morePrev {
+  border-top: 1px solid rgba(0 0 0 / 23%);
+}
+
+.itinerary-timesRow {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.directionLi-timeRow-text {
+.itinerary-timesRow-text {
   font-weight: bold;
 }
 
-.directionLi-legsRow {
+.itinerary-legsRow {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
 }
 
-.directionLeg {
+.leg {
   display: flex;
   align-items: center;
 }
 
-.directionLeg-divider {
+.leg-divider {
   display: flex;
   justify-content: flex-end;
   width: 1rem;
 }
 
-.directionLeg-dividerIcon {
+.leg-dividerIcon {
   font-size: 0.75rem;
 }
 
-.directionLeg-modeIcon {
+.leg-modeIcon {
   font-size: 1rem;
 }
 
-.directionLeg-transitDescContainer {
+.leg-transitDescContainer {
   display: flex;
   align-items: center;
   height: 1rem;
@@ -56,6 +72,6 @@
   border-radius: 999px; /* Rounded rectangle. */
 }
 
-.directionLeg-transitDesc {
+.leg-transitDesc {
   line-height: 0;
 }
