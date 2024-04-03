@@ -5,6 +5,9 @@ const config = {
     ecmaVersion: 'latest',
     sourceType: 'module',
   },
+  rules: {
+    eqeqeq: ['error', 'always', {null: 'ignore'}],
+  },
   overrides: [
     {
       files: [

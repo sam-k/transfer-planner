@@ -25,11 +25,13 @@
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^5.0.2",
+    "@graphql-codegen/typescript-operations": "^4.2.0",
     "@internal/constants": "workspace:*",
     "@internal/script-utils": "workspace:*",
     "@octokit/request": "^8.1.6",
     "@octokit/request-error": "^5.0.1",
     "@octokit/types": "^12.4.0",
+    "@types/geojson": "^7946.0.14",
     "@types/lodash-es": "^4.17.12",
     "dotenv": "^16.4.1",
     "glob": "^10.3.10",
