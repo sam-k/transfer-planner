@@ -159,13 +159,12 @@ const Sidebar = () => {
               setDirectionsMarkers?.(undefined);
             }}
           />
-          {directionsData && (
-            <DirectionsListBox
-              itineraries={directionsData.itineraries.filter(
-                (itin): itin is Itinerary => Boolean(itin)
-              )}
-            />
-          )}
+          <DirectionsListBox
+            itineraries={directionsData?.itineraries.filter(
+              (itin): itin is Itinerary => Boolean(itin)
+            )}
+            isLoading={!directionsData}
+          />
         </>
       ) : (
         <>

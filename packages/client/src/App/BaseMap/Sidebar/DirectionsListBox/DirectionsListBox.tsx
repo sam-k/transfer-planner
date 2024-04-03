@@ -4,6 +4,7 @@ import {Box, Typography} from '@mui/material';
 import {format as formatTimeTz} from 'date-fns-tz';
 import React, {Fragment, memo, useMemo} from 'react';
 
+import LoadingBar from '../LoadingBar';
 import './DirectionsListBox.css';
 import type {DirectionsListBoxProps} from './DirectionsListBox.types';
 import {
@@ -13,7 +14,9 @@ import {
 } from './DirectionsListBox.utils';
 
 /** Renders simplified information about a single leg in an itinerary. */
-const DirectionLeg = memo(({mode, duration, transitLeg, trip}: Leg) => {
+const DirectionLeg = memo((props: Leg) => {
+  const {mode, duration, transitLeg, trip} = props;
+
   /** Icon for the mode of transit for this leg. */
   const TransitModeIcon = useMemo(
     () => getOtpModeIcon(mode ?? undefined),
@@ -70,73 +73,72 @@ const DirectionLeg = memo(({mode, duration, transitLeg, trip}: Leg) => {
 });
 
 /** Renders simplified information about a single itinerary. */
-const DirectionItinerary = memo(
-  ({startTime, endTime, duration, legs}: Itinerary) => {
-    const startTimeStr = useMemo(
-      // TODO: Determine timezone.
-      () => formatTimeTz(new Date(startTime), TIME_FORMAT, {timeZone: ''}),
-      [startTime]
-    );
+const DirectionItinerary = memo((props: Itinerary) => {
+  const {startTime, endTime, duration, legs} = props;
 
-    const endTimeStr = useMemo(
-      // TODO: Determine timezone.
-      () => formatTimeTz(new Date(endTime), TIME_FORMAT, {timeZone: ''}),
-      [endTime]
-    );
+  const startTimeStr = useMemo(
+    // TODO: Determine timezone.
+    () => formatTimeTz(new Date(startTime), TIME_FORMAT, {timeZone: ''}),
+    [startTime]
+  );
 
-    const durationStr = useMemo(
-      () => formatShortDuration(duration),
-      [duration]
-    );
+  const endTimeStr = useMemo(
+    // TODO: Determine timezone.
+    () => formatTimeTz(new Date(endTime), TIME_FORMAT, {timeZone: ''}),
+    [endTime]
+  );
 
-    return (
-      <div>
-        <div className="directionLi-timeRow">
-          <Typography className="directionLi-timeRow-text">
-            {startTimeStr} – {endTimeStr}
-          </Typography>
-          <Typography className="directionLi-timeRow-text">
-            {durationStr}
-          </Typography>
-        </div>
-        <div className="directionLi-legsRow">
-          {legs.map(
-            (leg, i) =>
-              leg && (
-                <Fragment key={i}>
-                  {i > 0 && (
-                    <div className="directionLeg-divider">
-                      <NavigateNextIcon
-                        className="directionLeg-dividerIcon"
-                        sx={{color: 'text.secondary'}}
-                      />
-                    </div>
-                  )}
-                  <DirectionLeg {...leg} />
-                </Fragment>
-              )
-          )}
-        </div>
+  const durationStr = useMemo(() => formatShortDuration(duration), [duration]);
+
+  return (
+    <div>
+      <div className="directionLi-timeRow">
+        <Typography className="directionLi-timeRow-text">
+          {startTimeStr} – {endTimeStr}
+        </Typography>
+        <Typography className="directionLi-timeRow-text">
+          {durationStr}
+        </Typography>
       </div>
-    );
-  }
-);
+      <div className="directionLi-legsRow">
+        {legs.map(
+          (leg, i) =>
+            leg && (
+              <Fragment key={i}>
+                {i > 0 && (
+                  <div className="directionLeg-divider">
+                    <NavigateNextIcon
+                      className="directionLeg-dividerIcon"
+                      sx={{color: 'text.secondary'}}
+                    />
+                  </div>
+                )}
+                <DirectionLeg {...leg} />
+              </Fragment>
+            )
+        )}
+      </div>
+    </div>
+  );
+});
 
 /** Renders a box listing directions. */
 const DirectionsListBox = (props: DirectionsListBoxProps) => {
-  const {itineraries} = props;
+  const {itineraries, isLoading} = props;
 
   return (
     <div className="directionsListBox">
-      {itineraries.length ? (
-        itineraries.map((itin, i) => <DirectionItinerary key={i} {...itin} />)
-      ) : (
+      {isLoading ? (
+        <LoadingBar />
+      ) : !itineraries?.length ? (
         <Typography
           className="directionsListBox-noResults"
           color="text.secondary"
         >
           No directions found
         </Typography>
+      ) : (
+        itineraries.map((itin, i) => <DirectionItinerary key={i} {...itin} />)
       )}
     </div>
   );
