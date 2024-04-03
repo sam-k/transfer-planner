@@ -1,0 +1,9 @@
+.loadingBarContainer {
+  display: flex;
+  justify-content: center;
+  padding: 0.5625rem;
+}
+
+.loadingBar {
+  width: 100%;
+}

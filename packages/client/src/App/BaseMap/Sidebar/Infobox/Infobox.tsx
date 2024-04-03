@@ -4,11 +4,12 @@ import {
   Public as PublicIcon,
   type SvgIconComponent,
 } from '@mui/icons-material';
-import {Button, LinearProgress, Typography} from '@mui/material';
+import {Button, Typography} from '@mui/material';
 import React, {memo, useCallback, useEffect, useState} from 'react';
 
 import {areCoordsInBounds, convertDdToDmsCoords} from '../../../../utils';
 import {useBaseMapContext} from '../../../BaseMapContext';
+import LoadingBar from '../LoadingBar';
 import type {LocationInfo} from '../Sidebar.types';
 import {useFetchLocationInfo} from '../hooks';
 import './Infobox.css';
@@ -98,9 +99,7 @@ const Infobox = (props: InfoboxProps) => {
   return (
     <div className="infobox">
       {!selectedLocationInfo || isFetching ? (
-        <Typography className="infobox-loadingContainer" color="text.disabled">
-          <LinearProgress className="infobox-loading" color="inherit" />
-        </Typography>
+        <LoadingBar />
       ) : (
         <>
           <div>
