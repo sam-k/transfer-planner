@@ -160,6 +160,18 @@ const Sidebar = () => {
             }}
           />
           <DirectionsListBox
+            startCoords={
+              directionsData?.from && [
+                directionsData.from.lat,
+                directionsData.from.lon,
+              ]
+            }
+            endCoords={
+              directionsData?.to && [
+                directionsData.to.lat,
+                directionsData.to.lon,
+              ]
+            }
             itineraries={directionsData?.itineraries.filter(
               (itin): itin is Itinerary => Boolean(itin)
             )}

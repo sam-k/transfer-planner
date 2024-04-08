@@ -1,4 +1,4 @@
-import {API_PORT, ENV_VARS} from '@internal/constants';
+import {API_FETCH_ENDPOINT, ENV_VARS} from '@internal/constants';
 import {useCallback, useMemo, useState} from 'react';
 
 import {filterAndJoin} from '../../../../../utils';
@@ -81,7 +81,8 @@ const useFetchLocationInfo = () => {
           const {encodedUrl, encodedOptions} = encodedFetchLocationData;
           const responseJson = await (
             await fetch(
-              `http://localhost:${API_PORT}/fetch?` +
+              [
+                API_FETCH_ENDPOINT,
                 filterAndJoin(
                   [
                     `encodedUrl=${encodedUrl}`,
@@ -89,7 +90,8 @@ const useFetchLocationInfo = () => {
                     `id=${encodeURIComponent(searchResult.apiId ?? '')}`,
                   ],
                   /* sep= */ '&'
-                )
+                ),
+              ].join('?')
             )
           ).json();
           locationInfo = {

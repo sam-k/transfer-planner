@@ -1,4 +1,4 @@
-import {API_PORT, ENV_VARS} from '@internal/constants';
+import {API_FETCH_ENDPOINT, ENV_VARS} from '@internal/constants';
 import {Map as LeafletMap} from 'leaflet';
 import React, {memo, useEffect, useMemo, useRef, useState} from 'react';
 import {
@@ -73,8 +73,8 @@ const BaseMap = (props: BaseMapProps) => {
       case 'mapbox':
         // TODO: Add Mapbox logo attribution.
         return {
-          url:
-            `http://localhost:${API_PORT}/fetch?` +
+          url: [
+            API_FETCH_ENDPOINT,
             [
               `encodedUrl=${encodeURIComponent(
                 'https://api.mapbox.com/styles/v1/mapbox/light-v11/tiles/{z}/{x}/{y}?' +
@@ -84,6 +84,7 @@ const BaseMap = (props: BaseMapProps) => {
               'x={x}',
               'y={y}',
             ].join('&'),
+          ].join('?'),
           attribution: [
             '© <a href="https://www.mapbox.com/about/maps/">Mapbox</a>',
             '© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
