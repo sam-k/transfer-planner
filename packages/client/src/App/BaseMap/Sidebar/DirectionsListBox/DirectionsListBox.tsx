@@ -1,7 +1,6 @@
 import type {Leg} from '@internal/otp';
 import {NavigateNext as NavigateNextIcon} from '@mui/icons-material';
 import {Box, Typography} from '@mui/material';
-import {format as formatTimeTz} from 'date-fns-tz';
 import React, {
   Fragment,
   memo,
@@ -21,9 +20,9 @@ import type {
   DirectionsListBoxProps,
 } from './DirectionsListBox.types';
 import {
-  TIME_FORMAT,
   VERY_SHORT_DIST_M,
   formatShortDuration,
+  formatTimestamp,
   getOtpModeIcon,
 } from './DirectionsListBox.utils';
 
@@ -89,8 +88,8 @@ const DirectionLeg = memo((props: DirectionLegProps) => {
 /** Renders simplified information about a single itinerary. */
 const DirectionItinerary = memo((props: DirectionItineraryProps) => {
   const {
-    startTime,
-    endTime,
+    startTime: startTimestamp,
+    endTime: endTimestamp,
     duration,
     legs,
     classNames,
@@ -99,20 +98,12 @@ const DirectionItinerary = memo((props: DirectionItineraryProps) => {
   } = props;
 
   const startTimeStr = useMemo(
-    () =>
-      startTime != null
-        ? formatTimeTz(new Date(startTime), TIME_FORMAT, {
-            timeZone: startTimezone,
-          })
-        : '',
-    [startTime, startTimezone]
+    () => formatTimestamp(startTimestamp, startTimezone),
+    [startTimestamp, startTimezone]
   );
   const endTimeStr = useMemo(
-    () =>
-      endTime != null
-        ? formatTimeTz(new Date(endTime), TIME_FORMAT, {timeZone: endTimezone})
-        : '',
-    [endTime, endTimezone]
+    () => formatTimestamp(endTimestamp, endTimezone),
+    [endTimestamp, endTimezone]
   );
   const durationStr = useMemo(
     () => (duration != null ? formatShortDuration(duration) : ''),

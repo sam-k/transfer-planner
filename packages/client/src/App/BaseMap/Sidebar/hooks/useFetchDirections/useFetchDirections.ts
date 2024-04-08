@@ -7,12 +7,12 @@ import type {UseFetchDirectionsProps} from './useFetchDirections.types';
 
 /** Fetches transit directions between two locations. */
 const useFetchDirections = (props: UseFetchDirectionsProps) => {
-  const {fromLocation, toLocation} = props;
+  const {startLocation, endLocation} = props;
 
   /** Whether the query is valid to be run. */
   const isQueryValid = useMemo(
-    () => Boolean(fromLocation && toLocation),
-    [fromLocation, toLocation]
+    () => Boolean(startLocation && endLocation),
+    [startLocation, endLocation]
   );
 
   /** Variables to supply to the query. */
@@ -22,15 +22,15 @@ const useFetchDirections = (props: UseFetchDirectionsProps) => {
     }
     return {
       from: {
-        lat: fromLocation!.latitude,
-        lon: fromLocation!.longitude,
+        lat: startLocation!.latitude,
+        lon: startLocation!.longitude,
       },
       to: {
-        lat: toLocation!.latitude,
-        lon: toLocation!.longitude,
+        lat: endLocation!.latitude,
+        lon: endLocation!.longitude,
       },
     };
-  }, [fromLocation, toLocation, isQueryValid]);
+  }, [startLocation, endLocation, isQueryValid]);
 
   return useOtpQuery({
     name: PLAN_QUERY_NAME,
