@@ -1,4 +1,4 @@
-import {API_PORT, ENV_VARS} from '@internal/constants';
+import {API_FETCH_ENDPOINT, ENV_VARS} from '@internal/constants';
 import {useMemo, useState} from 'react';
 
 import type {LatLngCoords} from '../../../../../types';
@@ -141,7 +141,8 @@ const useFetchSearchResults = (props: UseFetchSearchResultsProps) => {
           const {encodedUrl, encodedOptions} = encodedFetchSearchData;
           const responseJson = await (
             await fetch(
-              `http://localhost:${API_PORT}/fetch?` +
+              [
+                API_FETCH_ENDPOINT,
                 filterAndJoin(
                   [
                     `encodedUrl=${encodedUrl}`,
@@ -149,7 +150,8 @@ const useFetchSearchResults = (props: UseFetchSearchResultsProps) => {
                     `query=${encodeURIComponent(query)}`,
                   ],
                   /* sep= */ '&'
-                )
+                ),
+              ].join('?')
             )
           ).json();
 

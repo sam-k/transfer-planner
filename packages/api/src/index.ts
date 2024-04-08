@@ -1,4 +1,9 @@
-import {API_PORT, REPO_DIR} from '@internal/constants';
+import {
+  API_FETCH_ENDPOINT_NAME,
+  API_PORT,
+  API_TZ_ENDPOINT_NAME,
+  REPO_DIR,
+} from '@internal/constants';
 import chalk from 'chalk';
 import cors from 'cors';
 import {configDotenv} from 'dotenv';
@@ -7,6 +12,7 @@ import minimist from 'minimist';
 import {join as joinPath} from 'path';
 
 import {fetchWithQuery, type FetchWithQueryParams} from './fetch';
+import {fetchTimezones, type FetchTimezonesParams} from './tz';
 
 configDotenv({path: joinPath(REPO_DIR, '.env')});
 
@@ -18,7 +24,7 @@ app.use(cors());
 
 // Endpoint for fetching data with query params and environment variables.
 app.get(
-  '/fetch',
+  `/${API_FETCH_ENDPOINT_NAME}`,
   async (
     req: Request<unknown, unknown, unknown, FetchWithQueryParams>,
     res
@@ -47,6 +53,16 @@ app.get(
       process.stderr.write(chalk.red(chalk.bold('ERROR:'), `${err}\n`));
       res.status(500).send(err);
     }
+  }
+);
+
+// Endpoint for fetching timezones corresponding to the given coordinates.
+app.get(
+  `/${API_TZ_ENDPOINT_NAME}`,
+  (req: Request<unknown, unknown, unknown, FetchTimezonesParams>, res) => {
+    res.status(200).send({
+      timezones: fetchTimezones(req.query),
+    });
   }
 );
 

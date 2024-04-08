@@ -14,7 +14,13 @@ import {
   Tram as TramIcon,
   type SvgIconComponent,
 } from '@mui/icons-material';
-import {formatDuration, intervalToDuration, type Locale} from 'date-fns';
+import {
+  format as formatDate,
+  formatDuration,
+  intervalToDuration,
+  type Locale,
+} from 'date-fns';
+import {formatInTimeZone as formatDateInTimezone} from 'date-fns-tz';
 
 /**
  * Distance to be considered a very short trip and thus should be excluded from
@@ -23,7 +29,22 @@ import {formatDuration, intervalToDuration, type Locale} from 'date-fns';
 export const VERY_SHORT_DIST_M = 500;
 
 /** Time short format. */
-export const TIME_FORMAT = 'h:mm a';
+const SHORT_TIME_FORMAT = 'h:mm a';
+
+/** Formats a timestamp into a time in the given timezone. */
+export const formatTimestamp = (
+  timestamp?: number | null,
+  timezone?: string
+) => {
+  if (!timestamp) {
+    return '';
+  }
+  const date = new Date(timestamp);
+  if (!timezone) {
+    return formatDate(date, SHORT_TIME_FORMAT);
+  }
+  return formatDateInTimezone(date, timezone, SHORT_TIME_FORMAT);
+};
 
 /**
  * Type for time-unit tokens used by `formatDistance` in `date-fns`. The library

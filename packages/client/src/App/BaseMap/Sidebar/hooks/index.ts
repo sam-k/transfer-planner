@@ -4,3 +4,4 @@ export {
   currentPosSearchResult,
   default as useFetchSearchResults,
 } from './useFetchSearchResults';
+export {default as useFetchTimezone} from './useFetchTimezone';

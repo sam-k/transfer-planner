@@ -3,7 +3,7 @@ import type {LocationInfo} from '../../Sidebar.types';
 /** Type for props for fetching transit directions. */
 export interface UseFetchDirectionsProps {
   /** Start location information. */
-  fromLocation?: LocationInfo;
+  startLocation?: LocationInfo;
   /** End location information. */
-  toLocation?: LocationInfo;
+  endLocation?: LocationInfo;
 }

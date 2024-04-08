@@ -45,8 +45,8 @@ const Sidebar = () => {
 
   // Transit result from start to end locations.
   const {queryData: directionsData} = useFetchDirections({
-    fromLocation: selectedLocationInfos.start,
-    toLocation: selectedLocationInfos.end,
+    startLocation: selectedLocationInfos.start,
+    endLocation: selectedLocationInfos.end,
   });
 
   /** Default value for the search field. */
@@ -160,6 +160,18 @@ const Sidebar = () => {
             }}
           />
           <DirectionsListBox
+            startCoords={
+              directionsData?.from && [
+                directionsData.from.lat,
+                directionsData.from.lon,
+              ]
+            }
+            endCoords={
+              directionsData?.to && [
+                directionsData.to.lat,
+                directionsData.to.lon,
+              ]
+            }
             itineraries={directionsData?.itineraries.filter(
               (itin): itin is Itinerary => Boolean(itin)
             )}

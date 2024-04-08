@@ -62,7 +62,7 @@ const replaceParamsAtOnce = (
  * Fetch response from the URL with populated query params and environment
  * variables.
  */
-export const fetchWithQuery = async ({
+const fetchWithQuery = async ({
   encodedUrl,
   encodedOptions,
   encodedQueryParams,
@@ -106,3 +106,5 @@ export const fetchWithQuery = async ({
 
   return await fetch(populatedUrl, populatedOptions);
 };
+
+export default fetchWithQuery;
