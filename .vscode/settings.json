@@ -20,8 +20,8 @@
   "json.format.enable": false,
   "json.schemas": [
     {
-      "fileMatch": ["config/dataSources.json"],
-      "url": "./config/schemas/dataSources.schema.json"
+      "fileMatch": ["packages/otp/config/dataSources.json"],
+      "url": "./packages/otp/config/schemas/dataSources.schema.json"
     }
   ],
   "search.exclude": {
