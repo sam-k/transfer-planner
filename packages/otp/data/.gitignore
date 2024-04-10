@@ -1,4 +1,4 @@
 *
 
 !.gitignore
-!otp-config.json
+!*-config.json
