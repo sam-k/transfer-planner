@@ -30,7 +30,9 @@ const printLog = (
   ...msgs: [unknown, ...unknown[]]
 ) => {
   const [firstMsg, ...restMsgs] = msgs;
-  console.log(formatter(`${prefix} ${firstMsg}`));
+  if (firstMsg != null) {
+    console.log(formatter(`${prefix} ${firstMsg}`));
+  }
   for (const msg of restMsgs) {
     console.log(formatter(`${' '.repeat(prefix.length)} ${msg}`));
   }

@@ -6,11 +6,7 @@ import {ProcessError} from './errors';
 /** Gets command-line arguments from the current process. */
 export const getArgs = () => minimist(process.argv.slice(2));
 
-/**
- * Executes a command in a child process.
- *
- * @throws {ProcessError}
- */
+/** Executes a command in a child process. */
 export const spawnCmd = ({
   name,
   cmd,

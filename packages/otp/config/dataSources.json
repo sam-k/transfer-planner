@@ -10,7 +10,21 @@
           "fileName": "511-sf-bay.gtfs.zip",
           "description": "GTFS data for all agencies in the SF Bay Area",
           "sourceType": "gtfs",
-          "url": "http://api.511.org/transit/datafeeds?operator_id=RG&api_key=${SF_511_API_KEY}"
+          "url": "http://api.511.org/transit/datafeeds?operator_id=RG&api_key=${SF_511_API_KEY}",
+          "sanitizeRules": [
+            {
+              "ruleType": "unique",
+              "fileName": "rider_categories.txt",
+              "sanitizeColNames": ["rider_category_id"],
+              "referenceColName": "rider_category_name"
+            },
+            {
+              "ruleType": "nonNull",
+              "fileName": "fare_products.txt",
+              "sanitizeColNames": ["fare_product_name"],
+              "referenceColName": "fare_product_id"
+            }
+          ]
         },
         {
           "id": "sf-osm",
