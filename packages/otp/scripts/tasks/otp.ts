@@ -311,7 +311,6 @@ export const generateOtpSchema = async () => {
       runOtpProc.kill();
       runOtpProc.on('close', () => {
         throw new DefaultError(
-          'otp',
           `OpenTripPlanner server failed to start on port ${OTP_PORT}.`
         );
       });

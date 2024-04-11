@@ -57,6 +57,43 @@
                   "markdownDescription": "Download URL for this data source, with any secrets (e.g., API keys) as `${SECRET}`.\n\nSecrets should be provided in `.env`.",
                   "type": "string",
                   "format": "uri"
+                },
+                "sanitizeRules": {
+                  "description": "Rules for sanitizing data from this data source.",
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "ruleType": {
+                        "description": "Type of this sanitization rule.",
+                        "enum": [
+                          "nonNull",
+                          "unique"
+                        ]
+                      },
+                      "fileName": {
+                        "description": "Name of the file to sanitize.",
+                        "type": "string"
+                      },
+                      "sanitizeColNames": {
+                        "description": "Column names to which to apply this rule.",
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "referenceColName": {
+                        "description": "Reference column name for this rule, for logging purposes.",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "ruleType",
+                      "fileName",
+                      "sanitizeColNames"
+                    ],
+                    "additionalProperties": false
+                  }
                 }
               },
               "required": [

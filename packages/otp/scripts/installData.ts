@@ -1,6 +1,7 @@
 import {getArgs, handleError, printUsage} from '@internal/script-utils';
 
 import {downloadDataForRegions} from './tasks';
+import {configureDotEnv} from './utils';
 
 const main = async () => {
   const argv = getArgs();
@@ -12,6 +13,7 @@ const main = async () => {
   }
 
   try {
+    configureDotEnv();
     await downloadDataForRegions(argv._);
   } catch (err) {
     handleError(err);

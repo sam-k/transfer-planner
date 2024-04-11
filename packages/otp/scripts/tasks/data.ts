@@ -3,12 +3,21 @@ import {
   downloadFromUrl,
   printInfo,
   printWarn,
+  spawnCmd,
 } from '@internal/script-utils';
-import {existsSync, mkdirSync, readFileSync} from 'fs';
+import {
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  renameSync,
+  rmSync,
+  unlinkSync,
+} from 'fs';
 import {join as joinPath} from 'path';
 
 import type {DataSources} from '../../config/schemas/dataSources.schema';
-import {CONFIG_DIR, DATA_DIR, configureDotEnv} from '../utils';
+import {CONFIG_DIR, DATA_DIR} from '../utils';
+import {sanitizeCsvInSource} from './sanitize';
 
 /** Path of the config specifying all data sources. */
 const DATA_SOURCES_CONFIG_PATH = joinPath(CONFIG_DIR, 'dataSources.json');
@@ -17,14 +26,36 @@ const DATA_SOURCES_CONFIG_PATH = joinPath(CONFIG_DIR, 'dataSources.json');
 const getDataName = (id: string, description?: string) =>
   id + (description ? ` (${description})` : '');
 
+/** Zips and replaces the given directory. */
+const zipAndReplace = async (dirPath: string) => {
+  const tmpZipPath = `${dirPath}-${Date.now()}`;
+  await spawnCmd({
+    name: 'data',
+    cmd: 'zip',
+    args: ['-j', '-r', '-q', tmpZipPath, dirPath],
+  }).resolved;
+  rmSync(dirPath, {recursive: true});
+  renameSync(tmpZipPath, dirPath);
+};
+
+/** Unzips and replaces the given archive. */
+const unzipAndReplace = async (zipPath: string) => {
+  const tmpDirPath = `${zipPath}-${Date.now()}`;
+  await spawnCmd({
+    name: 'data',
+    cmd: 'unzip',
+    args: ['-q', zipPath, '-d', tmpDirPath],
+  }).resolved;
+  unlinkSync(zipPath);
+  renameSync(tmpDirPath, zipPath);
+};
+
 /**
  * Downloads data specified by geographical region IDs.
  *
  * @param regionIds Region IDs, or all such IDs if unspecified
  */
 export const downloadDataForRegions = async (regionIds: string[]) => {
-  configureDotEnv();
-
   const dataSourcesConfig: DataSources = JSON.parse(
     readFileSync(DATA_SOURCES_CONFIG_PATH).toString()
   );
@@ -74,7 +105,7 @@ export const downloadDataForRegions = async (regionIds: string[]) => {
           ...source,
         }))
       )
-      .map(source => {
+      .map(async source => {
         const unifiedId = `${source.regionId}:${source.id}`;
         if (!source.fileName) {
           throw new DownloadError(
@@ -93,11 +124,24 @@ export const downloadDataForRegions = async (regionIds: string[]) => {
           dataUrl = dataUrl.replace(`\${${secretId}}`, secret);
         }
 
-        return downloadFromUrl({
+        const outPath = joinPath(DATA_DIR, source.fileName);
+
+        await downloadFromUrl({
           name: unifiedId,
           url: dataUrl,
-          outAbsolutePath: joinPath(DATA_DIR, source.fileName),
+          outAbsolutePath: outPath,
         });
+
+        if (!source.sanitizeRules?.length) {
+          return;
+        }
+        await unzipAndReplace(outPath);
+        // We block on each promise here instead of awaiting them all in
+        // parallel, so the file manipulations do not race with each other.
+        for (const rule of source.sanitizeRules ?? []) {
+          await sanitizeCsvInSource(joinPath(DATA_DIR, source.fileName), rule);
+        }
+        await zipAndReplace(outPath);
       })
   );
 };

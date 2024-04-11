@@ -1,10 +1,9 @@
-!.eslintrc.*
-!.prettierrc.*
-!.stylelintrc.*
-!.vscode/
-
-data/
 **/dist/
 **/node_modules/
 **/pnpm-lock.yaml
 **/*.d.ts
+
+!.eslintrc.*
+!.prettierrc.*
+!.stylelintrc.*
+!.vscode/

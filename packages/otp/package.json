@@ -33,6 +33,7 @@
     "@octokit/types": "^12.4.0",
     "@types/geojson": "^7946.0.14",
     "@types/lodash-es": "^4.17.12",
+    "csv": "^6.3.8",
     "dotenv": "^16.4.1",
     "glob": "^10.3.10",
     "json-schema-to-typescript": "^13.1.2",

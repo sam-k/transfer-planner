@@ -141,6 +141,21 @@ export const PLAN_QUERY_DOCUMENT: OtpQueryDocument<
             vehicleType
             vehicleMode
           }
+          fareProducts {
+            id
+            product {
+              id
+              name
+              riderCategory {
+                id
+                name
+              }
+              medium {
+                id
+                name
+              }
+            }
+          }
         }
         elevationGained
         elevationLost

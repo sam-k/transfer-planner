@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 
 import {printError} from './log';
+import {getRelativePath} from './path';
 
 /** Any custom error supported by this application. */
 class SupportedError {
@@ -30,7 +31,7 @@ export class ProcessError extends SupportedError {
   args: string[] = [];
 
   constructor(name: string, code: number, args: string[], stderr: string) {
-    super(name, /* reason= */ stderr);
+    super(name, stderr);
     this.code = code;
     this.args = args;
   }
@@ -61,10 +62,24 @@ export class DownloadError extends SupportedError {
   }
 }
 
+/** Error thrown when an expected path is not found. */
+export class PathNotFoundError extends SupportedError {
+  constructor(path: string, parentPath?: string) {
+    super(
+      /* name= */ '',
+      parentPath ? getRelativePath({path, parentPath}) : path
+    );
+  }
+
+  toString() {
+    return super.toString('Path not found');
+  }
+}
+
 /** Error thrown by any task. */
 export class DefaultError extends SupportedError {
-  constructor(name: string, reason: string) {
-    super(name, reason);
+  constructor(reason: string) {
+    super(/* name= */ '', reason);
   }
 
   toString() {

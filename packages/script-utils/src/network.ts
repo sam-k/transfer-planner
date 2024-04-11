@@ -6,11 +6,7 @@ import {get as getHttps} from 'https';
 import {DownloadError} from './errors';
 import {printInfo} from './log';
 
-/**
- * Downloads a file from a URL.
- *
- * @throws {DownloadError}
- */
+/** Downloads a file from a URL. */
 export const downloadFromUrl = ({
   name,
   url,
