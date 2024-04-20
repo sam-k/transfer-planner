@@ -228,8 +228,8 @@ const DirLeg = memo(
                 <div className="directionsInfobox-leg-routeHeader-route-titleContainer">
                   <Link
                     className="directionsInfobox-leg-routeHeader-route-title-nameContainer"
-                    href={routeUrl ?? undefined}
-                    underline="hover"
+                    href={routeUrl || undefined}
+                    underline={routeUrl ? 'hover' : 'none'}
                     color={textColor ? capColorSaturation(textColor) : 'black'}
                     sx={{
                       backgroundColor: color
@@ -251,10 +251,10 @@ const DirLeg = memo(
                 </div>
                 <Link
                   className="directionsInfobox-leg-routeHeader-route-agency"
-                  href={agencyUrl}
+                  href={agencyUrl || undefined}
                   variant="caption"
                   color="text.secondary"
-                  underline="hover"
+                  underline={agencyUrl ? 'hover' : 'none'}
                 >
                   {agencyName}
                 </Link>
