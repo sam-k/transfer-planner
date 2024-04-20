@@ -102,6 +102,9 @@ importers:
       '@emotion/styled':
         specifier: ^11.11.0
         version: 11.11.0(@emotion/react@11.11.4)(@types/react@18.2.67)(react@18.2.0)
+      '@googlemaps/polyline-codec':
+        specifier: ^1.0.28
+        version: 1.0.28
       '@internal/constants':
         specifier: workspace:*
         version: link:../constants
@@ -1355,6 +1358,10 @@ packages:
 
   /@floating-ui/utils@0.2.1:
     resolution: {integrity: sha512-9TANp6GPoMtYzQdt54kfAyMmz1+osLlXdg2ENroU7zzrtflTLrrC/lgrIfaSe+Wu0b89GKccT7vxXA0MoAIO+Q==}
+    dev: false
+
+  /@googlemaps/polyline-codec@1.0.28:
+    resolution: {integrity: sha512-m7rh8sbxlrHvebXEweBHX8r1uPtToPRYxWDD6p6k2YG8hyhBe0Wi6xRUVFpxpEseMNgF+OBotFQC5senj8K7TQ==}
     dev: false
 
   /@graphql-codegen/add@5.0.2(graphql@16.8.1):
