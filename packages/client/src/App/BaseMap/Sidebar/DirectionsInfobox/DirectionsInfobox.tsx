@@ -334,9 +334,9 @@ const DirectionsInfobox = (props: DirectionsInfoboxProps) => {
     [duration, walkTime, waitingTime]
   );
 
-  const {ref: startLocationRef, offsetPx: startlocationOffsetPx} =
+  const {ref: startLocationRef, offsetPx: startLocationOffsetPx} =
     useNegativeOffset();
-  const {ref: endLocationRef, offsetPx: endlocationOffsetPx} =
+  const {ref: endLocationRef, offsetPx: endLocationOffsetPx} =
     useNegativeOffset();
 
   return (
@@ -397,8 +397,8 @@ const DirectionsInfobox = (props: DirectionsInfoboxProps) => {
                 leg={leg}
                 timezones={{start: startTimezone, end: endTimezone}}
                 itinOffsetsPx={{
-                  start: i === 0 ? startlocationOffsetPx : undefined,
-                  end: i === legs.length - 1 ? endlocationOffsetPx : undefined,
+                  start: i === 0 ? startLocationOffsetPx : undefined,
+                  end: i === legs.length - 1 ? endLocationOffsetPx : undefined,
                 }}
               />
             ))}
