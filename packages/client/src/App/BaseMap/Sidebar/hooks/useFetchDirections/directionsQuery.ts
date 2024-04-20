@@ -112,6 +112,7 @@ export const PLAN_QUERY_DOCUMENT: OtpQueryDocument<
               desc
               color
               textColor
+              url
             }
             tripShortName
             tripHeadsign

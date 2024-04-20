@@ -5,7 +5,7 @@ import {filterAndJoin} from '../../../../../utils';
 import {useBaseMapContext} from '../../../../BaseMapContext';
 import type {LocationInfo} from '../../Sidebar.types';
 import {
-  currentPosSearchResult,
+  CURRENT_POS_SEARCH_RESULT,
   type SearchResult,
 } from '../useFetchSearchResults';
 import {transformFsqAddressDetailsResponse} from './useFetchLocationInfo.utils';
@@ -49,7 +49,7 @@ const useFetchLocationInfo = () => {
     async (searchResult: SearchResult): Promise<LocationInfo> => {
       setIsFetching(true);
 
-      if (currentPos && searchResult.id === currentPosSearchResult.id) {
+      if (currentPos && searchResult.id === CURRENT_POS_SEARCH_RESULT.id) {
         setIsFetching(false);
         return {
           ...searchResult,

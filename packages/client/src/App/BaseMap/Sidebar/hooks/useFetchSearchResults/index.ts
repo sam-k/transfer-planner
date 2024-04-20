@@ -1,3 +1,3 @@
 export {default} from './useFetchSearchResults';
 export type {SearchResult} from './useFetchSearchResults.types';
-export {currentPosSearchResult} from './useFetchSearchResults.utils';
+export {CURRENT_POS_SEARCH_RESULT} from './useFetchSearchResults.utils';

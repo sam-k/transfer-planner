@@ -14,7 +14,7 @@ import type {
   UseFetchSearchResultsProps,
 } from './useFetchSearchResults.types';
 import {
-  currentPosSearchResult,
+  CURRENT_POS_SEARCH_RESULT,
   transformSearchResponse,
 } from './useFetchSearchResults.utils';
 
@@ -133,9 +133,9 @@ const useFetchSearchResults = (props: UseFetchSearchResultsProps) => {
           if (
             allowSearchingCurrentPos &&
             query.toLocaleLowerCase() ===
-              currentPosSearchResult.label.toLocaleLowerCase()
+              CURRENT_POS_SEARCH_RESULT.label.toLocaleLowerCase()
           ) {
-            return [currentPosSearchResult];
+            return [CURRENT_POS_SEARCH_RESULT];
           }
 
           const {encodedUrl, encodedOptions} = encodedFetchSearchData;
