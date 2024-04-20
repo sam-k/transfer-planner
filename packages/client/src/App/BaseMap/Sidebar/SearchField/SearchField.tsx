@@ -141,8 +141,7 @@ const SearchField = (props: SearchFieldProps) => {
         <li {...optionProps}>
           <div className="searchField-result">
             <div className="searchField-result-iconContainer">
-              {selectedSearchResult?.label ===
-              CURRENT_POS_SEARCH_RESULT.label ? (
+              {option.label === CURRENT_POS_SEARCH_RESULT.label ? (
                 <MyLocationIcon sx={{color: 'text.secondary'}} />
               ) : (
                 <PlaceIcon sx={{color: 'text.secondary'}} />
