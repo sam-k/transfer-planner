@@ -9,7 +9,7 @@ import {mergeWith} from 'lodash-es';
 import React, {memo, useEffect, useMemo, useRef, useState} from 'react';
 
 import type {HighlightedSearchResult} from '../Sidebar.types';
-import {currentPosSearchResult, useFetchSearchResults} from '../hooks';
+import {CURRENT_POS_SEARCH_RESULT, useFetchSearchResults} from '../hooks';
 import './SearchField.css';
 import type {SearchFieldProps} from './SearchField.types';
 
@@ -141,7 +141,8 @@ const SearchField = (props: SearchFieldProps) => {
         <li {...optionProps}>
           <div className="searchField-result">
             <div className="searchField-result-iconContainer">
-              {selectedSearchResult?.label === currentPosSearchResult.label ? (
+              {selectedSearchResult?.label ===
+              CURRENT_POS_SEARCH_RESULT.label ? (
                 <MyLocationIcon sx={{color: 'text.secondary'}} />
               ) : (
                 <PlaceIcon sx={{color: 'text.secondary'}} />

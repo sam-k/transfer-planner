@@ -1,7 +1,9 @@
 import type {Itinerary} from '@internal/otp';
 import React, {memo, useCallback, useEffect, useMemo, useState} from 'react';
 
+import type {LatLngCoords} from '../../../types';
 import {useBaseMapContext} from '../../BaseMapContext';
+import DirectionsInfoBox from './DirectionsInfobox';
 import DirectionsListBox from './DirectionsListBox';
 import DirectionsSearchBox from './DirectionsSearchBox';
 import Infobox from './Infobox';
@@ -9,15 +11,16 @@ import SearchField, {type SearchFieldProps} from './SearchField';
 import './Sidebar.css';
 import type {HighlightedSearchResult, LocationInfo} from './Sidebar.types';
 import {
-  currentPosSearchResult,
+  CURRENT_POS_SEARCH_RESULT,
   useFetchDirections,
   useFetchLocationInfo,
+  useFetchTimezone,
 } from './hooks';
 
 /** Pseudo-highlighted search result corresponding to the current location. */
-const currentPosHighlightedSearchResult: HighlightedSearchResult = {
-  ...currentPosSearchResult,
-  matchedRanges: [[0, currentPosSearchResult.label.length]],
+const CURRENT_POS_HIGHLIGHTED_SEARCH_RESULT: HighlightedSearchResult = {
+  ...CURRENT_POS_SEARCH_RESULT,
+  matchedRanges: [[0, CURRENT_POS_SEARCH_RESULT.label.length]],
 } as const;
 
 /** Renders the sidebar for the application. */
@@ -41,6 +44,9 @@ const Sidebar = () => {
     end?: LocationInfo;
   }>({});
 
+  // The currently selected transit itinerary.
+  const [selectedItinerary, setSelectedItinerary] = useState<Itinerary>();
+
   const {fetchLocationInfo} = useFetchLocationInfo();
 
   // Transit result from start to end locations.
@@ -48,6 +54,40 @@ const Sidebar = () => {
     startLocation: selectedLocationInfos.start,
     endLocation: selectedLocationInfos.end,
   });
+
+  const {fetchTimezone} = useFetchTimezone();
+
+  // Timezone of the start location.
+  const [startTimezone, setStartTimezone] = useState<string>();
+  useEffect(() => {
+    const startCoords: LatLngCoords | undefined = directionsData?.from && [
+      directionsData.from.lat,
+      directionsData.from.lon,
+    ];
+    if (!startCoords) {
+      setStartTimezone(undefined);
+      return;
+    }
+    fetchTimezone(startCoords).then(timezone => {
+      setStartTimezone(timezone);
+    });
+  }, [directionsData, fetchTimezone]);
+
+  // Timezone of the end location.
+  const [endTimezone, setEndTimezone] = useState<string>();
+  useEffect(() => {
+    const endCoords: LatLngCoords | undefined = directionsData?.to && [
+      directionsData.to.lat,
+      directionsData.to.lon,
+    ];
+    if (!endCoords) {
+      setEndTimezone(undefined);
+      return;
+    }
+    fetchTimezone(endCoords).then(timezone => {
+      setEndTimezone(timezone);
+    });
+  }, [directionsData, fetchTimezone]);
 
   /** Default value for the search field. */
   const defaultSearchFieldValue = useMemo<SearchFieldProps['defaultValue']>(
@@ -119,65 +159,73 @@ const Sidebar = () => {
   return (
     <div className="sidebar">
       {areDirectionsShown ? (
-        <>
-          <DirectionsSearchBox
-            defaultValues={{
-              start: {
-                textInput: currentPosHighlightedSearchResult.label,
-                selectedSearchResult: currentPosHighlightedSearchResult,
-                searchResults: new Set([currentPosHighlightedSearchResult]),
-              },
-              end: defaultSearchFieldValue,
-            }}
-            onStartChange={async searchResult => {
-              const newStartLocationInfo = searchResult
-                ? await fetchLocationInfo(searchResult)
-                : undefined;
-              setSelectedLocationInfos(prevState => ({
-                ...prevState,
-                start: newStartLocationInfo,
-              }));
-            }}
-            onEndChange={async searchResult => {
-              const newEndLocationInfo = searchResult
-                ? await fetchLocationInfo(searchResult)
-                : undefined;
-              setSelectedLocationInfos(prevState => ({
-                ...prevState,
-                end: newEndLocationInfo,
-              }));
-            }}
-            onSwap={() => {
-              setSelectedLocationInfos(prevState => ({
-                start: prevState.end,
-                end: prevState.start,
-              }));
-            }}
+        selectedItinerary ? (
+          <DirectionsInfoBox
+            itinerary={selectedItinerary}
+            startLocationLabel={selectedLocationInfos.start?.label}
+            endLocationLabel={selectedLocationInfos.end?.label}
+            startTimezone={startTimezone}
+            endTimezone={endTimezone}
             onClose={() => {
-              setAreDirectionsShown(false);
-              setSelectedLocationInfos({});
-              setDirectionsMarkers?.(undefined);
+              setSelectedItinerary(undefined);
             }}
           />
-          <DirectionsListBox
-            startCoords={
-              directionsData?.from && [
-                directionsData.from.lat,
-                directionsData.from.lon,
-              ]
-            }
-            endCoords={
-              directionsData?.to && [
-                directionsData.to.lat,
-                directionsData.to.lon,
-              ]
-            }
-            itineraries={directionsData?.itineraries.filter(
-              (itin): itin is Itinerary => Boolean(itin)
-            )}
-            isLoading={!directionsData}
-          />
-        </>
+        ) : (
+          <>
+            <DirectionsSearchBox
+              defaultValues={{
+                start: {
+                  textInput: CURRENT_POS_HIGHLIGHTED_SEARCH_RESULT.label,
+                  selectedSearchResult: CURRENT_POS_HIGHLIGHTED_SEARCH_RESULT,
+                  searchResults: new Set([
+                    CURRENT_POS_HIGHLIGHTED_SEARCH_RESULT,
+                  ]),
+                },
+                end: defaultSearchFieldValue,
+              }}
+              onStartChange={async searchResult => {
+                const newStartLocationInfo = searchResult
+                  ? await fetchLocationInfo(searchResult)
+                  : undefined;
+                setSelectedLocationInfos(prevState => ({
+                  ...prevState,
+                  start: newStartLocationInfo,
+                }));
+              }}
+              onEndChange={async searchResult => {
+                const newEndLocationInfo = searchResult
+                  ? await fetchLocationInfo(searchResult)
+                  : undefined;
+                setSelectedLocationInfos(prevState => ({
+                  ...prevState,
+                  end: newEndLocationInfo,
+                }));
+              }}
+              onSwap={() => {
+                setSelectedLocationInfos(prevState => ({
+                  start: prevState.end,
+                  end: prevState.start,
+                }));
+              }}
+              onClose={() => {
+                setAreDirectionsShown(false);
+                setSelectedLocationInfos({});
+                setDirectionsMarkers?.(undefined);
+              }}
+            />
+            <DirectionsListBox
+              isLoading={!directionsData}
+              itineraries={directionsData?.itineraries.filter(
+                (itin): itin is Itinerary => Boolean(itin)
+              )}
+              startTimezone={startTimezone}
+              endTimezone={endTimezone}
+              onSelect={(itin: Itinerary) => {
+                setSelectedItinerary(itin);
+              }}
+            />
+          </>
+        )
       ) : (
         <>
           <SearchField
