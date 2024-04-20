@@ -105,8 +105,8 @@ const formatCustomDuration = (
     : formatDuration(
         intervalToDuration({
           start: 0,
-          // Round to the nearest minute; in milliseconds.
-          end: Math.round(seconds / 60) * 60 * 1000,
+          // Round to the nearest minute; in milliseconds. Minimum 1 minute.
+          end: (Math.round(seconds / 60) || 1) * 60 * 1000,
         }),
         short ? {locale: SHORT_DURATION_LOCALE} : undefined
       );

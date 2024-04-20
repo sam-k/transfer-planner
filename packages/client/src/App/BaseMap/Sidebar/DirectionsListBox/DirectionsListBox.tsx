@@ -90,14 +90,7 @@ const DirectionsListBox = (props: DirectionsListBoxProps) => {
         <div>
           <LoadingBar />
         </div>
-      ) : !itineraries?.length ? (
-        <Typography
-          className="directionsListBox-noResults"
-          color="text.secondary"
-        >
-          No directions found
-        </Typography>
-      ) : (
+      ) : itineraries?.length ? (
         itineraries.map((itin, i) => (
           <DirectionItinerary
             key={i}
@@ -108,6 +101,13 @@ const DirectionsListBox = (props: DirectionsListBoxProps) => {
             onSelect={onSelect}
           />
         ))
+      ) : (
+        <Typography
+          className="directionsListBox-noResults"
+          color="text.secondary"
+        >
+          No directions found
+        </Typography>
       )}
     </div>
   );

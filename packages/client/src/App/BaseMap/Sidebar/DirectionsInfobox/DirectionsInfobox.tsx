@@ -175,7 +175,13 @@ const DirLeg = memo(
       intermediateStops,
     } = leg;
     const {route, tripHeadsign} = trip ?? {};
-    const {shortName: routeShortName, color, textColor, agency} = route ?? {};
+    const {
+      shortName: routeShortName,
+      color,
+      textColor,
+      url: routeUrl,
+      agency,
+    } = route ?? {};
     const {name: agencyName, url: agencyUrl} = agency ?? {};
 
     const {ref: legStartLocationRef, offsetPx: legStartLocationOffsetPx} =
@@ -220,8 +226,11 @@ const DirLeg = memo(
               <TransitModeIcon className="directionsInfobox-leg-routeHeader-icon" />
               <div className="directionsInfobox-leg-routeHeader-route">
                 <div className="directionsInfobox-leg-routeHeader-route-titleContainer">
-                  <Box
+                  <Link
                     className="directionsInfobox-leg-routeHeader-route-title-nameContainer"
+                    href={routeUrl ?? undefined}
+                    underline="hover"
+                    color={textColor ? capColorSaturation(textColor) : 'black'}
                     sx={{
                       backgroundColor: color
                         ? capColorSaturation(color)
@@ -237,7 +246,7 @@ const DirLeg = memo(
                     >
                       {routeShortName}
                     </Typography>
-                  </Box>
+                  </Link>
                   <Typography>to {tripHeadsign}</Typography>
                 </div>
                 <Link
