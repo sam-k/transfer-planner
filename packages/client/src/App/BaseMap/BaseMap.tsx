@@ -13,6 +13,7 @@ import {BaseMapContextProvider} from '../BaseMapContext';
 import './BaseMap.css';
 import type {BaseMapProps, DirectionsMarkerProps} from './BaseMap.types';
 import Marker, {type MarkerProps} from './Marker';
+import Polyline, {type PolylineProps} from './Polyline';
 import Sidebar from './Sidebar';
 
 /** Renders the base map for the application. */
@@ -24,6 +25,9 @@ const BaseMap = (props: BaseMapProps) => {
   // Information for rendering the start and end location markers.
   const [directionsMarkers, setDirectionsMarkers] =
     useState<DirectionsMarkerProps>();
+  // Information for rendering a polyline.
+  const [directionsPolylines, setDirectionsPolylines] =
+    useState<PolylineProps[]>();
 
   const mapRef = useRef<LeafletMap>();
 
@@ -110,6 +114,7 @@ const BaseMap = (props: BaseMapProps) => {
       mapRef={mapRef}
       setMarker={setMarker}
       setDirectionsMarkers={setDirectionsMarkers}
+      setDirectionsPolylines={setDirectionsPolylines}
     >
       <Sidebar />
       <MapContainer
@@ -151,6 +156,7 @@ const BaseMap = (props: BaseMapProps) => {
         ) : (
           marker && <Marker {...marker} />
         )}
+        {directionsPolylines?.map(polyline => <Polyline {...polyline} />)}
 
         <ZoomControl position="bottomright" />
       </MapContainer>

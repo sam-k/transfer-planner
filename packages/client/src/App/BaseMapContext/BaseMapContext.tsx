@@ -17,6 +17,7 @@ export const BaseMapContextProvider = (props: BaseMapContextProviderProps) => {
     mapRef,
     setMarker,
     setDirectionsMarkers,
+    setDirectionsPolylines,
     children,
   } = props;
 
@@ -29,6 +30,7 @@ export const BaseMapContextProvider = (props: BaseMapContextProviderProps) => {
       mapRef,
       setMarker,
       setDirectionsMarkers,
+      setDirectionsPolylines,
     }),
     [
       tileApi,
@@ -38,6 +40,7 @@ export const BaseMapContextProvider = (props: BaseMapContextProviderProps) => {
       mapRef,
       setMarker,
       setDirectionsMarkers,
+      setDirectionsPolylines,
     ]
   );
 

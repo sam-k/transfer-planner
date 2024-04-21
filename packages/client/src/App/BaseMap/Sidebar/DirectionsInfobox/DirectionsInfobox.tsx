@@ -13,6 +13,7 @@ import {merge} from 'lodash-es';
 import React, {memo, useMemo, type Ref} from 'react';
 
 import {capColorSaturation, filterAndJoin} from '../../../../utils';
+import {useBaseMapContext} from '../../../BaseMapContext';
 import {
   ItinerarySummary,
   formatLongDuration,
@@ -306,6 +307,8 @@ const DirectionsInfobox = (props: DirectionsInfoboxProps) => {
     onClose,
   } = props;
 
+  const {setDirectionsPolylines} = useBaseMapContext();
+
   const {
     startTime: startTimestamp,
     endTime: endTimestamp,
@@ -422,6 +425,7 @@ const DirectionsInfobox = (props: DirectionsInfoboxProps) => {
         className="directionsInfobox-closeButton"
         variant="contained"
         onClick={() => {
+          setDirectionsPolylines?.([]); // Clear polylines
           onClose?.();
         }}
       >

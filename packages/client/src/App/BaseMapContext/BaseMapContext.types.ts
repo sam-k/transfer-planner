@@ -1,8 +1,10 @@
 import type {Map as LeafletMap} from 'leaflet';
-import type {Dispatch, ProviderProps, RefObject, SetStateAction} from 'react';
+import type {ProviderProps, RefObject} from 'react';
 
+import type {SetState} from '../../types';
 import type {BaseMapProps, DirectionsMarkerProps} from '../BaseMap';
 import type {MarkerProps} from '../BaseMap/Marker';
+import type {PolylineProps} from '../BaseMap/Polyline';
 
 /** Type for the value provided by `BaseMapContext`. */
 export interface BaseMapContextValue
@@ -12,11 +14,11 @@ export interface BaseMapContextValue
   /** Reference to the map. */
   mapRef?: RefObject<LeafletMap | undefined>;
   /** Sets the map marker state. */
-  setMarker?: Dispatch<SetStateAction<MarkerProps | undefined>>;
+  setMarker?: SetState<MarkerProps>;
   /** Sets the start and end map marker state for directions. */
-  setDirectionsMarkers?: Dispatch<
-    SetStateAction<DirectionsMarkerProps | undefined>
-  >;
+  setDirectionsMarkers?: SetState<DirectionsMarkerProps>;
+  /** Sets the polylines state for directions. */
+  setDirectionsPolylines?: SetState<PolylineProps[]>;
 }
 
 /** Type for props for the `BaseMapContext` provider. */
