@@ -1,7 +1,10 @@
+import {decode as decodePolyline} from '@googlemaps/polyline-codec';
 import {Typography} from '@mui/material';
 import React, {memo, useCallback, useMemo} from 'react';
 
-import {filterAndJoin} from '../../../../utils';
+import {capColorSaturation, filterAndJoin} from '../../../../utils';
+import {useBaseMapContext} from '../../../BaseMapContext';
+import type {PolylineProps} from '../../Polyline';
 import LoadingBar from '../LoadingBar';
 import {
   ItinerarySummary,
@@ -64,6 +67,8 @@ const DirectionItinerary = memo((props: DirectionItineraryProps) => {
 const DirectionsListBox = (props: DirectionsListBoxProps) => {
   const {isLoading, itineraries, startTimezone, endTimezone, onSelect} = props;
 
+  const {setDirectionsPolylines} = useBaseMapContext();
+
   /** Gets the class name for an itinerary container. */
   const getItineraryContainerClassName = useCallback(
     (index: number) => {
@@ -98,7 +103,23 @@ const DirectionsListBox = (props: DirectionsListBoxProps) => {
             itinerary={itin}
             startTimezone={startTimezone}
             endTimezone={endTimezone}
-            onSelect={onSelect}
+            onSelect={itin => {
+              for (const leg of itin.legs) {
+                if (leg?.legGeometry?.points) {
+                  setDirectionsPolylines?.(prevState => [
+                    ...(prevState ?? []),
+                    {
+                      coordsList: decodePolyline(leg.legGeometry!.points!),
+                      color: leg.trip?.route?.color
+                        ? capColorSaturation(leg.trip.route.color)
+                        : undefined,
+                      isTransit: Boolean(leg.transitLeg),
+                    } satisfies PolylineProps,
+                  ]);
+                }
+              }
+              onSelect?.(itin);
+            }}
           />
         ))
       ) : (

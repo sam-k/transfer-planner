@@ -5,7 +5,7 @@
   "license": "ISC",
   "author": "Sam Kim",
   "type": "module",
-  "packageManager": "pnpm@8.15.5",
+  "packageManager": "pnpm@9.0.4",
   "scripts": {
     "postinstall": "pnpm run build",
     "build": "vite build",
@@ -14,6 +14,7 @@
   "dependencies": {
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
+    "@googlemaps/polyline-codec": "^1.0.28",
     "@internal/constants": "workspace:*",
     "@internal/otp": "workspace:*",
     "@mui/icons-material": "^5.15.7",
