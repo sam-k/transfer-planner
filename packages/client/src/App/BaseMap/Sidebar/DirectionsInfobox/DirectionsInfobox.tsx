@@ -163,7 +163,7 @@ const DirIntermediateStops = memo(
       setStopsListHeightPx(el.clientHeight);
     }, []);
 
-    // Toggle visibility of the stops list.
+    // Toggle visibility of the stops list in a way that enables CSS transition.
     const stopsListContainerRef = useRef<HTMLDivElement>(null);
     const toggleStopsList = useCallback(
       (shouldEnable: boolean) => {
