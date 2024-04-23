@@ -1,0 +1,56 @@
+.directionsTimeBox {
+  display: flex;
+  flex-direction: column;
+  border-radius: 16px;
+  box-shadow: 0 0 8px rgba(0 0 0 / 25%);
+  background-color: white;
+}
+
+.directionsTimeBox-option {
+  border: 1px solid rgba(0 0 0 / 23%);
+  border-radius: unset;
+  font-size: 1rem;
+  text-transform: unset;
+}
+
+.directionsTimeBox-option-firstWithDateTimeHidden {
+  border-radius: 16px 0 0 16px;
+}
+
+.directionsTimeBox-option-firstWithDateTimeShown {
+  border-radius: 16px 0 0;
+}
+
+.directionsTimeBox-option-lastWithDateTimeHidden {
+  border-radius: 0 16px 16px 0;
+}
+
+.directionsTimeBox-option-lastWithDateTimeShown {
+  border-radius: 0 16px 0 0;
+}
+
+.directionsTimeBox-option-moreNext {
+  border-right: 1px solid rgba(0 0 0 / 23%);
+}
+
+.directionsTimeBox-dateTime {
+  display: flex;
+}
+
+.directionsTimeBox-dateTime fieldset {
+  border-color: rgba(0 0 0 / 23%);
+  border-radius: unset;
+}
+
+.directionsTimeBox-dateTime-field {
+  border-width: 1px;
+  border-color: rgba(0 0 0 / 23%);
+}
+
+.directionsTimeBox-dateTime-timeField fieldset {
+  border-bottom-left-radius: 16px;
+}
+
+.directionsTimeBox-dateTime-dateField fieldset {
+  border-bottom-right-radius: 16px;
+}

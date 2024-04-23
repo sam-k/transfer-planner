@@ -1,5 +1,7 @@
 import {OTP_GTFS_GRAPHQL_ENDPOINT} from '@internal/constants';
 import {StyledEngineProvider} from '@mui/material';
+import {LocalizationProvider} from '@mui/x-date-pickers';
+import {AdapterDateFns} from '@mui/x-date-pickers/AdapterDateFns';
 import React, {memo} from 'react';
 import {
   Client as UrqlClient,
@@ -20,7 +22,9 @@ const otpUrqlClient = new UrqlClient({
 const App = (props: AppProps) => (
   <UrqlProvider value={otpUrqlClient}>
     <StyledEngineProvider injectFirst>
-      <BaseMap {...props} />
+      <LocalizationProvider dateAdapter={AdapterDateFns}>
+        <BaseMap {...props} />
+      </LocalizationProvider>
     </StyledEngineProvider>
   </UrqlProvider>
 );
