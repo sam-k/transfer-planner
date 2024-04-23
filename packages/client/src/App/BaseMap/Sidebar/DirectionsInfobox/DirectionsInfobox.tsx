@@ -1,16 +1,25 @@
-import {Mode as TransitMode, type Leg, type Stop} from '@internal/otp';
+import {Mode as TransitMode, type Leg, type Place} from '@internal/otp';
 import {
   Close as CloseIcon,
   DirectionsTransit as DirectionsTransitIcon,
   DirectionsWalk as DirectionsWalkIcon,
+  KeyboardArrowDown as KeyboardArrowDownIcon,
+  KeyboardArrowUp as KeyboardArrowUpIcon,
   Route as RouteIcon,
   Schedule as ScheduleIcon,
-  TripOrigin as TripOriginIcon,
   type SvgIconComponent,
 } from '@mui/icons-material';
 import {Box, Button, Link, Typography, type SxProps} from '@mui/material';
 import {merge} from 'lodash-es';
-import React, {memo, useMemo, type Ref} from 'react';
+import React, {
+  memo,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+  type Ref,
+  type RefCallback,
+} from 'react';
 
 import {capColorSaturation, filterAndJoin} from '../../../../utils';
 import {useBaseMapContext} from '../../../BaseMapContext';
@@ -23,6 +32,7 @@ import {
 } from '../Sidebar.utils';
 import './DirectionsInfobox.css';
 import type {DirectionsInfoboxProps} from './DirectionsInfobox.types';
+import LocationIcon from './LocationIcon';
 import useNegativeOffset from './useNegativeOffset';
 
 /** Transit modes that are rail or rail-adjacent. */
@@ -73,24 +83,34 @@ const TimeDetailsSeparator = memo(() => (
 const DirLocation = memo(
   ({
     label,
-    timeStr,
+    timestamp,
+    timezone,
     color,
+    isIntermediate,
     containerRef,
   }: {
     label?: string;
-    timeStr?: string;
+    timestamp?: number;
+    timezone?: string;
     color?: string;
+    isIntermediate?: boolean;
     containerRef?: Ref<HTMLDivElement>;
   }) => (
     <div className="directionsInfobox-location" ref={containerRef}>
-      <TripOriginIcon
+      <LocationIcon
         className="directionsInfobox-location-icon"
-        sx={{color: color ? capColorSaturation(color) : 'black'}}
+        strokeColor={color ? capColorSaturation(color) : 'black'}
       />
       <div className="directionsInfobox-location-details">
-        <Typography>{label || 'Current location'}</Typography>
+        <Typography
+          {...(isIntermediate
+            ? {variant: 'body2', color: 'text.secondary'}
+            : undefined)}
+        >
+          {label || 'Current location'}
+        </Typography>
         <Typography variant="body2" color="text.secondary">
-          {timeStr}
+          {formatTimestamp(timestamp, timezone)}
         </Typography>
       </div>
     </div>
@@ -101,38 +121,78 @@ const DirLocation = memo(
 const DirIntermediateStops = memo(
   ({
     durationStr,
-    stops,
+    places,
     color,
+    timezone,
     isTransit,
     TransitModeIcon,
     containerSx,
   }: {
     durationStr: string;
-    stops?: Stop[];
+    places?: Place[];
     color?: string;
+    timezone?: string;
     isTransit: boolean;
     TransitModeIcon: SvgIconComponent;
     containerSx?: SxProps;
   }) => {
+    /** Whether this stops list is expandable. */
+    const isExpandable = useMemo(
+      () => isTransit && places?.length,
+      [places, isTransit]
+    );
+
+    // Whether this stops list is currently expanded.
+    const [isExpanded, setIsExpanded] = useState(false);
+
     const numStopsStr = useMemo(() => {
       if (!isTransit) {
         return undefined;
       }
       // Add 1 to include destination stop.
-      const numStops = (stops?.length ?? 0) + 1;
+      const numStops = (places?.length ?? 0) + 1;
       return `(${numStops} ${numStops === 1 ? 'stop' : 'stops'})`;
-    }, [stops, isTransit]);
+    }, [places, isTransit]);
+
+    // Measure the height of the stops list, in pixels.
+    const [stopsListHeightPx, setStopsListHeightPx] = useState(0);
+    const stopsListRef = useCallback<RefCallback<HTMLDivElement>>(el => {
+      if (!el) {
+        return;
+      }
+      setStopsListHeightPx(el.clientHeight);
+    }, []);
+
+    // Toggle visibility of the stops list.
+    const stopsListContainerRef = useRef<HTMLDivElement>(null);
+    const toggleStopsList = useCallback(
+      (shouldEnable: boolean) => {
+        if (!stopsListContainerRef.current) {
+          return;
+        }
+        stopsListContainerRef.current.style.height = shouldEnable
+          ? `${stopsListHeightPx}px`
+          : '0';
+      },
+      [stopsListHeightPx]
+    );
 
     return (
       <Box
         className={[
-          'directionsInfobox-intermediateStops',
+          'directionsInfobox-intermediateStopsContainer',
           isTransit
-            ? 'directionsInfobox-intermediateStopsTransit'
-            : 'directionsInfobox-intermediateStopsNonTransit',
+            ? 'directionsInfobox-intermediateStopsContainer-transit'
+            : 'directionsInfobox-intermediateStopsContainer-nonTransit',
         ].join(' ')}
+        onClick={() => {
+          setIsExpanded(prevState => {
+            const newState = !prevState;
+            toggleStopsList(newState);
+            return newState;
+          });
+        }}
         sx={merge(
-          {},
           {
             borderColor: isTransit
               ? color
@@ -143,13 +203,57 @@ const DirIntermediateStops = memo(
           containerSx
         )}
       >
-        <TransitModeIcon
-          className="directionsInfobox-intermediateStops-icon"
-          sx={{color: 'text.secondary'}}
-        />
-        <Typography variant="body2" color="text.secondary">
-          {filterAndJoin([durationStr, numStopsStr], /* sep= */ ' ')}
-        </Typography>
+        <div
+          className={filterAndJoin(
+            [
+              'directionsInfobox-intermediateStops-details',
+              isExpandable
+                ? 'directionsInfobox-intermediateStops-details-expandable'
+                : undefined,
+            ],
+            /* sep= */ ' '
+          )}
+        >
+          <TransitModeIcon
+            className="directionsInfobox-intermediateStops-details-icon"
+            sx={{color: 'text.secondary'}}
+          />
+          <Typography variant="body2" color="text.secondary">
+            {filterAndJoin([durationStr, numStopsStr], /* sep= */ ' ')}
+          </Typography>
+          {isExpandable &&
+            (isExpanded ? (
+              <KeyboardArrowUpIcon
+                fontSize="small"
+                sx={{color: 'text.secondary'}}
+              />
+            ) : (
+              <KeyboardArrowDownIcon
+                fontSize="small"
+                sx={{color: 'text.secondary'}}
+              />
+            ))}
+        </div>
+        <div
+          className="directionsInfobox-intermediateStops-listContainer"
+          ref={stopsListContainerRef}
+        >
+          <div
+            className="directionsInfobox-intermediateStops-list"
+            ref={stopsListRef}
+          >
+            {places?.map((place, i) => (
+              <DirLocation
+                key={i}
+                label={place.stop?.name}
+                timestamp={place.arrivalTime}
+                timezone={timezone}
+                color={color}
+                isIntermediate
+              />
+            ))}
+          </div>
+        </div>
       </Box>
     );
   }
@@ -159,17 +263,12 @@ const DirIntermediateStops = memo(
 const DirLeg = memo(
   ({
     leg,
-    timezones: {start: startTimezone, end: endTimezone} = {},
     itinOffsetsPx: {
       start: itinStartLocationOffsetPx,
       end: itinEndLocationOffsetPx,
     } = {},
   }: {
     leg: Leg;
-    timezones?: {
-      start?: string;
-      end?: string;
-    };
     itinOffsetsPx?: {
       start?: number;
       end?: number;
@@ -184,7 +283,7 @@ const DirLeg = memo(
       startTime: startTimestamp,
       endTime: endTimestamp,
       trip,
-      intermediateStops,
+      intermediatePlaces,
     } = leg;
     const {route, tripHeadsign, tripShortName} = trip ?? {};
     const {
@@ -194,21 +293,16 @@ const DirLeg = memo(
       url: routeUrl,
       agency,
     } = route ?? {};
-    const {name: agencyName, url: agencyUrl} = agency ?? {};
+    const {
+      name: agencyName,
+      timezone: agencyTimezone,
+      url: agencyUrl,
+    } = agency ?? {};
 
     const {ref: legStartLocationRef, offsetPx: legStartLocationOffsetPx} =
       useNegativeOffset();
     const {ref: legEndLocationRef, offsetPx: legEndLocationOffsetPx} =
       useNegativeOffset();
-
-    const startTimeStr = useMemo(
-      () => formatTimestamp(startTimestamp, startTimezone),
-      [startTimestamp, startTimezone]
-    );
-    const endTimeStr = useMemo(
-      () => formatTimestamp(endTimestamp, endTimezone),
-      [endTimestamp, endTimezone]
-    );
 
     const TransitModeIcon = useMemo(() => getOtpModeIcon(mode), [mode]);
 
@@ -274,31 +368,36 @@ const DirLeg = memo(
                     </Typography>
                   )}
                 </div>
-                <Link
+                <Typography
                   className="directionsInfobox-leg-routeHeader-route-agency"
-                  href={agencyUrl || undefined}
                   variant="caption"
-                  color="text.secondary"
-                  underline={agencyUrl ? 'hover' : 'none'}
                 >
-                  {agencyName}
-                </Link>
+                  <Link
+                    href={agencyUrl || undefined}
+                    color="text.secondary"
+                    underline={agencyUrl ? 'hover' : 'none'}
+                  >
+                    {agencyName}
+                  </Link>
+                </Typography>
               </div>
             </div>
             <div>
               <DirLocation
                 label={fromName ?? ''}
-                timeStr={startTimeStr}
+                timestamp={startTimestamp ?? undefined}
+                timezone={agencyTimezone}
                 color={color ?? ''}
                 containerRef={legStartLocationRef}
               />
               <DirIntermediateStops
                 durationStr={formatLongDuration(duration)}
-                stops={intermediateStops?.filter((stop): stop is Stop =>
-                  Boolean(stop)
+                places={intermediatePlaces?.filter((place): place is Place =>
+                  Boolean(place)
                 )}
                 isTransit={Boolean(transitLeg)}
                 color={color ?? ''}
+                timezone={agencyTimezone}
                 TransitModeIcon={TransitModeIcon}
                 containerSx={{
                   marginTop: `-${legStartLocationOffsetPx}px`,
@@ -309,7 +408,8 @@ const DirLeg = memo(
               />
               <DirLocation
                 label={toName ?? ''}
-                timeStr={endTimeStr}
+                timestamp={endTimestamp ?? undefined}
+                timezone={agencyTimezone}
                 color={color ?? ''}
                 containerRef={legEndLocationRef}
               />
@@ -326,16 +426,16 @@ const DirectionsInfobox = (props: DirectionsInfoboxProps) => {
     itinerary,
     startLocationLabel,
     endLocationLabel,
-    startTimezone,
-    endTimezone,
+    startTimezone: startLocationTimezone,
+    endTimezone: endLocationTimezone,
     onClose,
   } = props;
 
   const {setDirectionsPolylines} = useBaseMapContext();
 
   const {
-    startTime: startTimestamp,
-    endTime: endTimestamp,
+    startTime: startLocationTimestamp,
+    endTime: endLocationTimestamp,
     duration,
     walkTime,
     waitingTime,
@@ -343,12 +443,12 @@ const DirectionsInfobox = (props: DirectionsInfoboxProps) => {
   } = itinerary;
 
   const startTimeStr = useMemo(
-    () => formatTimestamp(startTimestamp, startTimezone),
-    [startTimestamp, startTimezone]
+    () => formatTimestamp(startLocationTimestamp, startLocationTimezone),
+    [startLocationTimestamp, startLocationTimezone]
   );
   const endTimeStr = useMemo(
-    () => formatTimestamp(endTimestamp, endTimezone),
-    [endTimestamp, endTimezone]
+    () => formatTimestamp(endLocationTimestamp, endLocationTimezone),
+    [endLocationTimestamp, endLocationTimezone]
   );
   const totalDurationStr = useMemo(
     () => formatLongDuration(duration ?? 0),
@@ -422,7 +522,8 @@ const DirectionsInfobox = (props: DirectionsInfoboxProps) => {
         <div className="directionsInfobox-dir directionsInfoBox-morePrev">
           <DirLocation
             label={startLocationLabel}
-            timeStr={startTimeStr}
+            timestamp={startLocationTimestamp ?? undefined}
+            timezone={startLocationTimezone}
             containerRef={startLocationRef}
           />
           {legs
@@ -431,7 +532,6 @@ const DirectionsInfobox = (props: DirectionsInfoboxProps) => {
               <DirLeg
                 key={i}
                 leg={leg}
-                timezones={{start: startTimezone, end: endTimezone}}
                 itinOffsetsPx={{
                   start: i === 0 ? startLocationOffsetPx : undefined,
                   end: i === legs.length - 1 ? endLocationOffsetPx : undefined,
@@ -440,7 +540,8 @@ const DirectionsInfobox = (props: DirectionsInfoboxProps) => {
             ))}
           <DirLocation
             label={endLocationLabel}
-            timeStr={endTimeStr}
+            timestamp={endLocationTimestamp ?? undefined}
+            timezone={endLocationTimezone}
             containerRef={endLocationRef}
           />
         </div>
