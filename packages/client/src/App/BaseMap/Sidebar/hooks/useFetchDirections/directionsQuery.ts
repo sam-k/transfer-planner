@@ -119,15 +119,10 @@ export const PLAN_QUERY_DOCUMENT: OtpQueryDocument<
             directionId
             wheelchairAccessible
           }
-          intermediateStops {
-            gtfsId
-            name
-            lat
-            lon
-            code
-            desc
-            locationType
-            parentStation {
+          intermediatePlaces {
+            arrivalTime
+            departureTime
+            stop {
               gtfsId
               name
               lat
@@ -135,12 +130,21 @@ export const PLAN_QUERY_DOCUMENT: OtpQueryDocument<
               code
               desc
               locationType
+              parentStation {
+                gtfsId
+                name
+                lat
+                lon
+                code
+                desc
+                locationType
+                vehicleType
+                vehicleMode
+                platformCode
+              }
               vehicleType
               vehicleMode
-              platformCode
             }
-            vehicleType
-            vehicleMode
           }
           fareProducts {
             id

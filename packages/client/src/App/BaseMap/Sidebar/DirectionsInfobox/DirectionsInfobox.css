@@ -78,25 +78,47 @@
   width: 100%;
 }
 
-.directionsInfobox-intermediateStops {
-  display: flex;
-  align-items: center;
-  column-gap: 0.25rem;
+.directionsInfobox-intermediateStopsContainer {
   margin-left: 5px;
   padding-left: calc(1rem + 5px);
   border-width: 6px;
 }
 
-.directionsInfobox-intermediateStopsTransit {
+.directionsInfobox-intermediateStopsContainer-transit {
   border-left-style: solid;
 }
 
-.directionsInfobox-intermediateStopsNonTransit {
+.directionsInfobox-intermediateStopsContainer-nonTransit {
   border-left-style: dotted;
 }
 
-.directionsInfobox-intermediateStops-icon {
+.directionsInfobox-intermediateStops-details {
+  display: flex;
+  align-items: center;
+  column-gap: 0.25rem;
+  max-width: fit-content;
+}
+
+.directionsInfobox-intermediateStops-details-expandable {
+  cursor: pointer;
+}
+
+.directionsInfobox-intermediateStops-details-icon {
   font-size: 1rem;
+}
+
+.directionsInfobox-intermediateStops-listContainer {
+  margin-left: calc(-1rem - 16px);
+  height: 0;
+  overflow: hidden;
+  transition: height 250ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.directionsInfobox-intermediateStops-list {
+  display: flex;
+  flex-direction: column;
+  row-gap: 0.5rem;
+  padding-top: 0.5rem;
 }
 
 .directionsInfobox-leg {
