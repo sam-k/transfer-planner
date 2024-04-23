@@ -156,7 +156,9 @@ const BaseMap = (props: BaseMapProps) => {
         ) : (
           marker && <Marker {...marker} />
         )}
-        {directionsPolylines?.map(polyline => <Polyline {...polyline} />)}
+        {directionsPolylines?.map((polyline, i) => (
+          <Polyline key={i} {...polyline} />
+        ))}
 
         <ZoomControl position="bottomright" />
       </MapContainer>

@@ -1,4 +1,4 @@
-import {Mode, type Leg, type Stop} from '@internal/otp';
+import {Mode as TransitMode, type Leg, type Stop} from '@internal/otp';
 import {
   Close as CloseIcon,
   DirectionsTransit as DirectionsTransitIcon,
@@ -24,6 +24,17 @@ import {
 import './DirectionsInfobox.css';
 import type {DirectionsInfoboxProps} from './DirectionsInfobox.types';
 import useNegativeOffset from './useNegativeOffset';
+
+/** Transit modes that are rail or rail-adjacent. */
+const RAIL_MODES: ReadonlySet<TransitMode> = new Set([
+  TransitMode.CableCar,
+  TransitMode.Funicular,
+  TransitMode.Gondola,
+  TransitMode.Monorail,
+  TransitMode.Rail,
+  TransitMode.Subway,
+  TransitMode.Tram,
+]);
 
 /** Renders details about a time segment. */
 const TimeDetails = memo(
@@ -104,13 +115,13 @@ const DirIntermediateStops = memo(
     containerSx?: SxProps;
   }) => {
     const numStopsStr = useMemo(() => {
-      const numStops = stops?.length;
-      if (!numStops) {
+      if (!isTransit) {
         return undefined;
       }
       // Add 1 to include destination stop.
-      return `(${numStops + 1} ${numStops === 1 ? 'stop' : 'stops'})`;
-    }, [stops]);
+      const numStops = (stops?.length ?? 0) + 1;
+      return `(${numStops} ${numStops === 1 ? 'stop' : 'stops'})`;
+    }, [stops, isTransit]);
 
     return (
       <Box
@@ -175,7 +186,7 @@ const DirLeg = memo(
       trip,
       intermediateStops,
     } = leg;
-    const {route, tripHeadsign} = trip ?? {};
+    const {route, tripHeadsign, tripShortName} = trip ?? {};
     const {
       shortName: routeShortName,
       color,
@@ -205,7 +216,7 @@ const DirLeg = memo(
       return null;
     }
     switch (mode) {
-      case Mode.Walk:
+      case TransitMode.Walk:
         return (
           <DirIntermediateStops
             durationStr={formatLongDuration(duration)}
@@ -248,7 +259,20 @@ const DirLeg = memo(
                       {routeShortName}
                     </Typography>
                   </Link>
-                  <Typography>to {tripHeadsign}</Typography>
+                  {routeShortName !== tripHeadsign && (
+                    <Typography>
+                      {filterAndJoin(
+                        [
+                          mode && RAIL_MODES.has(mode)
+                            ? tripShortName
+                            : undefined,
+                          'to',
+                          tripHeadsign,
+                        ],
+                        /* sep= */ ' '
+                      )}
+                    </Typography>
+                  )}
                 </div>
                 <Link
                   className="directionsInfobox-leg-routeHeader-route-agency"

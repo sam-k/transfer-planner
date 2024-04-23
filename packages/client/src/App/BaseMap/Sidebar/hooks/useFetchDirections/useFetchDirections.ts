@@ -1,4 +1,5 @@
 import type {QueryTypePlanArgs} from '@internal/otp';
+import {format as formatDateTime, isValid as isValidDateTime} from 'date-fns';
 import {useMemo} from 'react';
 
 import {useOtpQuery} from '../utils';
@@ -7,12 +8,15 @@ import type {UseFetchDirectionsProps} from './useFetchDirections.types';
 
 /** Fetches transit directions between two locations. */
 const useFetchDirections = (props: UseFetchDirectionsProps) => {
-  const {startLocation, endLocation} = props;
+  const {startLocation, endLocation, schedule} = props;
 
   /** Whether the query is valid to be run. */
   const isQueryValid = useMemo(
-    () => Boolean(startLocation && endLocation),
-    [startLocation, endLocation]
+    () =>
+      Boolean(
+        startLocation && endLocation && isValidDateTime(schedule?.dateTime)
+      ),
+    [startLocation, endLocation, schedule]
   );
 
   /** Variables to supply to the query. */
@@ -21,6 +25,10 @@ const useFetchDirections = (props: UseFetchDirectionsProps) => {
       return {};
     }
     return {
+      date: formatDateTime(schedule!.dateTime!, 'yyyy-MM-dd'),
+      time: formatDateTime(schedule!.dateTime!, 'HH:mm:ss'),
+      arriveBy: schedule!.isArriveBy,
+      walkReluctance: 3,
       from: {
         lat: startLocation!.latitude,
         lon: startLocation!.longitude,
@@ -30,7 +38,7 @@ const useFetchDirections = (props: UseFetchDirectionsProps) => {
         lon: endLocation!.longitude,
       },
     };
-  }, [startLocation, endLocation, isQueryValid]);
+  }, [startLocation, endLocation, schedule, isQueryValid]);
 
   return useOtpQuery({
     name: PLAN_QUERY_NAME,

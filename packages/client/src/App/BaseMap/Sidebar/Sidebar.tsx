@@ -6,6 +6,7 @@ import {useBaseMapContext} from '../../BaseMapContext';
 import DirectionsInfoBox from './DirectionsInfobox';
 import DirectionsListBox from './DirectionsListBox';
 import DirectionsSearchBox from './DirectionsSearchBox';
+import DirectionsTimeBox from './DirectionsTimeBox';
 import Infobox from './Infobox';
 import SearchField, {type SearchFieldProps} from './SearchField';
 import './Sidebar.css';
@@ -43,6 +44,11 @@ const Sidebar = () => {
     start?: LocationInfo;
     end?: LocationInfo;
   }>({});
+  // Information about the currently selected directions schedule.
+  const [selectedScheduleInfos, setSelectedScheduleInfos] = useState<{
+    dateTime?: Date;
+    isArriveBy?: boolean;
+  }>({});
 
   // The currently selected transit itinerary.
   const [selectedItinerary, setSelectedItinerary] = useState<Itinerary>();
@@ -53,6 +59,7 @@ const Sidebar = () => {
   const {queryData: directionsData} = useFetchDirections({
     startLocation: selectedLocationInfos.start,
     endLocation: selectedLocationInfos.end,
+    schedule: selectedScheduleInfos,
   });
 
   const {fetchTimezone} = useFetchTimezone();
@@ -139,15 +146,6 @@ const Sidebar = () => {
     });
 
     flyToLocation(selectedLocationInfos.start, selectedLocationInfos.end);
-
-    // TODO: Render directions.
-    console.log(
-      `DIRECTIONS: ${JSON.stringify(
-        directionsData,
-        /* replacer= */ null,
-        /* space= */ 2
-      )}`
-    );
   }, [
     setDirectionsMarkers,
     areDirectionsShown,
@@ -211,6 +209,43 @@ const Sidebar = () => {
                 setAreDirectionsShown(false);
                 setSelectedLocationInfos({});
                 setDirectionsMarkers?.(undefined);
+              }}
+            />
+            <DirectionsTimeBox
+              onTimeChange={newTime => {
+                const newDateTime = new Date(
+                  selectedScheduleInfos.dateTime ?? new Date()
+                );
+                newDateTime.setHours(
+                  newTime.getHours(),
+                  newTime.getMinutes(),
+                  newTime.getSeconds(),
+                  newTime.getMilliseconds()
+                );
+                setSelectedScheduleInfos(prevState => ({
+                  ...prevState,
+                  dateTime: newDateTime,
+                }));
+              }}
+              onDateChange={newDate => {
+                const newDateTime = new Date(
+                  selectedScheduleInfos.dateTime ?? new Date()
+                );
+                newDateTime.setFullYear(
+                  newDate.getFullYear(),
+                  newDate.getMonth(),
+                  newDate.getDate()
+                );
+                setSelectedScheduleInfos(prevState => ({
+                  ...prevState,
+                  dateTime: newDateTime,
+                }));
+              }}
+              onModeChange={newMode => {
+                setSelectedScheduleInfos(prevState => ({
+                  ...prevState,
+                  isArriveBy: newMode === 'arriveBy',
+                }));
               }}
             />
             <DirectionsListBox
