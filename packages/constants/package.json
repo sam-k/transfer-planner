@@ -21,8 +21,8 @@
   "devDependencies": {
     "@internal/script-utils": "workspace:*",
     "@types/lodash-es": "^4.17.12",
-    "glob": "^10.3.10",
-    "lodash-es": "^4.17.21"
+    "glob": "^12.0.0",
+    "lodash-es": "^4.18.1"
   },
   "engines": {
     "node": ">=17.0.0"
